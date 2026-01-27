@@ -1,0 +1,16 @@
+Depois também tem de haver uma opção, que seja tipo, a dizer, investidor, e normalmente vamos ser nós.
+Mas às vezes, imagina, os Valdephone Play, para os bandidos irem lá tocar, deram-nos 400€,
+e nós em vez de pagarmos logo aos bandidos, ficámos nós com o dinheiro.
+Eu preciso também de ter uma maneira de inserir estas coisas, ou seja, o dinheiro que entra para nós,
+e o dinheiro que nós investimos nos bandidos.
+Porquê? Porque no final do ano nós temos de acertar contas com o artista.
+Imagina que nós durante o ano gastámos 5.000€ com os bandidos, mas destes pagamentos juntámos 1.000.
+No final do ano os bandidos têm-nos de pagar 4.000€.
+E eu quero que o site gere também este acerto de contas, que nunca vai ser mega complexo,
+porque a maior parte das vezes somos nós a investir, e depois são estas pequenas coisas,
+mas também quero que haja essa opção.
+Eu penso que a forma mais simples seja haver também uma hipótese para escolher de investidor,
+e pode ser MacTube ou outro.
+E quando for outro sabemos que é dinheiro que nós devemos ao artista,
+e quando for MacTube sabemos que é dinheiro que o artista nos deve a nós.
+Achas que consegues criar este website ou parece-te muito complexo?

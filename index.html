@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#f0f4ff">
+    <title>MacTube - Gestão de Despesas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <h1 class="splash-title">MacTube</h1>
+            <p class="splash-subtitle">Gestão de Despesas</p>
+            <div class="splash-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                    <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+                    <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen active">
+        <div class="auth-container">
+            <div class="auth-logo">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                    <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+                    <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+                </svg>
+            </div>
+            <h1 class="auth-title">MacTube</h1>
+            <p class="auth-subtitle">Sistema de Gestão de Despesas para Artistas</p>
+            
+            <div class="auth-form">
+                <input type="email" id="email" placeholder="Email" autocomplete="email" value="madalena@mactube.pt">
+                <input type="password" id="password" placeholder="Password" autocomplete="current-password" value="demo123">
+                <button id="email-login" class="auth-btn auth-btn-primary">Entrar</button>
+            </div>
+            
+            <p class="auth-demo-note">Demo: clique em Entrar para aceder</p>
+            
+            <div id="auth-error"></div>
+        </div>
+    </div>
+
+    <!-- App Screen -->
+    <div id="app-screen" class="screen hidden">
+        <header class="app-header">
+            <div class="header-brand">
+                <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/>
+                    <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/>
+                    <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/>
+                </svg>
+                <h1>MacTube</h1>
+            </div>
+            <div class="header-user">
+                <span id="user-greeting">Olá, Madalena</span>
+                <button id="refresh-data" class="header-icon-btn" title="Atualizar dados">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                        <path d="M16 16h5v5"/>
+                    </svg>
+                </button>
+                <button id="logout" class="header-icon-btn" title="Terminar sessão">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
+        
+        <nav class="tabs">
+            <button class="tab active" data-tab="dashboard">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+                Dashboard
+            </button>
+            <button class="tab" data-tab="new-expense">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                Nova Despesa
+            </button>
+            <button class="tab" data-tab="reports">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                Relatórios
+            </button>
+            <button class="tab" data-tab="settlement">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Acerto
+            </button>
+        </nav>
+        
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content active">
+            <div class="dashboard-header">
+                <h2>Dashboard</h2>
+                <p class="session-subtitle">Visão geral das despesas</p>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="stat-card stat-total">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="dash-total">€0.00</span>
+                        <span class="stat-label">Total Gasto</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-mactube">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="dash-mactube">€0.00</span>
+                        <span class="stat-label">MacTube Investiu</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-others">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="dash-others">€0.00</span>
+                        <span class="stat-label">Terceiros</span>
+                    </div>
+                </div>
+                <div class="stat-card stat-count">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-value" id="dash-count">0</span>
+                        <span class="stat-label">Registos</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <h3>Despesas por Artista</h3>
+                    <div id="chart-artists" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Despesas por Tipo</h3>
+                    <div id="chart-types" class="chart-container"></div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="activity-section">
+                <div class="section-header">
+                    <h3>Actividade Recente</h3>
+                    <button class="btn-text" id="view-all-expenses">Ver Todas</button>
+                </div>
+                <div id="recent-activity"></div>
+            </div>
+        </div>
+        
+        <!-- New Expense Tab -->
+        <div id="new-expense-tab" class="tab-content hidden">
+            <div class="session-box">
+                <h2>Inserir Despesa</h2>
+                <p class="session-subtitle">Registe uma nova despesa</p>
+                
+                <form id="expense-form" class="expense-form">
+                    <!-- Categoria (Artista) -->
+                    <div class="form-group">
+                        <label class="form-label">Categoria (Artista)</label>
+                        <select id="category" class="form-select" required>
+                            <option value="">Selecionar artista...</option>
+                            <option value="bubaspinho">Bubaspinho</option>
+                            <option value="bandidos">Os Bandidos</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                        <button type="button" class="btn-add-new" id="add-category">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                            Adicionar novo artista
+                        </button>
+                    </div>
+                    
+                    <!-- Subcategoria (Projeto) -->
+                    <div class="form-group">
+                        <label class="form-label">Projeto / Subcategoria</label>
+                        <select id="subcategory" class="form-select" required>
+                            <option value="">Selecionar projeto...</option>
+                            <option value="videoclipe-x">Videoclipe X</option>
+                            <option value="concerto-vodafone">Concerto Vodafone</option>
+                            <option value="gravacao-tanto-tempo">Gravação - Tanto Tempo</option>
+                            <option value="geral">Despesas Gerais</option>
+                        </select>
+                        <button type="button" class="btn-add-new" id="add-subcategory">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+                            Adicionar novo projeto
+                        </button>
+                    </div>
+                    
+                    <!-- Tipo de Despesa -->
+                    <div class="form-group">
+                        <label class="form-label">Tipo de Despesa</label>
+                        <div class="options expense-types">
+                            <button type="button" class="option" data-value="combustivel">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M13 10h4a2 2 0 0 1 2 2v8a2 2 0 0 0 2 2"/><path d="M19 6V4a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v2"/><circle cx="8" cy="10" r="2"/></svg>
+                                <span>Combustível</span>
+                            </button>
+                            <button type="button" class="option" data-value="alimentacao">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>
+                                <span>Alimentação</span>
+                            </button>
+                            <button type="button" class="option" data-value="alojamento">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></svg>
+                                <span>Alojamento</span>
+                            </button>
+                            <button type="button" class="option" data-value="equipamento">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/><path d="M8 17V5l12-2v12"/></svg>
+                                <span>Equipamento</span>
+                            </button>
+                            <button type="button" class="option" data-value="producao">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                                <span>Produção</span>
+                            </button>
+                            <button type="button" class="option" data-value="promocao">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>
+                                <span>Promoção</span>
+                            </button>
+                            <button type="button" class="option" data-value="transporte">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10H6l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 9V6a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/></svg>
+                                <span>Transporte</span>
+                            </button>
+                            <button type="button" class="option" data-value="outros">
+                                <svg class="option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                                <span>Outros</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="expense-type" required>
+                    </div>
+                    
+                    <!-- Valor e Data em linha -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Valor (€)</label>
+                            <input type="number" id="amount" class="form-input" placeholder="0.00" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Data</label>
+                            <input type="date" id="expense-date" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Entidade -->
+                    <div class="form-group">
+                        <label class="form-label">Entidade</label>
+                        <input type="text" id="entity" class="form-input" placeholder="Ex: Galp, Continente, etc.">
+                    </div>
+                    
+                    <!-- Investidor -->
+                    <div class="form-group">
+                        <label class="form-label">Investidor</label>
+                        <div class="investor-options">
+                            <button type="button" class="option investor-option selected" data-value="mactube">
+                                <span class="investor-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>
+                                </span>
+                                <span class="investor-name">MacTube</span>
+                                <span class="investor-desc">Nós investimos</span>
+                            </button>
+                            <button type="button" class="option investor-option" data-value="outro">
+                                <span class="investor-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                                </span>
+                                <span class="investor-name">Outro</span>
+                                <span class="investor-desc">Terceiros pagaram</span>
+                            </button>
+                        </div>
+                        <input type="hidden" id="investor" value="mactube">
+                        <div id="other-investor-details" class="hidden">
+                            <input type="text" id="other-investor-name" class="form-input" placeholder="Nome do investidor externo">
+                        </div>
+                    </div>
+                    
+                    <!-- Notas -->
+                    <div class="form-group">
+                        <label class="form-label">Notas (opcional)</label>
+                        <textarea id="notes" class="form-textarea" placeholder="Detalhes adicionais..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary btn-submit">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        Gravar Despesa
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Reports Tab -->
+        <div id="reports-tab" class="tab-content hidden">
+            <div class="reports-header">
+                <h2>Relatórios</h2>
+                <p class="session-subtitle">Consulte as despesas por artista e projeto</p>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <input type="text" id="search-expenses" class="search-input" placeholder="Pesquisar despesas...">
+            </div>
+            
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="form-group">
+                    <label class="form-label">Filtrar por Artista</label>
+                    <select id="filter-category" class="form-select">
+                        <option value="all">Todos os Artistas</option>
+                        <option value="bubaspinho">Bubaspinho</option>
+                        <option value="bandidos">Os Bandidos</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Filtrar por Projeto</label>
+                    <select id="filter-subcategory" class="form-select">
+                        <option value="all">Todos os Projetos</option>
+                        <option value="videoclipe-x">Videoclipe X</option>
+                        <option value="concerto-vodafone">Concerto Vodafone</option>
+                        <option value="gravacao-tanto-tempo">Gravação - Tanto Tempo</option>
+                        <option value="geral">Despesas Gerais</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Período</label>
+                    <select id="filter-period" class="form-select">
+                        <option value="all">Todo o período</option>
+                        <option value="month">Este mês</option>
+                        <option value="quarter">Este trimestre</option>
+                        <option value="year" selected>Este ano</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <div class="summary-icon" style="background: rgba(99, 102, 241, 0.1); color: #6366f1;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-label">Total Despesas</span>
+                        <span class="summary-value" id="total-expenses">€0.00</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-label">MacTube Investiu</span>
+                        <span class="summary-value" id="mactube-invested">€0.00</span>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-label">Terceiros Pagaram</span>
+                        <span class="summary-value" id="others-paid">€0.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expenses Table -->
+            <div class="table-container">
+                <table class="expenses-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Artista</th>
+                            <th>Projeto</th>
+                            <th>Tipo</th>
+                            <th>Entidade</th>
+                            <th>Investidor</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses-table-body">
+                        <!-- Data loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="export-buttons">
+                <button id="export-excel" class="btn-export">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/>
+                    </svg>
+                    Exportar Excel
+                </button>
+                <button id="export-pdf" class="btn-export">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    Exportar PDF
+                </button>
+            </div>
+        </div>
+        
+        <!-- Settlement Tab -->
+        <div id="settlement-tab" class="tab-content hidden">
+            <div class="settlement-header">
+                <h2>Acerto de Contas</h2>
+                <p class="session-subtitle">Balanço entre investimento MacTube e pagamentos de terceiros</p>
+            </div>
+            
+            <!-- Artist Selection -->
+            <div class="form-group">
+                <label class="form-label">Selecionar Artista</label>
+                <select id="settlement-artist" class="form-select">
+                    <option value="">Selecionar artista...</option>
+                    <option value="bubaspinho">Bubaspinho</option>
+                    <option value="bandidos">Os Bandidos</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+            
+            <!-- Quick Overview Cards -->
+            <div id="settlement-overview" class="settlement-overview hidden">
+                <div class="settlement-cards">
+                    <div class="settlement-card invested">
+                        <div class="settlement-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 7-5-5-5 5"/></svg>
+                        </div>
+                        <div class="settlement-card-content">
+                            <span class="settlement-card-label">MacTube Investiu</span>
+                            <span class="settlement-card-value" id="settlement-mactube-card">€0.00</span>
+                        </div>
+                    </div>
+                    <div class="settlement-card received">
+                        <div class="settlement-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22V2"/><path d="m7 17 5 5 5-5"/></svg>
+                        </div>
+                        <div class="settlement-card-content">
+                            <span class="settlement-card-label">Terceiros Pagaram</span>
+                            <span class="settlement-card-value" id="settlement-others-card">€0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settlement Summary -->
+            <div id="settlement-summary" class="settlement-box hidden">
+                <div class="settlement-artist-name" id="settlement-artist-name">Bubaspinho</div>
+                
+                <div class="settlement-visual">
+                    <div class="settlement-bar">
+                        <div class="settlement-bar-mactube" id="settlement-bar-mactube"></div>
+                        <div class="settlement-bar-others" id="settlement-bar-others"></div>
+                    </div>
+                    <div class="settlement-bar-legend">
+                        <span class="legend-mactube">MacTube</span>
+                        <span class="legend-others">Terceiros</span>
+                    </div>
+                </div>
+                
+                <div class="settlement-divider"></div>
+                
+                <div class="settlement-result">
+                    <div class="settlement-result-icon" id="settlement-result-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                    </div>
+                    <div class="settlement-result-content">
+                        <span class="settlement-result-label" id="settlement-result-label">Balanço Final</span>
+                        <span class="settlement-result-value" id="settlement-balance">€0.00</span>
+                        <p class="settlement-note" id="settlement-note">Resultado do acerto</p>
+                    </div>
+                </div>
+                
+                <div class="settlement-breakdown">
+                    <h4>Detalhe por Projeto</h4>
+                    <div id="settlement-projects"></div>
+                </div>
+                
+                <button id="export-settlement" class="btn-export">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    Exportar Acerto
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Category Modal -->
+    <div id="add-category-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Novo Artista</h3>
+                <button class="modal-close" id="close-category-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <p>Nome do artista:</p>
+            <input type="text" id="new-category-name" class="form-input" placeholder="Nome do artista">
+            <div class="modal-buttons">
+                <button id="cancel-add-category" class="btn-secondary">Cancelar</button>
+                <button id="confirm-add-category" class="btn-primary">Adicionar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Subcategory Modal -->
+    <div id="add-subcategory-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Novo Projeto</h3>
+                <button class="modal-close" id="close-subcategory-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <p>Nome do projeto:</p>
+            <input type="text" id="new-subcategory-name" class="form-input" placeholder="Nome do projeto">
+            <div class="modal-buttons">
+                <button id="cancel-add-subcategory" class="btn-secondary">Cancelar</button>
+                <button id="confirm-add-subcategory" class="btn-primary">Adicionar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Expense Modal -->
+    <div id="edit-expense-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Editar Despesa</h3>
+                <button class="modal-close" id="close-edit-modal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            <form id="edit-expense-form">
+                <input type="hidden" id="edit-expense-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Artista</label>
+                        <select id="edit-category" class="form-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Projeto</label>
+                        <select id="edit-subcategory" class="form-select" required></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Valor (€)</label>
+                        <input type="number" id="edit-amount" class="form-input" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data</label>
+                        <input type="date" id="edit-date" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Entidade</label>
+                    <input type="text" id="edit-entity" class="form-input">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" id="delete-expense" class="btn-danger">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        Eliminar
+                    </button>
+                    <button type="submit" class="btn-primary">Guardar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Eliminação</h3>
+            </div>
+            <p>Tem a certeza que deseja eliminar esta despesa? Esta ação não pode ser revertida.</p>
+            <div class="modal-buttons">
+                <button id="cancel-delete" class="btn-secondary">Cancelar</button>
+                <button id="confirm-delete" class="btn-danger">Eliminar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Toast -->
+    <div id="toast" class="toast hidden">
+        <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span id="toast-message">Despesa gravada com sucesso!</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

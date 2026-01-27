@@ -1,0 +1,26 @@
+Só para perceberes por que é que eu preciso disto, eu neste momento faço tudo à mão.
+Tenho aqui folhas de custo e criei pastas para cada artista.
+Qual é que é o problema?
+Eu neste momento tenho, ou seja, concertos aqui, festas, videoclipes, gerais e por projeto.
+Mas ou seja, o projeto é cada música, os custos na gravação.
+Qual é que é o problema?
+Neste momento chegamos ao final do ano, eu vou ter de encontrar as contas.
+Então vou ter de, à mão, somar estas tabelas todas, perceber quem é que investiu o quê.
+E eu não quero que isto se volte a repetir para o ano.
+Portanto, eu quero algo que me gere estas tabelas, mas depois também me gere tabelas gerais que tenham...
+Por exemplo, esta do videoclip.
+Videoclipo de tanto tempo.
+Esta tabela, eu quero ir inserindo os dados e que eles me criem esta tabela,
+mas que também criem automaticamente esta tabela dentro da tabela do projeto do tanto tempo,
+que há de estar aqui.
+Estão a perceber?
+Porque estão aqui custos do tanto tempo, mas que são outros que não foram com o videoclipo.
+E depois ainda quero que eles me metam isto tudo dentro de uma tabela dos bandidos do canto,
+para eu no final do ano fazer o acerto e estar tudo no mesmo sítio.
+Atenção, eu quero que tudo o que seja gerado pelo site possa ser conferido,
+ou seja, que sejam tabelas de custo deste género,
+que eu consiga ver o que é que é, o valor,
+por isso é que eu disse que quero poder inserir aquilo tudo no menu inicial
+e quero que isso depois se transparência na tabela final.
+Diz-me o que achas.
+Diz-me o que achas.

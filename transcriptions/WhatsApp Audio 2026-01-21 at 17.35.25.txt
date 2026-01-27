@@ -1,0 +1,7 @@
+Mas primeiro vou-te explicar, quando eu carrego no Insurgir Despesas, que tipo de operações é que eu quero que me apareçam.
+Imagina que há uma despesa de combustível, que foi o combustível usado para ir para o videoclipe do Bubaspinho.
+Eu quero que me apareça categoria despesa e eu seleciono Bubaspinho e depois subcategoria despesa, videoclipe X.
+As subcategorias terão de ser algo que eu posso ir acrescentando, porque são as coisas que vão surgindo.
+Depois, tipo de despesa, combustível.
+Depois, valor de despesa, X.
+E depois pode também ter entidade, galp, imagina.

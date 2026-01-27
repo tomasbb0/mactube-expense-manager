@@ -1,0 +1,2 @@
+Então, o que eu quero idealmente é um website onde eu entro e apareça inserir despesas, eu carrego e aparece várias linhas para eu preencher com opções, tipo um formulário, aqueles formulários com opções e aparece categoria despesa.
+Eu carrego e aparece várias categorias, até pode ser por cores idealmente. Imagina, isto vai ser super importante porque as categorias é que vão gerar os X6 que eu quero ver depois, porque eu quero que isto depois esteja tudo inserido em X6 e podem ser tabelas, qualquer coisa, que mostre os custos.
