@@ -2801,3 +2801,215 @@ window.copyAppsScriptCode = copyAppsScriptCode;
 window.showSetupGuide = showSetupGuide;
 window.createNewProject = createNewProject;
 window.loadExistingProjects = loadExistingProjects;
+
+// ==========================================
+// TUTORIAL SYSTEM
+// ==========================================
+
+const tutorialSteps = [
+    {
+        target: '.header-brand',
+        title: '👋 Bem-vinda ao Maktub Expenses!',
+        description: 'Este sistema foi criado especialmente para ti, <strong>Madalena</strong>, para gerir todas as despesas dos artistas da Maktub Art Group. Vou guiar-te pela plataforma!',
+        position: 'bottom'
+    },
+    {
+        target: '.tab[data-tab="dashboard"]',
+        title: '📊 Dashboard',
+        description: 'Aqui tens uma <strong>visão geral</strong> de todas as despesas. Podes ver totais por artista, por tipo de despesa, e filtrar por projeto. É o teu painel de controlo principal!',
+        position: 'bottom'
+    },
+    {
+        target: '.tab[data-tab="new-expense"]',
+        title: '➕ Nova Despesa',
+        description: 'Quando precisares de registar uma despesa (combustível, alojamento, produção, etc.), clica aqui. Podes associar a despesa a um <strong>artista</strong> e <strong>projeto específico</strong> (ex: D.A.M.A - Beja 25 Abril).',
+        position: 'bottom'
+    },
+    {
+        target: '.tab[data-tab="new-project"]',
+        title: '📁 Novo Projeto',
+        description: 'Cada concerto, videoclipe ou evento é um <strong>projeto</strong>. Cria projetos aqui para organizar as despesas. Por exemplo: "Prémios Play", "Festival Académico Lisboa", etc.',
+        position: 'bottom'
+    },
+    {
+        target: '.tab[data-tab="reports"]',
+        title: '📈 Relatórios',
+        description: 'Gera <strong>relatórios detalhados</strong> com gráficos! Podes ver despesas por período, comparar artistas, analisar tipos de gastos. Perfeito para apresentar à equipa.',
+        position: 'bottom'
+    },
+    {
+        target: '.tab[data-tab="settlement"]',
+        title: '💰 Acerto de Contas',
+        description: 'A funcionalidade que pediste! Aqui calculas o <strong>balanço entre Maktub e cada artista</strong>. Mostra quanto a Maktub investiu vs. quanto os terceiros pagaram, por projeto.',
+        position: 'bottom'
+    },
+    {
+        target: '.sync-btn',
+        title: '☁️ Google Sheets Sync',
+        description: 'O mais importante! <strong>Sincroniza tudo para o Google Drive</strong>. Cada artista tem a sua própria spreadsheet com as despesas organizadas por projeto, exatamente como pediste!',
+        position: 'bottom-left'
+    },
+    {
+        target: '.drive-btn',
+        title: '📂 Pasta Google Drive',
+        description: 'Acesso direto à <strong>pasta partilhada no Drive</strong> onde estão todas as spreadsheets dos artistas. Podes partilhar com a equipa ou aceder de qualquer dispositivo!',
+        position: 'bottom-left'
+    }
+];
+
+let currentTutorialStep = 0;
+let tutorialActive = false;
+
+function startTutorial() {
+    tutorialActive = true;
+    currentTutorialStep = 0;
+    
+    // Make sure we're on the main app screen
+    if (appScreen.classList.contains('hidden')) {
+        showToast('Faz login primeiro para ver o tutorial', 'error');
+        return;
+    }
+    
+    // Show the tutorial overlay
+    const overlay = document.getElementById('tutorial-overlay');
+    overlay.classList.remove('hidden');
+    
+    // Show first step
+    showTutorialStep(0);
+}
+
+function showTutorialStep(stepIndex) {
+    const step = tutorialSteps[stepIndex];
+    if (!step) {
+        endTutorial();
+        return;
+    }
+    
+    const targetElement = document.querySelector(step.target);
+    if (!targetElement) {
+        console.warn('Tutorial target not found:', step.target);
+        nextTutorialStep();
+        return;
+    }
+    
+    // Update step indicator
+    document.querySelector('.tutorial-step-current').textContent = stepIndex + 1;
+    document.querySelector('.tutorial-step-total').textContent = tutorialSteps.length;
+    
+    // Update content
+    document.querySelector('.tutorial-title').innerHTML = step.title;
+    document.querySelector('.tutorial-description').innerHTML = step.description;
+    
+    // Position highlight around target
+    const highlight = document.querySelector('.tutorial-highlight');
+    const rect = targetElement.getBoundingClientRect();
+    const padding = 8;
+    
+    highlight.style.top = (rect.top - padding) + 'px';
+    highlight.style.left = (rect.left - padding) + 'px';
+    highlight.style.width = (rect.width + padding * 2) + 'px';
+    highlight.style.height = (rect.height + padding * 2) + 'px';
+    
+    // Position tooltip
+    const tooltip = document.querySelector('.tutorial-tooltip');
+    const arrow = document.querySelector('.tutorial-arrow');
+    
+    // Remove all arrow classes
+    arrow.className = 'tutorial-arrow';
+    
+    // Calculate tooltip position based on step.position
+    const tooltipRect = tooltip.getBoundingClientRect();
+    let tooltipTop, tooltipLeft;
+    
+    switch (step.position) {
+        case 'bottom':
+            tooltipTop = rect.bottom + 20;
+            tooltipLeft = rect.left + (rect.width / 2) - 180;
+            arrow.classList.add('bottom');
+            break;
+        case 'bottom-left':
+            tooltipTop = rect.bottom + 20;
+            tooltipLeft = rect.right - 360;
+            arrow.classList.add('bottom');
+            arrow.style.left = 'auto';
+            arrow.style.right = '40px';
+            arrow.style.marginLeft = '0';
+            break;
+        case 'top':
+            tooltipTop = rect.top - tooltipRect.height - 20;
+            tooltipLeft = rect.left + (rect.width / 2) - 180;
+            arrow.classList.add('top');
+            break;
+        case 'left':
+            tooltipTop = rect.top + (rect.height / 2) - 100;
+            tooltipLeft = rect.left - 380;
+            arrow.classList.add('left');
+            break;
+        case 'right':
+            tooltipTop = rect.top + (rect.height / 2) - 100;
+            tooltipLeft = rect.right + 20;
+            arrow.classList.add('right');
+            break;
+        default:
+            tooltipTop = rect.bottom + 20;
+            tooltipLeft = rect.left;
+            arrow.classList.add('bottom');
+    }
+    
+    // Keep tooltip on screen
+    tooltipLeft = Math.max(20, Math.min(tooltipLeft, window.innerWidth - 380));
+    tooltipTop = Math.max(20, Math.min(tooltipTop, window.innerHeight - 300));
+    
+    tooltip.style.top = tooltipTop + 'px';
+    tooltip.style.left = tooltipLeft + 'px';
+    
+    // Update button states
+    const prevBtn = document.querySelector('.tutorial-btn-prev');
+    const nextBtn = document.querySelector('.tutorial-btn-next');
+    
+    prevBtn.disabled = stepIndex === 0;
+    prevBtn.style.visibility = stepIndex === 0 ? 'hidden' : 'visible';
+    
+    if (stepIndex === tutorialSteps.length - 1) {
+        nextBtn.textContent = '✓ Concluir';
+        nextBtn.classList.add('finish');
+    } else {
+        nextBtn.textContent = 'Próximo →';
+        nextBtn.classList.remove('finish');
+    }
+}
+
+function nextTutorialStep() {
+    currentTutorialStep++;
+    if (currentTutorialStep >= tutorialSteps.length) {
+        endTutorial();
+        showToast('🎉 Tutorial concluído! Estás pronta para usar a plataforma.', 'success');
+    } else {
+        showTutorialStep(currentTutorialStep);
+    }
+}
+
+function prevTutorialStep() {
+    if (currentTutorialStep > 0) {
+        currentTutorialStep--;
+        showTutorialStep(currentTutorialStep);
+    }
+}
+
+function endTutorial() {
+    tutorialActive = false;
+    const overlay = document.getElementById('tutorial-overlay');
+    overlay.classList.add('hidden');
+    
+    // Reset arrow positioning
+    const arrow = document.querySelector('.tutorial-arrow');
+    arrow.style.left = '';
+    arrow.style.right = '';
+    arrow.style.marginLeft = '';
+}
+
+// Make tutorial functions globally accessible
+window.startTutorial = startTutorial;
+window.nextTutorialStep = nextTutorialStep;
+window.prevTutorialStep = prevTutorialStep;
+window.endTutorial = endTutorial;
