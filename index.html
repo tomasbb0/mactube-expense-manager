@@ -127,6 +127,17 @@
                 </div>
             </div>
             
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3>Por Artista: Maktub vs Terceiros</h3>
+                    <div id="chart-artist-investor" class="stacked-chart"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Por Artista: Breakdown por Categoria</h3>
+                    <div id="chart-artist-category" class="stacked-chart"></div>
+                </div>
+            </div>
+            
             <div class="section">
                 <div class="section-header">
                     <h3>Actividade Recente</h3>
@@ -146,27 +157,32 @@
             <form id="expense-form" class="form-box">
                 <div class="form-group">
                     <label>Artista</label>
-                    <select id="artist" required>
-                        <option value="">Selecionar...</option>
-                        <option value="Buba Espinho">Buba Espinho</option>
-                        <option value="MAR">MAR</option>
-                        <option value="D.A.M.A">D.A.M.A</option>
-                        <option value="Bandidos do Cante">Bandidos do Cante</option>
-                        <option value="Outro">Outro</option>
-                    </select>
+                    <div class="select-with-add">
+                        <select id="artist" required>
+                            <option value="">Selecionar...</option>
+                            <option value="Buba Espinho">Buba Espinho</option>
+                            <option value="MAR">MAR</option>
+                            <option value="D.A.M.A">D.A.M.A</option>
+                            <option value="Bandidos do Cante">Bandidos do Cante</option>
+                        </select>
+                        <button type="button" class="btn-add-option" onclick="addNewOption('artist', 'Novo Artista')">+</button>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label>Projeto</label>
-                    <select id="project" required>
-                        <option value="">Selecionar...</option>
-                        <option value="Videoclipe">Videoclipe</option>
-                        <option value="Concerto">Concerto</option>
-                        <option value="Gravação">Gravação</option>
-                        <option value="Tour">Tour</option>
-                        <option value="Promoção">Promoção</option>
-                        <option value="Geral">Despesas Gerais</option>
-                    </select>
+                    <div class="select-with-add">
+                        <select id="project" required>
+                            <option value="">Selecionar...</option>
+                            <option value="Videoclipe">Videoclipe</option>
+                            <option value="Concerto">Concerto</option>
+                            <option value="Gravação">Gravação</option>
+                            <option value="Tour">Tour</option>
+                            <option value="Promoção">Promoção</option>
+                            <option value="Geral">Despesas Gerais</option>
+                        </select>
+                        <button type="button" class="btn-add-option" onclick="addNewOption('project', 'Novo Projeto')">+</button>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -268,10 +284,9 @@
             <div class="filters-row">
                 <select id="filter-artist">
                     <option value="all">Todos os Artistas</option>
-                    <option value="Buba Espinho">Buba Espinho</option>
-                    <option value="MAR">MAR</option>
-                    <option value="D.A.M.A">D.A.M.A</option>
-                    <option value="Bandidos do Cante">Bandidos do Cante</option>
+                </select>
+                <select id="filter-project">
+                    <option value="all">Todos os Projetos</option>
                 </select>
                 <select id="filter-type">
                     <option value="all">Todos os Tipos</option>
@@ -304,6 +319,29 @@
                     <span class="summary-label">Terceiros</span>
                     <span class="summary-value yellow" id="summary-others">0.00 EUR</span>
                 </div>
+                <div class="summary-item">
+                    <span class="summary-label">Registos</span>
+                    <span class="summary-value" id="summary-count">0</span>
+                </div>
+            </div>
+            
+            <!-- Pivot Tables -->
+            <div class="pivot-section">
+                <h3>Tabelas Dinâmicas (Pivot)</h3>
+                <div class="pivot-grid">
+                    <div class="pivot-table">
+                        <h4>Por Artista</h4>
+                        <div id="pivot-artist"></div>
+                    </div>
+                    <div class="pivot-table">
+                        <h4>Por Projeto</h4>
+                        <div id="pivot-project"></div>
+                    </div>
+                    <div class="pivot-table">
+                        <h4>Por Tipo</h4>
+                        <div id="pivot-type"></div>
+                    </div>
+                </div>
             </div>
             
             <div class="table-wrapper">
@@ -328,6 +366,10 @@
                 <button class="btn-secondary" id="export-csv">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     Exportar CSV
+                </button>
+                <button class="btn-secondary" id="export-sheets">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>
+                    Google Sheets
                 </button>
                 <button class="btn-secondary" id="export-pdf">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>

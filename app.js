@@ -5,6 +5,8 @@
 let expenses = [];
 let currentUser = null;
 let editingId = null;
+let customArtists = [];
+let customProjects = [];
 
 // DOM Elements
 const authScreen = document.getElementById('auth-screen');
@@ -73,6 +75,7 @@ function showApp() {
     appScreen.classList.remove('hidden');
     document.getElementById('user-greeting').textContent = currentUser.name;
     updateDashboard();
+    updateFilterDropdowns();
 }
 
 function hideApp() {
@@ -82,7 +85,7 @@ function hideApp() {
 }
 
 // ==========================================
-// TABS NAVIGATION - FIXED!
+// TABS NAVIGATION
 // ==========================================
 
 function initTabs() {
@@ -93,28 +96,22 @@ function initTabs() {
         tab.addEventListener('click', () => {
             const targetId = tab.getAttribute('data-tab');
             
-            // Remove active from all tabs
             tabs.forEach(t => t.classList.remove('active'));
-            
-            // Hide all content
             contents.forEach(c => {
                 c.classList.remove('active');
                 c.classList.add('hidden');
             });
             
-            // Activate clicked tab
             tab.classList.add('active');
-            
-            // Show target content - IDs now match data-tab values exactly!
             const targetContent = document.getElementById(targetId);
             if (targetContent) {
                 targetContent.classList.add('active');
                 targetContent.classList.remove('hidden');
             }
             
-            // Update data when switching to certain tabs
             if (targetId === 'reports') {
                 renderTable();
+                renderPivotTables();
             } else if (targetId === 'settlement') {
                 updateSettlement();
             } else if (targetId === 'dashboard') {
@@ -125,6 +122,63 @@ function initTabs() {
 }
 
 // ==========================================
+// ADD NEW OPTIONS
+// ==========================================
+
+function addNewOption(fieldId, promptText) {
+    const newValue = prompt(promptText + ':');
+    if (newValue && newValue.trim()) {
+        const select = document.getElementById(fieldId);
+        const option = document.createElement('option');
+        option.value = newValue.trim();
+        option.textContent = newValue.trim();
+        select.appendChild(option);
+        select.value = newValue.trim();
+        
+        // Save custom options
+        if (fieldId === 'artist') {
+            customArtists.push(newValue.trim());
+            localStorage.setItem('maktub_custom_artists', JSON.stringify(customArtists));
+        } else if (fieldId === 'project') {
+            customProjects.push(newValue.trim());
+            localStorage.setItem('maktub_custom_projects', JSON.stringify(customProjects));
+        }
+        
+        showToast('Opção adicionada!', 'success');
+    }
+}
+
+function loadCustomOptions() {
+    const savedArtists = localStorage.getItem('maktub_custom_artists');
+    const savedProjects = localStorage.getItem('maktub_custom_projects');
+    
+    if (savedArtists) {
+        customArtists = JSON.parse(savedArtists);
+        const artistSelect = document.getElementById('artist');
+        customArtists.forEach(a => {
+            const option = document.createElement('option');
+            option.value = a;
+            option.textContent = a;
+            artistSelect.appendChild(option);
+        });
+    }
+    
+    if (savedProjects) {
+        customProjects = JSON.parse(savedProjects);
+        const projectSelect = document.getElementById('project');
+        customProjects.forEach(p => {
+            const option = document.createElement('option');
+            option.value = p;
+            option.textContent = p;
+            projectSelect.appendChild(option);
+        });
+    }
+}
+
+// Make global
+window.addNewOption = addNewOption;
+
+// ==========================================
 // EXPENSE FORM
 // ==========================================
 
@@ -133,7 +187,6 @@ function initForm() {
     const typeButtons = document.querySelectorAll('.type-btn');
     const investorButtons = document.querySelectorAll('.investor-btn');
     
-    // Type selection
     typeButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             typeButtons.forEach(b => b.classList.remove('selected'));
@@ -142,7 +195,6 @@ function initForm() {
         });
     });
     
-    // Investor selection
     investorButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             investorButtons.forEach(b => b.classList.remove('selected'));
@@ -151,8 +203,8 @@ function initForm() {
         });
     });
     
-    // Form submit
     form.addEventListener('submit', handleFormSubmit);
+    loadCustomOptions();
 }
 
 function setDefaultDate() {
@@ -195,9 +247,9 @@ function handleFormSubmit(e) {
     saveData();
     resetForm();
     updateDashboard();
+    updateFilterDropdowns();
     showToast('Despesa registada com sucesso!', 'success');
     
-    // Switch to dashboard
     document.querySelector('[data-tab="dashboard"]').click();
 }
 
@@ -219,92 +271,64 @@ function loadData() {
     if (saved) {
         expenses = JSON.parse(saved);
     } else {
-        // Load demo data
-        expenses = getDemoData();
+        expenses = generateDemoData(200);
         saveData();
     }
     updateDashboard();
+    updateFilterDropdowns();
 }
 
 function saveData() {
     localStorage.setItem('maktub_expenses', JSON.stringify(expenses));
 }
 
-function getDemoData() {
-    return [
-        {
-            id: '1',
-            artist: 'Buba Espinho',
-            project: 'Videoclipe',
-            type: 'producao',
-            amount: 2500,
-            date: '2025-01-10',
-            entity: 'Studio XYZ',
-            investor: 'maktub',
-            notes: 'Produção videoclipe "Novo Single"',
-            createdAt: '2025-01-10T10:00:00Z'
-        },
-        {
-            id: '2',
-            artist: 'MAR',
-            project: 'Concerto',
-            type: 'alojamento',
-            amount: 450,
-            date: '2025-01-12',
-            entity: 'Hotel Lisboa',
-            investor: 'maktub',
-            notes: '2 noites para banda',
-            createdAt: '2025-01-12T14:00:00Z'
-        },
-        {
-            id: '3',
-            artist: 'D.A.M.A',
-            project: 'Tour',
-            type: 'combustivel',
-            amount: 180,
-            date: '2025-01-14',
-            entity: 'Galp',
-            investor: 'outro',
-            notes: 'Viagem Lisboa-Porto',
-            createdAt: '2025-01-14T09:00:00Z'
-        },
-        {
-            id: '4',
-            artist: 'Buba Espinho',
-            project: 'Promoção',
-            type: 'promocao',
-            amount: 800,
-            date: '2025-01-15',
-            entity: 'Meta Ads',
-            investor: 'maktub',
-            notes: 'Campanha Instagram',
-            createdAt: '2025-01-15T11:00:00Z'
-        },
-        {
-            id: '5',
-            artist: 'Bandidos do Cante',
-            project: 'Gravação',
-            type: 'equipamento',
-            amount: 350,
-            date: '2025-01-16',
-            entity: 'Thomann',
-            investor: 'outro',
-            notes: 'Cordas e acessórios',
-            createdAt: '2025-01-16T16:00:00Z'
-        },
-        {
-            id: '6',
-            artist: 'MAR',
-            project: 'Videoclipe',
-            type: 'alimentacao',
-            amount: 220,
-            date: '2025-01-18',
-            entity: 'Catering Pro',
-            investor: 'maktub',
-            notes: 'Catering dia de filmagem',
-            createdAt: '2025-01-18T12:00:00Z'
+function generateDemoData(count) {
+    const artists = ['Buba Espinho', 'MAR', 'D.A.M.A', 'Bandidos do Cante'];
+    const projects = ['Videoclipe', 'Concerto', 'Gravação', 'Tour', 'Promoção', 'Geral'];
+    const types = ['combustivel', 'alimentacao', 'alojamento', 'equipamento', 'producao', 'promocao', 'transporte', 'outros'];
+    const entities = ['Galp', 'BP', 'Hotel Lisboa', 'Hotel Porto', 'Airbnb', 'Studio XYZ', 'Thomann', 'Amazon', 'Meta Ads', 'Google Ads', 'Catering Pro', 'Uber', 'Bolt', 'TAP', 'Ryanair', 'FNAC', 'Worten', 'El Corte Inglés', 'Continente', 'Pingo Doce'];
+    const investors = ['maktub', 'outro'];
+    
+    const data = [];
+    const startDate = new Date('2024-01-01');
+    const endDate = new Date('2026-01-28');
+    
+    for (let i = 0; i < count; i++) {
+        const randomDate = new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
+        const artist = artists[Math.floor(Math.random() * artists.length)];
+        const type = types[Math.floor(Math.random() * types.length)];
+        
+        // Weighted investor selection - 70% maktub, 30% outro
+        const investor = Math.random() < 0.7 ? 'maktub' : 'outro';
+        
+        // Different amount ranges for different types
+        let amount;
+        switch(type) {
+            case 'producao': amount = 500 + Math.random() * 4500; break;
+            case 'alojamento': amount = 80 + Math.random() * 400; break;
+            case 'equipamento': amount = 50 + Math.random() * 1500; break;
+            case 'promocao': amount = 200 + Math.random() * 2000; break;
+            case 'combustivel': amount = 30 + Math.random() * 150; break;
+            case 'alimentacao': amount = 20 + Math.random() * 200; break;
+            case 'transporte': amount = 50 + Math.random() * 500; break;
+            default: amount = 20 + Math.random() * 300;
         }
-    ];
+        
+        data.push({
+            id: (Date.now() + i).toString(),
+            artist,
+            project: projects[Math.floor(Math.random() * projects.length)],
+            type,
+            amount: Math.round(amount * 100) / 100,
+            date: randomDate.toISOString().split('T')[0],
+            entity: entities[Math.floor(Math.random() * entities.length)],
+            investor,
+            notes: '',
+            createdAt: randomDate.toISOString()
+        });
+    }
+    
+    return data.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 // ==========================================
@@ -314,6 +338,7 @@ function getDemoData() {
 function updateDashboard() {
     updateStats();
     updateCharts();
+    updateStackedCharts();
     updateRecentList();
 }
 
@@ -387,6 +412,129 @@ function updateTypeChart() {
     `).join('');
 }
 
+function updateStackedCharts() {
+    updateArtistInvestorChart();
+    updateArtistCategoryChart();
+}
+
+function updateArtistInvestorChart() {
+    const container = document.getElementById('chart-artist-investor');
+    const byArtist = {};
+    
+    expenses.forEach(e => {
+        if (!byArtist[e.artist]) {
+            byArtist[e.artist] = { maktub: 0, outros: 0, total: 0 };
+        }
+        if (e.investor === 'maktub') {
+            byArtist[e.artist].maktub += e.amount;
+        } else {
+            byArtist[e.artist].outros += e.amount;
+        }
+        byArtist[e.artist].total += e.amount;
+    });
+    
+    const sorted = Object.entries(byArtist).sort((a, b) => b[1].total - a[1].total);
+    const maxTotal = sorted.length > 0 ? sorted[0][1].total : 0;
+    
+    if (sorted.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sem dados</p>';
+        return;
+    }
+    
+    let html = sorted.map(([artist, data]) => {
+        const maktubPct = (data.maktub / data.total * 100);
+        const outrosPct = (data.outros / data.total * 100);
+        const widthPct = (data.total / maxTotal * 100);
+        
+        return `
+            <div class="stacked-bar-item">
+                <div class="stacked-bar-label">
+                    <span>${artist}</span>
+                    <span>${formatCurrency(data.total)}</span>
+                </div>
+                <div class="stacked-bar-track" style="width: ${widthPct}%">
+                    <div class="stacked-bar-segment maktub" style="width: ${maktubPct}%" title="Maktub: ${formatCurrency(data.maktub)}"></div>
+                    <div class="stacked-bar-segment outros" style="width: ${outrosPct}%" title="Terceiros: ${formatCurrency(data.outros)}"></div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    html += `
+        <div class="chart-legend">
+            <div class="legend-item"><div class="legend-color" style="background: var(--green-primary)"></div> Maktub</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--warning)"></div> Terceiros</div>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+function updateArtistCategoryChart() {
+    const container = document.getElementById('chart-artist-category');
+    const byArtist = {};
+    const types = ['combustivel', 'alimentacao', 'alojamento', 'equipamento', 'producao', 'promocao', 'transporte', 'outros'];
+    const typeColors = {
+        combustivel: '#ff6b6b',
+        alimentacao: '#ffa94d',
+        alojamento: '#ffd43b',
+        equipamento: '#69db7c',
+        producao: '#33E933',
+        promocao: '#4dabf7',
+        transporte: '#9775fa',
+        outros: '#868e96'
+    };
+    
+    expenses.forEach(e => {
+        if (!byArtist[e.artist]) {
+            byArtist[e.artist] = { total: 0 };
+            types.forEach(t => byArtist[e.artist][t] = 0);
+        }
+        byArtist[e.artist][e.type] += e.amount;
+        byArtist[e.artist].total += e.amount;
+    });
+    
+    const sorted = Object.entries(byArtist).sort((a, b) => b[1].total - a[1].total);
+    const maxTotal = sorted.length > 0 ? sorted[0][1].total : 0;
+    
+    if (sorted.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sem dados</p>';
+        return;
+    }
+    
+    let html = sorted.map(([artist, data]) => {
+        const widthPct = (data.total / maxTotal * 100);
+        
+        let segments = types.map(type => {
+            const pct = (data[type] / data.total * 100);
+            if (pct > 0) {
+                return `<div class="stacked-bar-segment ${type}" style="width: ${pct}%" title="${getTypeName(type)}: ${formatCurrency(data[type])}"></div>`;
+            }
+            return '';
+        }).join('');
+        
+        return `
+            <div class="stacked-bar-item">
+                <div class="stacked-bar-label">
+                    <span>${artist}</span>
+                    <span>${formatCurrency(data.total)}</span>
+                </div>
+                <div class="stacked-bar-track" style="width: ${widthPct}%">
+                    ${segments}
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    html += `
+        <div class="chart-legend">
+            ${types.map(t => `<div class="legend-item"><div class="legend-color" style="background: ${typeColors[t]}"></div> ${getTypeName(t)}</div>`).join('')}
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
 function updateRecentList() {
     const container = document.getElementById('recent-list');
     const recent = [...expenses].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
@@ -421,41 +569,69 @@ function updateRecentList() {
 }
 
 // ==========================================
+// FILTER DROPDOWNS
+// ==========================================
+
+function updateFilterDropdowns() {
+    // Get unique artists and projects
+    const artists = [...new Set(expenses.map(e => e.artist))].sort();
+    const projects = [...new Set(expenses.map(e => e.project))].sort();
+    
+    // Update artist filter
+    const artistFilter = document.getElementById('filter-artist');
+    artistFilter.innerHTML = '<option value="all">Todos os Artistas</option>' +
+        artists.map(a => `<option value="${a}">${a}</option>`).join('');
+    
+    // Update project filter
+    const projectFilter = document.getElementById('filter-project');
+    projectFilter.innerHTML = '<option value="all">Todos os Projetos</option>' +
+        projects.map(p => `<option value="${p}">${p}</option>`).join('');
+}
+
+// ==========================================
 // REPORTS / TABLE
 // ==========================================
 
 function initFilters() {
-    document.getElementById('search-input').addEventListener('input', renderTable);
-    document.getElementById('filter-artist').addEventListener('change', renderTable);
-    document.getElementById('filter-type').addEventListener('change', renderTable);
-    document.getElementById('filter-investor').addEventListener('change', renderTable);
+    document.getElementById('search-input').addEventListener('input', () => { renderTable(); renderPivotTables(); });
+    document.getElementById('filter-artist').addEventListener('change', () => { renderTable(); renderPivotTables(); });
+    document.getElementById('filter-project').addEventListener('change', () => { renderTable(); renderPivotTables(); });
+    document.getElementById('filter-type').addEventListener('change', () => { renderTable(); renderPivotTables(); });
+    document.getElementById('filter-investor').addEventListener('change', () => { renderTable(); renderPivotTables(); });
     
     document.getElementById('export-csv').addEventListener('click', exportCSV);
+    document.getElementById('export-sheets').addEventListener('click', exportGoogleSheets);
     document.getElementById('export-pdf').addEventListener('click', exportPDF);
     document.getElementById('view-all-btn').addEventListener('click', () => {
         document.querySelector('[data-tab="reports"]').click();
     });
 }
 
-function renderTable() {
+function getFilteredExpenses() {
     const search = document.getElementById('search-input').value.toLowerCase();
     const artistFilter = document.getElementById('filter-artist').value;
+    const projectFilter = document.getElementById('filter-project').value;
     const typeFilter = document.getElementById('filter-type').value;
     const investorFilter = document.getElementById('filter-investor').value;
     
-    let filtered = expenses.filter(e => {
+    return expenses.filter(e => {
         const matchSearch = !search || 
             e.artist.toLowerCase().includes(search) ||
             e.project.toLowerCase().includes(search) ||
-            e.entity.toLowerCase().includes(search) ||
-            e.notes.toLowerCase().includes(search);
+            (e.entity && e.entity.toLowerCase().includes(search)) ||
+            (e.notes && e.notes.toLowerCase().includes(search));
         
         const matchArtist = artistFilter === 'all' || e.artist === artistFilter;
+        const matchProject = projectFilter === 'all' || e.project === projectFilter;
         const matchType = typeFilter === 'all' || e.type === typeFilter;
         const matchInvestor = investorFilter === 'all' || e.investor === investorFilter;
         
-        return matchSearch && matchArtist && matchType && matchInvestor;
+        return matchSearch && matchArtist && matchProject && matchType && matchInvestor;
     });
+}
+
+function renderTable() {
+    const filtered = getFilteredExpenses();
     
     // Update summary
     const total = filtered.reduce((sum, e) => sum + e.amount, 0);
@@ -465,14 +641,14 @@ function renderTable() {
     document.getElementById('summary-total').textContent = formatCurrency(total);
     document.getElementById('summary-maktub').textContent = formatCurrency(maktub);
     document.getElementById('summary-others').textContent = formatCurrency(others);
+    document.getElementById('summary-count').textContent = filtered.length;
     
     // Sort by date descending
-    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sorted = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
     
-    // Render table
     const tbody = document.getElementById('expenses-body');
     
-    if (filtered.length === 0) {
+    if (sorted.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
@@ -483,7 +659,7 @@ function renderTable() {
         return;
     }
     
-    tbody.innerHTML = filtered.map(e => `
+    tbody.innerHTML = sorted.map(e => `
         <tr>
             <td>${formatDate(e.date)}</td>
             <td>${e.artist}</td>
@@ -506,20 +682,94 @@ function renderTable() {
     `).join('');
 }
 
+function renderPivotTables() {
+    const filtered = getFilteredExpenses();
+    
+    // By Artist
+    const byArtist = {};
+    filtered.forEach(e => {
+        if (!byArtist[e.artist]) byArtist[e.artist] = { total: 0, maktub: 0, outros: 0 };
+        byArtist[e.artist].total += e.amount;
+        if (e.investor === 'maktub') byArtist[e.artist].maktub += e.amount;
+        else byArtist[e.artist].outros += e.amount;
+    });
+    
+    const pivotArtist = document.getElementById('pivot-artist');
+    const artistEntries = Object.entries(byArtist).sort((a, b) => b[1].total - a[1].total);
+    const artistTotal = artistEntries.reduce((sum, [_, d]) => sum + d.total, 0);
+    
+    pivotArtist.innerHTML = artistEntries.map(([name, data]) => `
+        <div class="pivot-row">
+            <span class="label">${name}</span>
+            <span class="value">${formatCurrency(data.total)}</span>
+        </div>
+    `).join('') + `
+        <div class="pivot-row total">
+            <span class="label">TOTAL</span>
+            <span class="value">${formatCurrency(artistTotal)}</span>
+        </div>
+    `;
+    
+    // By Project
+    const byProject = {};
+    filtered.forEach(e => {
+        byProject[e.project] = (byProject[e.project] || 0) + e.amount;
+    });
+    
+    const pivotProject = document.getElementById('pivot-project');
+    const projectEntries = Object.entries(byProject).sort((a, b) => b[1] - a[1]);
+    const projectTotal = projectEntries.reduce((sum, [_, v]) => sum + v, 0);
+    
+    pivotProject.innerHTML = projectEntries.map(([name, value]) => `
+        <div class="pivot-row">
+            <span class="label">${name}</span>
+            <span class="value">${formatCurrency(value)}</span>
+        </div>
+    `).join('') + `
+        <div class="pivot-row total">
+            <span class="label">TOTAL</span>
+            <span class="value">${formatCurrency(projectTotal)}</span>
+        </div>
+    `;
+    
+    // By Type
+    const byType = {};
+    filtered.forEach(e => {
+        byType[e.type] = (byType[e.type] || 0) + e.amount;
+    });
+    
+    const pivotType = document.getElementById('pivot-type');
+    const typeEntries = Object.entries(byType).sort((a, b) => b[1] - a[1]);
+    const typeTotal = typeEntries.reduce((sum, [_, v]) => sum + v, 0);
+    
+    pivotType.innerHTML = typeEntries.map(([name, value]) => `
+        <div class="pivot-row">
+            <span class="label">${getTypeName(name)}</span>
+            <span class="value">${formatCurrency(value)}</span>
+        </div>
+    `).join('') + `
+        <div class="pivot-row total">
+            <span class="label">TOTAL</span>
+            <span class="value">${formatCurrency(typeTotal)}</span>
+        </div>
+    `;
+}
+
 function exportCSV() {
+    const filtered = getFilteredExpenses();
     const headers = ['Data', 'Artista', 'Projeto', 'Tipo', 'Entidade', 'Investidor', 'Valor', 'Notas'];
-    const rows = expenses.map(e => [
+    const rows = filtered.map(e => [
         e.date,
         e.artist,
         e.project,
         getTypeName(e.type),
-        e.entity,
+        e.entity || '',
         e.investor === 'maktub' ? 'Maktub' : 'Terceiros',
         e.amount.toFixed(2),
-        e.notes
+        e.notes || ''
     ]);
     
-    const csv = [headers, ...rows].map(row => row.join(';')).join('\n');
+    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
     const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     
@@ -531,12 +781,67 @@ function exportCSV() {
     showToast('CSV exportado!', 'success');
 }
 
+function exportGoogleSheets() {
+    const filtered = getFilteredExpenses();
+    
+    // Create a TSV format that Google Sheets handles well
+    const headers = ['Data\tArtista\tProjeto\tTipo\tEntidade\tInvestidor\tValor\tNotas'];
+    const rows = filtered.map(e => [
+        e.date,
+        e.artist,
+        e.project,
+        getTypeName(e.type),
+        e.entity || '',
+        e.investor === 'maktub' ? 'Maktub' : 'Terceiros',
+        e.amount.toFixed(2).replace('.', ','), // European format
+        e.notes || ''
+    ].join('\t'));
+    
+    // Add summary rows
+    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+    const maktub = filtered.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
+    const outros = filtered.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
+    
+    rows.push('');
+    rows.push(`\t\t\t\t\tTOTAL\t${total.toFixed(2).replace('.', ',')}`);
+    rows.push(`\t\t\t\t\tMaktub\t${maktub.toFixed(2).replace('.', ',')}`);
+    rows.push(`\t\t\t\t\tTerceiros\t${outros.toFixed(2).replace('.', ',')}`);
+    
+    // Add pivot summaries
+    rows.push('');
+    rows.push('RESUMO POR ARTISTA');
+    const byArtist = {};
+    filtered.forEach(e => { byArtist[e.artist] = (byArtist[e.artist] || 0) + e.amount; });
+    Object.entries(byArtist).sort((a, b) => b[1] - a[1]).forEach(([artist, amount]) => {
+        rows.push(`${artist}\t\t\t\t\t\t${amount.toFixed(2).replace('.', ',')}`);
+    });
+    
+    rows.push('');
+    rows.push('RESUMO POR TIPO');
+    const byType = {};
+    filtered.forEach(e => { byType[e.type] = (byType[e.type] || 0) + e.amount; });
+    Object.entries(byType).sort((a, b) => b[1] - a[1]).forEach(([type, amount]) => {
+        rows.push(`${getTypeName(type)}\t\t\t\t\t\t${amount.toFixed(2).replace('.', ',')}`);
+    });
+    
+    const tsv = [headers, ...rows].join('\n');
+    const blob = new Blob(['\ufeff' + tsv], { type: 'text/tab-separated-values;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `maktub_despesas_${new Date().toISOString().split('T')[0]}.tsv`;
+    link.click();
+    
+    showToast('Ficheiro para Google Sheets exportado! Abra no Google Sheets.', 'success');
+}
+
 function exportPDF() {
-    // Simple print-based PDF export
+    const filtered = getFilteredExpenses();
     const printWindow = window.open('', '_blank');
-    const total = expenses.reduce((sum, e) => sum + e.amount, 0);
-    const maktub = expenses.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
-    const others = expenses.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
+    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+    const maktub = filtered.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
+    const others = filtered.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
     
     printWindow.document.write(`
         <!DOCTYPE html>
@@ -551,8 +856,8 @@ function exportPDF() {
                 .summary-item { padding: 16px; background: #f5f5f5; border-radius: 8px; }
                 .summary-label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
                 .summary-value { font-size: 20px; font-weight: bold; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                table { width: 100%; border-collapse: collapse; font-size: 12px; }
+                th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
                 th { background: #f5f5f5; font-weight: 600; }
                 .maktub { color: #33E933; }
                 .outros { color: #ffbb33; }
@@ -560,7 +865,7 @@ function exportPDF() {
         </head>
         <body>
             <h1>Maktub Art Group</h1>
-            <p class="subtitle">Relatório de Despesas - ${new Date().toLocaleDateString('pt-PT')}</p>
+            <p class="subtitle">Relatório de Despesas - ${new Date().toLocaleDateString('pt-PT')} (${filtered.length} registos)</p>
             
             <div class="summary">
                 <div class="summary-item">
@@ -589,7 +894,7 @@ function exportPDF() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${expenses.sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
+                    ${filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
                         <tr>
                             <td>${formatDate(e.date)}</td>
                             <td>${e.artist}</td>
@@ -622,7 +927,6 @@ function updateSettlement() {
     document.getElementById('settle-maktub').textContent = formatCurrency(maktub);
     document.getElementById('settle-others').textContent = formatCurrency(others);
     
-    // Balance bar
     const pctMaktub = total > 0 ? (maktub / total * 100) : 50;
     const pctOthers = total > 0 ? (others / total * 100) : 50;
     
@@ -631,7 +935,6 @@ function updateSettlement() {
     document.getElementById('pct-maktub').textContent = pctMaktub.toFixed(1) + '%';
     document.getElementById('pct-others').textContent = pctOthers.toFixed(1) + '%';
     
-    // Summary text
     const summaryEl = document.getElementById('settlement-summary');
     if (total === 0) {
         summaryEl.innerHTML = '<p>Carregue dados para ver o resumo do acerto.</p>';
@@ -653,7 +956,6 @@ function updateSettlement() {
         `;
     }
     
-    // Artist breakdown
     updateArtistBreakdown();
 }
 
@@ -695,17 +997,14 @@ function updateArtistBreakdown() {
 // ==========================================
 
 function initModals() {
-    // Edit modal
     document.getElementById('close-edit').addEventListener('click', closeEditModal);
     document.getElementById('cancel-edit').addEventListener('click', closeEditModal);
     document.getElementById('edit-form').addEventListener('submit', handleEdit);
     
-    // Delete modal
     document.getElementById('close-delete').addEventListener('click', closeDeleteModal);
     document.getElementById('cancel-delete').addEventListener('click', closeDeleteModal);
     document.getElementById('confirm-delete').addEventListener('click', handleDelete);
     
-    // Close on backdrop click
     document.getElementById('edit-modal').addEventListener('click', (e) => {
         if (e.target.id === 'edit-modal') closeEditModal();
     });
@@ -725,9 +1024,9 @@ function openEditModal(id) {
     document.getElementById('edit-type').value = expense.type;
     document.getElementById('edit-amount').value = expense.amount;
     document.getElementById('edit-date').value = expense.date;
-    document.getElementById('edit-entity').value = expense.entity;
+    document.getElementById('edit-entity').value = expense.entity || '';
     document.getElementById('edit-investor').value = expense.investor;
-    document.getElementById('edit-notes').value = expense.notes;
+    document.getElementById('edit-notes').value = expense.notes || '';
     
     document.getElementById('edit-modal').classList.remove('hidden');
 }
@@ -758,6 +1057,7 @@ function handleEdit(e) {
     saveData();
     closeEditModal();
     renderTable();
+    renderPivotTables();
     updateDashboard();
     showToast('Despesa atualizada!', 'success');
 }
@@ -777,7 +1077,9 @@ function handleDelete() {
     saveData();
     closeDeleteModal();
     renderTable();
+    renderPivotTables();
     updateDashboard();
+    updateFilterDropdowns();
     showToast('Despesa eliminada!', 'success');
 }
 
@@ -838,6 +1140,6 @@ function showToast(message, type = '') {
     }, 3000);
 }
 
-// Make functions globally accessible for onclick handlers
+// Make functions globally accessible
 window.openEditModal = openEditModal;
 window.openDeleteModal = openDeleteModal;
