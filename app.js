@@ -1639,14 +1639,10 @@ async function syncToGoogleSheets() {
         steps[1].active = true;
         updateSyncProgress(30, 'A enviar dados para Google Drive...', steps);
         
-        // Use URL parameter approach for better compatibility
-        const response = await fetch(GOOGLE_SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify(payload)), {
-            method: 'POST',
-            redirect: 'follow'
-        });
+        // Use iframe form submission to bypass CORS
+        await sendToGoogleSheets(payload);
         
         console.log('✅ Request sent successfully');
-        console.log('Response status:', response.status);
         
         if (syncAborted) return;
         
