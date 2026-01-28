@@ -287,6 +287,8 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
+    overflow-y: auto;
+    position: relative;
 }
 
 .tab-content.hidden {
@@ -888,14 +890,13 @@ body {
 /* Reports Sticky Header */
 .reports-sticky-header {
     position: sticky;
-    top: 0;
-    z-index: 100;
+    top: -24px;
+    z-index: 50;
     background: var(--bg-primary);
-    padding-bottom: 16px;
     margin: -24px -24px 24px -24px;
-    padding: 24px 24px 16px 24px;
+    padding: 24px 24px 20px 24px;
     border-bottom: 1px solid var(--border-color);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 /* Summary Row */
