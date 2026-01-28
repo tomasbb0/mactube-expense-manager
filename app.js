@@ -1,12 +1,17 @@
 // Maktub Art Group - Expense Manager App
 // ==========================================
 
+// Google Sheets Integration
+// IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
+const GOOGLE_SCRIPT_URL = ''; // Leave empty to disable, or paste your URL here
+
 // State
 let expenses = [];
 let currentUser = null;
 let editingId = null;
 let customArtists = [];
 let customProjects = [];
+let isSyncing = false;
 
 // DOM Elements
 const authScreen = document.getElementById('auth-screen');
@@ -23,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFilters();
     initModals();
     initAuth();
+    initGoogleSheetsSync();
     setDefaultDate();
     loadData();
 });
@@ -1444,9 +1450,326 @@ function exportChartPDF(chartType) {
     showToast('A preparar PDF...', 'success');
 }
 
+// ==========================================
+// Google Sheets Sync
+// ==========================================
+
+function initGoogleSheetsSync() {
+    // Check if Google Sheets integration is enabled
+    if (!GOOGLE_SCRIPT_URL) {
+        console.log('Google Sheets sync disabled - no URL configured');
+        // Hide sync buttons if they exist
+        const syncButtons = document.querySelectorAll('.sync-btn');
+        syncButtons.forEach(btn => btn.style.display = 'none');
+        return;
+    }
+    
+    console.log('Google Sheets sync enabled');
+    // Show sync buttons
+    const syncButtons = document.querySelectorAll('.sync-btn');
+    syncButtons.forEach(btn => btn.style.display = 'inline-flex');
+}
+
+// Sync local data to Google Sheets
+async function syncToGoogleSheets() {
+    if (!GOOGLE_SCRIPT_URL) {
+        showToast('Google Sheets não configurado', 'error');
+        return;
+    }
+    
+    if (isSyncing) {
+        showToast('Sincronização em progresso...', 'error');
+        return;
+    }
+    
+    isSyncing = true;
+    updateSyncButtonState(true);
+    showToast('A enviar dados para Google Sheets...', 'success');
+    
+    try {
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', // Required for Google Apps Script
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'syncFromWebsite',
+                expenses: expenses,
+                timestamp: new Date().toISOString()
+            })
+        });
+        
+        // With no-cors, we can't read the response, so we assume success
+        showToast('Dados enviados para Google Sheets!', 'success');
+        localStorage.setItem('lastSyncToSheets', new Date().toISOString());
+        
+    } catch (error) {
+        console.error('Sync to Google Sheets failed:', error);
+        showToast('Erro ao sincronizar: ' + error.message, 'error');
+    } finally {
+        isSyncing = false;
+        updateSyncButtonState(false);
+    }
+}
+
+// Sync data from Google Sheets to local
+async function syncFromGoogleSheets() {
+    if (!GOOGLE_SCRIPT_URL) {
+        showToast('Google Sheets não configurado', 'error');
+        return;
+    }
+    
+    if (isSyncing) {
+        showToast('Sincronização em progresso...', 'error');
+        return;
+    }
+    
+    isSyncing = true;
+    updateSyncButtonState(true);
+    showToast('A obter dados do Google Sheets...', 'success');
+    
+    try {
+        // For GET requests, we can use JSONP-style approach
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllExpenses`, {
+            method: 'GET',
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.expenses) {
+            // Merge with existing data or replace
+            const sheetExpenses = data.expenses;
+            
+            // Create a map of existing expenses by ID
+            const existingMap = new Map(expenses.map(e => [e.id, e]));
+            
+            // Merge sheet expenses
+            sheetExpenses.forEach(sheetExp => {
+                // Try to find matching expense
+                if (sheetExp.id && existingMap.has(sheetExp.id)) {
+                    // Update existing
+                    const idx = expenses.findIndex(e => e.id === sheetExp.id);
+                    if (idx !== -1) {
+                        expenses[idx] = { ...expenses[idx], ...sheetExp };
+                    }
+                } else {
+                    // Add new (generate ID if missing)
+                    if (!sheetExp.id) {
+                        sheetExp.id = generateId();
+                    }
+                    expenses.push(sheetExp);
+                }
+            });
+            
+            saveData();
+            updateDashboard();
+            updateReportsTable();
+            updateSettlement();
+            
+            showToast(`Sincronizado! ${sheetExpenses.length} registos do Google Sheets`, 'success');
+            localStorage.setItem('lastSyncFromSheets', new Date().toISOString());
+        } else {
+            showToast('Nenhum dado encontrado no Google Sheets', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Sync from Google Sheets failed:', error);
+        showToast('Erro ao sincronizar: ' + error.message, 'error');
+    } finally {
+        isSyncing = false;
+        updateSyncButtonState(false);
+    }
+}
+
+// Full bidirectional sync
+async function fullSync() {
+    if (!GOOGLE_SCRIPT_URL) {
+        showToast('Google Sheets não configurado', 'error');
+        return;
+    }
+    
+    if (isSyncing) {
+        showToast('Sincronização em progresso...', 'error');
+        return;
+    }
+    
+    isSyncing = true;
+    updateSyncButtonState(true);
+    showToast('A sincronizar bidirecionalmente...', 'success');
+    
+    try {
+        // First, get data from sheets
+        const getResponse = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllExpenses`, {
+            method: 'GET',
+        });
+        
+        const getData = await getResponse.json();
+        let sheetExpenses = getData.success ? (getData.expenses || []) : [];
+        
+        // Create maps for comparison
+        const localMap = new Map(expenses.map(e => [e.id, e]));
+        const sheetMap = new Map(sheetExpenses.map(e => [e.id, e]));
+        
+        // Merge: newer timestamp wins
+        const mergedExpenses = [];
+        const allIds = new Set([...localMap.keys(), ...sheetMap.keys()]);
+        
+        allIds.forEach(id => {
+            const local = localMap.get(id);
+            const sheet = sheetMap.get(id);
+            
+            if (local && sheet) {
+                // Both exist - use the one with newer timestamp or local if no timestamps
+                const localTime = local.updatedAt ? new Date(local.updatedAt) : new Date(0);
+                const sheetTime = sheet.updatedAt ? new Date(sheet.updatedAt) : new Date(0);
+                mergedExpenses.push(localTime >= sheetTime ? local : sheet);
+            } else if (local) {
+                mergedExpenses.push(local);
+            } else if (sheet) {
+                mergedExpenses.push(sheet);
+            }
+        });
+        
+        expenses = mergedExpenses;
+        
+        // Now push merged data back to sheets
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'syncFromWebsite',
+                expenses: expenses,
+                timestamp: new Date().toISOString()
+            })
+        });
+        
+        saveData();
+        updateDashboard();
+        updateReportsTable();
+        updateSettlement();
+        
+        const now = new Date().toISOString();
+        localStorage.setItem('lastSyncToSheets', now);
+        localStorage.setItem('lastSyncFromSheets', now);
+        
+        showToast('Sincronização completa!', 'success');
+        
+    } catch (error) {
+        console.error('Full sync failed:', error);
+        showToast('Erro na sincronização: ' + error.message, 'error');
+    } finally {
+        isSyncing = false;
+        updateSyncButtonState(false);
+    }
+}
+
+// Update sync button visual state
+function updateSyncButtonState(syncing) {
+    const syncBtns = document.querySelectorAll('.sync-btn');
+    syncBtns.forEach(btn => {
+        if (syncing) {
+            btn.classList.add('syncing');
+            btn.disabled = true;
+        } else {
+            btn.classList.remove('syncing');
+            btn.disabled = false;
+        }
+    });
+}
+
+// Generate unique ID
+function generateId() {
+    return 'exp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Get last sync info
+function getLastSyncInfo() {
+    const lastTo = localStorage.getItem('lastSyncToSheets');
+    const lastFrom = localStorage.getItem('lastSyncFromSheets');
+    
+    return {
+        lastSyncToSheets: lastTo ? new Date(lastTo) : null,
+        lastSyncFromSheets: lastFrom ? new Date(lastFrom) : null
+    };
+}
+
+// Open sync settings/info modal
+function openSyncModal() {
+    const syncInfo = getLastSyncInfo();
+    const isConfigured = !!GOOGLE_SCRIPT_URL;
+    
+    let statusHtml = '';
+    if (!isConfigured) {
+        statusHtml = '<p class="sync-status-warning">⚠️ Google Sheets não está configurado</p>';
+        statusHtml += '<p class="sync-instructions">Para configurar:</p>';
+        statusHtml += '<ol class="sync-instructions-list">';
+        statusHtml += '<li>Abra o ficheiro <code>google-apps-script.js</code></li>';
+        statusHtml += '<li>Copie o código para um novo Google Apps Script</li>';
+        statusHtml += '<li>Configure os IDs das suas folhas</li>';
+        statusHtml += '<li>Publique como Web App</li>';
+        statusHtml += '<li>Cole o URL no ficheiro <code>app.js</code></li>';
+        statusHtml += '</ol>';
+    } else {
+        statusHtml = '<p class="sync-status-ok">✅ Google Sheets configurado</p>';
+        if (syncInfo.lastSyncToSheets) {
+            statusHtml += `<p>Último envio: ${syncInfo.lastSyncToSheets.toLocaleString('pt-PT')}</p>`;
+        }
+        if (syncInfo.lastSyncFromSheets) {
+            statusHtml += `<p>Última receção: ${syncInfo.lastSyncFromSheets.toLocaleString('pt-PT')}</p>`;
+        }
+    }
+    
+    // Create modal HTML
+    const modalHtml = `
+        <div class="modal-overlay sync-modal-overlay" onclick="closeSyncModal()">
+            <div class="modal sync-modal" onclick="event.stopPropagation()">
+                <div class="modal-header">
+                    <h3>⚙️ Sincronização Google Sheets</h3>
+                    <button class="modal-close" onclick="closeSyncModal()">×</button>
+                </div>
+                <div class="modal-body">
+                    ${statusHtml}
+                    ${isConfigured ? `
+                    <div class="sync-actions">
+                        <button class="btn btn-primary sync-action-btn" onclick="syncToGoogleSheets()">
+                            <span class="sync-icon">📤</span> Enviar para Sheets
+                        </button>
+                        <button class="btn btn-secondary sync-action-btn" onclick="syncFromGoogleSheets()">
+                            <span class="sync-icon">📥</span> Obter de Sheets
+                        </button>
+                        <button class="btn btn-accent sync-action-btn" onclick="fullSync()">
+                            <span class="sync-icon">🔄</span> Sincronização Completa
+                        </button>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+function closeSyncModal() {
+    const modal = document.querySelector('.sync-modal-overlay');
+    if (modal) {
+        modal.remove();
+    }
+}
+
 // Make functions globally accessible
 window.openEditModal = openEditModal;
 window.openDeleteModal = openDeleteModal;
 window.togglePivotSection = togglePivotSection;
 window.exportChartCSV = exportChartCSV;
 window.exportChartPDF = exportChartPDF;
+window.syncToGoogleSheets = syncToGoogleSheets;
+window.syncFromGoogleSheets = syncFromGoogleSheets;
+window.fullSync = fullSync;
+window.openSyncModal = openSyncModal;
+window.closeSyncModal = closeSyncModal;

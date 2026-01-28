@@ -1692,3 +1692,171 @@ tr:hover td {
 .pivot-row .value.yellow {
     color: var(--warning);
 }
+
+/* ==========================================
+   Google Sheets Sync Styles
+   ========================================== */
+
+.sync-btn {
+    position: relative;
+}
+
+.sync-btn.syncing svg {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.sync-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(4px);
+}
+
+.sync-modal {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+}
+
+.sync-modal .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sync-modal .modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.sync-modal .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.sync-modal .modal-close:hover {
+    color: var(--text-primary);
+}
+
+.sync-modal .modal-body {
+    padding: 24px;
+}
+
+.sync-status-ok {
+    color: var(--green-primary);
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.sync-status-warning {
+    color: var(--warning);
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.sync-instructions {
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+
+.sync-instructions-list {
+    padding-left: 24px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.sync-instructions-list code {
+    background: var(--bg-tertiary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    color: var(--green-primary);
+}
+
+.sync-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.sync-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sync-action-btn .sync-icon {
+    font-size: 1.2rem;
+}
+
+.sync-action-btn.btn-primary {
+    background: var(--green-primary);
+    color: var(--bg-primary);
+    border: none;
+}
+
+.sync-action-btn.btn-primary:hover {
+    background: var(--green-hover);
+    transform: translateY(-1px);
+}
+
+.sync-action-btn.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.sync-action-btn.btn-secondary:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-secondary);
+}
+
+.sync-action-btn.btn-accent {
+    background: linear-gradient(135deg, var(--green-primary), #2BC92B);
+    color: var(--bg-primary);
+    border: none;
+    font-weight: 600;
+}
+
+.sync-action-btn.btn-accent:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(51, 233, 51, 0.3);
+}
+
+.sync-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
