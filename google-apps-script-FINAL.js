@@ -22,7 +22,9 @@ const SPREADSHEET_IDS = {
 };
 
 // Column mapping for the main sheet
+// Column mappings - internal names and display headers
 const MAIN_COLUMNS = ['id', 'date', 'artist', 'project', 'type', 'entity', 'investor', 'amount', 'notes', 'createdAt'];
+const MAIN_HEADERS = ['ID', 'DATA', 'ARTISTA', 'PROJETO', 'TIPO', 'ENTIDADE', 'INVESTIDOR', 'VALOR', 'NOTAS', 'CRIADO EM'];
 
 // ============================================
 // WEB APP HANDLERS
@@ -191,9 +193,9 @@ function addToMainSheet(expense) {
   // Create sheet if it doesn't exist
   if (!sheet) {
     sheet = ss.insertSheet('Despesas');
-    sheet.appendRow(MAIN_COLUMNS);
+    sheet.appendRow(MAIN_HEADERS);
     // Format header
-    sheet.getRange(1, 1, 1, MAIN_COLUMNS.length).setFontWeight('bold');
+    sheet.getRange(1, 1, 1, MAIN_HEADERS.length).setFontWeight('bold');
   }
   
   const row = MAIN_COLUMNS.map(col => expense[col] || '');
@@ -301,15 +303,14 @@ function syncFromWebsite(expenses) {
     if (!sheet) {
       Logger.log('Creating Despesas sheet');
       sheet = ss.insertSheet('Despesas');
-      sheet.appendRow(MAIN_COLUMNS);
-      sheet.getRange(1, 1, 1, MAIN_COLUMNS.length).setFontWeight('bold');
+      sheet.appendRow(MAIN_HEADERS);
+      sheet.getRange(1, 1, 1, MAIN_HEADERS.length).setFontWeight('bold');
     } else {
-      // Clear existing data (keep header)
-      const lastRow = sheet.getLastRow();
-      if (lastRow > 1) {
-        Logger.log('Clearing ' + (lastRow - 1) + ' existing rows');
-        sheet.deleteRows(2, lastRow - 1);
-      }
+      // Clear ALL data including headers and rewrite
+      sheet.clear();
+      sheet.appendRow(MAIN_HEADERS);
+      sheet.getRange(1, 1, 1, MAIN_HEADERS.length).setFontWeight('bold');
+      Logger.log('Sheet cleared and headers rewritten');
     }
     
     // Add all expenses to main sheet
