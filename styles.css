@@ -2028,6 +2028,34 @@ tr:hover td {
     word-break: break-word;
 }
 
+.step-action {
+    font-size: 0.85rem !important;
+    color: var(--green-primary) !important;
+    background: rgba(51, 233, 51, 0.1);
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--green-primary);
+    margin-top: 12px !important;
+    font-weight: 500;
+}
+
+.setup-intro {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+    border: 2px solid var(--green-primary);
+}
+
+.setup-final {
+    background: linear-gradient(135deg, rgba(51, 233, 51, 0.1), rgba(51, 233, 51, 0.05));
+    padding: 20px;
+    border-radius: var(--radius-md);
+    margin-top: 20px;
+    border: 2px solid var(--green-primary);
+    text-align: center;
+}
+
 .code-example {
     background: var(--bg-tertiary);
     padding: 12px;

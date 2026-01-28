@@ -1706,88 +1706,84 @@ function openSyncModal() {
     if (!isConfigured) {
         statusHtml = `
             <div class="sync-setup-guide">
-                <p class="sync-status-warning">⚠️ Google Sheets não está configurado</p>
+                <div class="setup-intro">
+                    <h3 style="color: var(--green-primary); margin-bottom: 16px;">🎯 Configuração Super Simples</h3>
+                    <p style="font-size: 1rem; margin-bottom: 24px;">Vou guiar-te passo-a-passo. Quando precisar de informação, cola AQUI no chat comigo!</p>
+                </div>
                 
                 <div class="setup-step">
                     <div class="step-number">1</div>
                     <div class="step-content">
-                        <h4>Criar um Google Apps Script</h4>
-                        <p>Abre o Google Apps Script e cria um novo projeto:</p>
+                        <h4>Abrir Google Apps Script</h4>
+                        <p>Clica aqui para criar um novo projeto:</p>
                         <a href="https://script.google.com/home/start" target="_blank" class="setup-link">
-                            <span class="link-icon">🔗</span> Abrir Google Apps Script
+                            🔗 Criar Projeto no Apps Script
                         </a>
+                        <p class="step-action">✅ Quando abrires, cola o nome do projeto aqui no chat</p>
                     </div>
                 </div>
                 
                 <div class="setup-step">
                     <div class="step-number">2</div>
                     <div class="step-content">
-                        <h4>Copiar o código</h4>
-                        <p>Copia todo o código do ficheiro <code>google-apps-script.js</code> deste repositório:</p>
-                        <a href="https://github.com/tomasbb0/mactube-expense-manager/blob/main/google-apps-script.js" target="_blank" class="setup-link">
-                            <span class="link-icon">📄</span> Ver google-apps-script.js no GitHub
-                        </a>
+                        <h4>Copiar o Código</h4>
                         <button class="copy-code-btn" onclick="copyAppsScriptCode()">
-                            <span class="link-icon">📋</span> Copiar Código
+                            📋 COPIAR CÓDIGO (clica aqui)
                         </button>
+                        <p style="margin-top: 12px;">Depois cola no Apps Script (apaga tudo primeiro)</p>
+                        <p class="step-action">✅ Cola "CÓDIGO COLADO" aqui no chat quando terminares</p>
                     </div>
                 </div>
                 
                 <div class="setup-step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h4>Criar a Folha de Cálculo Principal</h4>
-                        <p>Cria uma nova Google Sheet para guardar as despesas:</p>
-                        <a href="https://sheets.google.com/create" target="_blank" class="setup-link">
-                            <span class="link-icon">📊</span> Criar Nova Google Sheet
-                        </a>
-                        <p class="step-note">💡 O ID da folha está no URL: docs.google.com/spreadsheets/d/<strong>[ID_AQUI]</strong>/edit</p>
+                        <h4>Criar Sheets (vou fazer por ti!)</h4>
+                        <p style="color: var(--warning); font-weight: 500;">⚠️ NÃO cries sheets manualmente!</p>
+                        <p>Cola esta lista de artistas aqui no chat:</p>
+                        <pre class="code-example" style="font-size: 0.85rem;">Bandidos do Cante
+Buba Espinho
+MAR
+D.A.M.A
+BRUCE
+LUTZ
+INÊS
+REAL GUNS
+SUAVE
+Gerais Maktub</pre>
+                        <p class="step-action">✅ Copia e cola a lista acima no chat - vou criar links para todas as sheets!</p>
                     </div>
                 </div>
                 
                 <div class="setup-step">
                     <div class="step-number">4</div>
                     <div class="step-content">
-                        <h4>Configurar os IDs</h4>
-                        <p>No código do Apps Script, actualiza o objeto <code>SPREADSHEET_IDS</code> com os IDs das tuas folhas:</p>
-                        <pre class="code-example">const SPREADSHEET_IDS = {
-  main: 'ID_DA_FOLHA_PRINCIPAL',
-  // Adiciona mais artistas...
-};</pre>
+                        <h4>Publicar como Web App</h4>
+                        <p>No Apps Script, clica em:</p>
+                        <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; margin: 12px 0;">
+                            <p style="margin: 4px 0;">1. <strong>Implementar</strong> (canto superior direito)</p>
+                            <p style="margin: 4px 0;">2. <strong>Nova implementação</strong></p>
+                            <p style="margin: 4px 0;">3. Tipo: <strong>Aplicação Web</strong></p>
+                            <p style="margin: 4px 0;">4. Quem tem acesso: <strong>Qualquer pessoa</strong></p>
+                            <p style="margin: 4px 0;">5. Clica <strong>Implementar</strong></p>
+                        </div>
+                        <p class="step-action">✅ Cola o URL que aparecer aqui no chat!</p>
                     </div>
                 </div>
                 
                 <div class="setup-step">
                     <div class="step-number">5</div>
                     <div class="step-content">
-                        <h4>Publicar como Web App</h4>
-                        <p>No Apps Script:</p>
-                        <ol class="mini-steps">
-                            <li>Clica em <strong>Implementar → Nova implementação</strong></li>
-                            <li>Tipo: <strong>App da Web</strong></li>
-                            <li>Executar como: <strong>Eu</strong></li>
-                            <li>Quem tem acesso: <strong>Qualquer pessoa</strong></li>
-                            <li>Clica <strong>Implementar</strong></li>
-                            <li>Copia o <strong>URL da implementação</strong></li>
-                        </ol>
+                        <h4>Configurar IDs das Sheets</h4>
+                        <p>Abre cada Google Sheet que criei e copia o ID do URL:</p>
+                        <p class="step-note">💡 URL: docs.google.com/spreadsheets/d/<strong style="color: var(--green-primary);">ESTE_É_O_ID</strong>/edit</p>
+                        <p class="step-action">✅ Cola TODOS os IDs aqui no chat (um por linha) - vou dar-te o código pronto!</p>
                     </div>
                 </div>
                 
-                <div class="setup-step">
-                    <div class="step-number">6</div>
-                    <div class="step-content">
-                        <h4>Colar o URL no App</h4>
-                        <p>Abre o ficheiro <code>app.js</code> e cola o URL na linha 5:</p>
-                        <pre class="code-example">const GOOGLE_SCRIPT_URL = 'https://script.google.com/...';</pre>
-                        <p class="step-note">⚠️ Depois de alterar, faz commit e push para o GitHub.</p>
-                    </div>
-                </div>
-                
-                <div class="setup-help">
-                    <h4>📚 Precisa de ajuda?</h4>
-                    <a href="https://developers.google.com/apps-script/guides/web" target="_blank" class="setup-link">
-                        <span class="link-icon">📖</span> Documentação Google Apps Script
-                    </a>
+                <div class="setup-final">
+                    <h4 style="color: var(--green-primary); margin-bottom: 12px;">🎉 Depois disso, está pronto!</h4>
+                    <p>Dou-te o código final para colares no <code>app.js</code> e no Apps Script.</p>
                 </div>
             </div>
         `;
