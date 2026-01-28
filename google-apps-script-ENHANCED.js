@@ -385,8 +385,7 @@ function syncArtistSheets(expenses) {
         byProject[projectName].push(e);
       });
       
-      // === DELETE OLD PROJECT SHEETS ===
-      // Get all sheet names that match artist project pattern
+      // === DELETE ALL OLD SHEETS AND START FRESH ===
       const artistShort = artist.replace(/ /g, '').substring(0, 10);
       const existingSheets = ss.getSheets();
       const validSheetNames = new Set();
@@ -397,20 +396,46 @@ function syncArtistSheets(expenses) {
         validSheetNames.add(sheetName);
       });
       validSheetNames.add(artistShort + '_QG'); // Keep QG summary sheet
+      validSheetNames.add('DASHBOARD'); // We'll recreate this
       
-      // Delete sheets that match artist pattern but are not in valid list
+      // Delete ALL sheets except valid ones (including old "Despesas", "Promoção", "Tour", etc.)
+      // Must keep at least 1 sheet, so create a temp if needed
+      const sheetsToDelete = [];
       existingSheets.forEach(sheet => {
         const name = sheet.getName();
-        // Check if this is an artist project sheet (starts with artist prefix and underscore)
-        if (name.startsWith(artistShort + '_') && !validSheetNames.has(name)) {
-          Logger.log('DELETING old project sheet: ' + name);
-          try {
-            ss.deleteSheet(sheet);
-          } catch (e) {
-            Logger.log('Could not delete sheet ' + name + ': ' + e.toString());
-          }
+        if (!validSheetNames.has(name)) {
+          sheetsToDelete.push(sheet);
         }
       });
+      
+      // If we're deleting all sheets, create a placeholder first
+      if (sheetsToDelete.length === existingSheets.length) {
+        Logger.log('All sheets will be deleted, creating placeholder first');
+        ss.insertSheet('_TEMP_');
+      }
+      
+      // Now delete all invalid sheets
+      sheetsToDelete.forEach(sheet => {
+        const name = sheet.getName();
+        Logger.log('DELETING old sheet: ' + name);
+        try {
+          ss.deleteSheet(sheet);
+        } catch (e) {
+          Logger.log('Could not delete sheet ' + name + ': ' + e.toString());
+        }
+      });
+      
+      // Delete the old DASHBOARD too (we'll recreate it fresh)
+      const oldDash = ss.getSheetByName('DASHBOARD');
+      if (oldDash) {
+        try {
+          ss.deleteSheet(oldDash);
+          Logger.log('Deleted old DASHBOARD');
+        } catch (e) {
+          Logger.log('Could not delete DASHBOARD: ' + e.toString());
+        }
+      }
+      
       Logger.log('Cleaned up old sheets for ' + artist + '. Valid projects: ' + Array.from(validSheetNames).join(', '));
       
       // Process each project with Madalena's format
@@ -430,6 +455,19 @@ function syncArtistSheets(expenses) {
       
       // Create QG summary sheet for this artist
       createArtistQGSheet(ss, artist, allProjectSummaries.filter(s => s.artist === artist));
+      
+      // Create artist DASHBOARD with correct formulas
+      createArtistDashboard(ss, artist, allProjectSummaries.filter(s => s.artist === artist));
+      
+      // Delete temp sheet if it exists
+      const tempSheet = ss.getSheetByName('_TEMP_');
+      if (tempSheet) {
+        try {
+          ss.deleteSheet(tempSheet);
+        } catch (e) {
+          Logger.log('Could not delete temp sheet');
+        }
+      }
       
       Logger.log('Updated ' + Object.keys(byProject).length + ' projects for ' + artist);
       
@@ -640,6 +678,137 @@ function createArtistQGSheet(ss, artist, summaries) {
   // Column widths
   sheet.setColumnWidth(1, 180);
   for (let i = 2; i <= 6; i++) sheet.setColumnWidth(i, 130);
+}
+
+// Create DASHBOARD for an artist with correct formulas pointing to new sheet names
+function createArtistDashboard(ss, artist, summaries) {
+  let sheet = ss.getSheetByName('DASHBOARD');
+  if (!sheet) {
+    sheet = ss.insertSheet('DASHBOARD');
+  }
+  sheet.clear();
+  
+  // Move to first position
+  ss.setActiveSheet(sheet);
+  ss.moveActiveSheet(1);
+  
+  const artistShort = artist.replace(/ /g, '').substring(0, 10);
+  let currentRow = 1;
+  
+  // Title
+  sheet.getRange(currentRow, 1).setValue('🎵 ' + artist + ' - DASHBOARD');
+  sheet.getRange(currentRow, 1, 1, 4).merge().setFontWeight('bold').setFontSize(14).setBackground('#1a1a2e').setFontColor('#ffffff');
+  currentRow++;
+  
+  const today = new Date();
+  sheet.getRange(currentRow, 1).setValue('Última atualização: ' + formatDate(today.toISOString()) + ', ' + today.toLocaleTimeString('pt-PT'));
+  sheet.getRange(currentRow, 1, 1, 4).merge().setFontStyle('italic').setFontColor('#666666');
+  currentRow += 2;
+  
+  // RESUMO section
+  sheet.getRange(currentRow, 1).setValue('RESUMO');
+  sheet.getRange(currentRow, 1).setFontWeight('bold').setFontSize(11);
+  currentRow++;
+  
+  // Calculate totals from summaries
+  let totalDespesas = 0;
+  let totalMaktub = 0;
+  let totalTerceiros = 0;
+  summaries.forEach(s => {
+    totalMaktub += s.custos;
+    totalTerceiros += s.proveitos;
+  });
+  totalDespesas = summaries.length;
+  const totalValor = totalMaktub + totalTerceiros;
+  const balanco = totalTerceiros - totalMaktub;
+  
+  // Summary rows with formulas pointing to QG sheet
+  const qgSheetRef = "'" + artistShort + "_QG'";
+  const qgTotalRow = summaries.length + 4; // Header rows + data rows + 1
+  
+  sheet.getRange(currentRow, 1, 5, 2).setValues([
+    ['Total Despesas', summaries.length],
+    ['Valor Total', '=' + qgSheetRef + '!B' + qgTotalRow + '+' + qgSheetRef + '!C' + qgTotalRow],
+    ['Maktub Investiu', '=' + qgSheetRef + '!C' + qgTotalRow],
+    ['Terceiros Pagaram', '=' + qgSheetRef + '!B' + qgTotalRow],
+    ['Balanço', '=' + qgSheetRef + '!F' + qgTotalRow]
+  ]);
+  sheet.getRange(currentRow + 4, 2).setFontColor(balanco >= 0 ? '#006400' : '#8b0000');
+  currentRow += 6;
+  
+  // POR PROJETO/CATEGORIA section
+  sheet.getRange(currentRow, 1).setValue('POR PROJETO/CATEGORIA');
+  sheet.getRange(currentRow, 1).setFontWeight('bold').setFontSize(11);
+  currentRow++;
+  
+  // Headers
+  sheet.getRange(currentRow, 1, 1, 4).setValues([['Projeto', 'Maktub', 'Terceiros', 'Total']]);
+  sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#c6efce');
+  const projectDataStartRow = currentRow + 1;
+  currentRow++;
+  
+  // Project rows with formulas
+  summaries.forEach((s, index) => {
+    const projectSheetName = "'" + s.sheetName + "'";
+    const dataRow = index + 4; // Row in QG sheet where this project's data is
+    sheet.getRange(currentRow, 1, 1, 4).setValues([[
+      s.project,
+      '=' + projectSheetName + '!D' + s.custosRow,
+      '=' + projectSheetName + '!D' + s.proveitosRow,
+      '=' + projectSheetName + '!D' + s.proveitosRow + '+' + projectSheetName + '!D' + s.custosRow
+    ]]);
+    currentRow++;
+  });
+  
+  // Total row
+  const projectDataEndRow = currentRow - 1;
+  sheet.getRange(currentRow, 1, 1, 4).setValues([[
+    'TOTAL',
+    '=SUM(B' + projectDataStartRow + ':B' + projectDataEndRow + ')',
+    '=SUM(C' + projectDataStartRow + ':C' + projectDataEndRow + ')',
+    '=SUM(D' + projectDataStartRow + ':D' + projectDataEndRow + ')'
+  ]]);
+  sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold');
+  currentRow += 2;
+  
+  // POR TIPO section (aggregated from all projects)
+  sheet.getRange(currentRow, 1).setValue('POR TIPO');
+  sheet.getRange(currentRow, 1).setFontWeight('bold').setFontSize(11);
+  currentRow++;
+  
+  sheet.getRange(currentRow, 1, 1, 2).setValues([['Tipo', 'Valor']]);
+  sheet.getRange(currentRow, 1, 1, 2).setFontWeight('bold').setBackground('#ffc7ce');
+  currentRow++;
+  
+  // Type categories (these will show aggregated values using SUMIF across all project sheets)
+  const types = ['Produção', 'Marketing e Promoção', 'Desgaste rápido 23% + Equipamento técnico', 'Transporte', 'Alojamento', 'Outros Gastos', 'Combustível', 'Alimentação - comitivas'];
+  
+  types.forEach(type => {
+    // Create SUMIF formulas across all project sheets
+    const sumifParts = summaries.map(s => {
+      const sheetRef = "'" + s.sheetName + "'";
+      return 'SUMIF(' + sheetRef + '!B:B,"' + type + '",' + sheetRef + '!D:D)';
+    });
+    const formula = sumifParts.length > 0 ? '=' + sumifParts.join('+') : '0';
+    sheet.getRange(currentRow, 1, 1, 2).setValues([[type, formula]]);
+    currentRow++;
+  });
+  
+  // Total row for types
+  sheet.getRange(currentRow, 1, 1, 2).setValues([['TOTAL', '=SUM(B' + (currentRow - types.length) + ':B' + (currentRow - 1) + ')']]);
+  sheet.getRange(currentRow, 1, 1, 2).setFontWeight('bold');
+  
+  // Format currency
+  sheet.getRange(5, 2, currentRow - 4, 1).setNumberFormat('#,##0.00 €');
+  sheet.getRange(projectDataStartRow, 2, projectDataEndRow - projectDataStartRow + 2, 3).setNumberFormat('#,##0.00 €');
+  
+  // Column widths
+  sheet.setColumnWidth(1, 250);
+  sheet.setColumnWidth(2, 120);
+  sheet.setColumnWidth(3, 120);
+  sheet.setColumnWidth(4, 120);
+  
+  Logger.log('Created DASHBOARD for ' + artist);
 }
 
 // ============================================
