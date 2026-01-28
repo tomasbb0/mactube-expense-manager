@@ -3,7 +3,7 @@
 
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxniGEMoh_VBp5_mTc_CM15wbz5dkNlDXAIaIR7-D5fHG--9a2XsCEvlEAnUCy34_jO/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDZ5FINtZU0s9-T4ULaY9TIgAgXo2wv26Oi2KQKOZR9IFIjPcuyyR9g7azk9fls8HY/exec';
 
 // Helper function to send data to Google Sheets
 async function sendToGoogleSheets(payload) {
