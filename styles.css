@@ -885,6 +885,19 @@ body {
     border-color: var(--green-primary);
 }
 
+/* Reports Sticky Header */
+.reports-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    padding-bottom: 16px;
+    margin: -24px -24px 24px -24px;
+    padding: 24px 24px 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
 /* Summary Row */
 .summary-row {
     display: flex;

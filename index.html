@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=2">
+    <link rel="stylesheet" href="styles.css?v=3">
     <link rel="icon" type="image/png" href="maktub-logo.png">
 </head>
 <body>
@@ -291,57 +291,59 @@
         
         <!-- Reports Tab -->
         <div id="reports" class="tab-content hidden">
-            <div class="content-header">
-                <h2>Relatórios</h2>
-                <p>Consulte todas as despesas</p>
-            </div>
-            
-            <div class="search-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                <input type="text" id="search-input" placeholder="Pesquisar despesas...">
-            </div>
-            
-            <div class="filters-row">
-                <select id="filter-artist">
-                    <option value="all">Todos os Artistas</option>
-                </select>
-                <select id="filter-project">
-                    <option value="all">Todos os Projetos</option>
-                </select>
-                <select id="filter-type">
-                    <option value="all">Todos os Tipos</option>
-                    <option value="combustivel">Combustível</option>
-                    <option value="alimentacao">Alimentação</option>
-                    <option value="alojamento">Alojamento</option>
-                    <option value="equipamento">Equipamento</option>
-                    <option value="producao">Produção</option>
-                    <option value="promocao">Promoção</option>
-                    <option value="transporte">Transporte</option>
-                    <option value="outros">Outros</option>
-                </select>
-                <select id="filter-investor">
-                    <option value="all">Todos os Investidores</option>
-                    <option value="maktub">Maktub</option>
-                    <option value="outro">Terceiros</option>
-                </select>
-            </div>
-            
-            <div class="summary-row">
-                <div class="summary-item">
-                    <span class="summary-label">Total</span>
-                    <span class="summary-value" id="summary-total">0.00 EUR</span>
+            <div class="reports-sticky-header">
+                <div class="content-header">
+                    <h2>Relatórios</h2>
+                    <p>Consulte todas as despesas</p>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Maktub</span>
-                    <span class="summary-value green" id="summary-maktub">0.00 EUR</span>
+                
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" id="search-input" placeholder="Pesquisar despesas...">
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Terceiros</span>
-                    <span class="summary-value yellow" id="summary-others">0.00 EUR</span>
+                
+                <div class="filters-row">
+                    <select id="filter-artist">
+                        <option value="all">Todos os Artistas</option>
+                    </select>
+                    <select id="filter-project">
+                        <option value="all">Todos os Projetos</option>
+                    </select>
+                    <select id="filter-type">
+                        <option value="all">Todos os Tipos</option>
+                        <option value="combustivel">Combustível</option>
+                        <option value="alimentacao">Alimentação</option>
+                        <option value="alojamento">Alojamento</option>
+                        <option value="equipamento">Equipamento</option>
+                        <option value="producao">Produção</option>
+                        <option value="promocao">Promoção</option>
+                        <option value="transporte">Transporte</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                    <select id="filter-investor">
+                        <option value="all">Todos os Investidores</option>
+                        <option value="maktub">Maktub</option>
+                        <option value="outro">Terceiros</option>
+                    </select>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-label">Registos</span>
-                    <span class="summary-value" id="summary-count">0</span>
+                
+                <div class="summary-row">
+                    <div class="summary-item">
+                        <span class="summary-label">Total</span>
+                        <span class="summary-value" id="summary-total">0.00 EUR</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Maktub</span>
+                        <span class="summary-value green" id="summary-maktub">0.00 EUR</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Terceiros</span>
+                        <span class="summary-value yellow" id="summary-others">0.00 EUR</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Registos</span>
+                        <span class="summary-value" id="summary-count">0</span>
+                    </div>
                 </div>
             </div>
             
@@ -540,6 +542,6 @@
     <!-- Toast -->
     <div id="toast" class="toast hidden"></div>
     
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
