@@ -2008,6 +2008,160 @@ function closeSyncModal() {
     }
 }
 
+// ============================================
+// CREATE NEW PROJECT
+// ============================================
+
+async function createNewProject() {
+    const artistSelect = document.getElementById('project-artist');
+    const nameInput = document.getElementById('project-name');
+    const typeSelect = document.getElementById('project-type');
+    const resultDiv = document.getElementById('project-result');
+    const createBtn = document.getElementById('create-project-btn');
+    
+    const artist = artistSelect.value;
+    const projectName = nameInput.value.trim();
+    const projectType = typeSelect.value;
+    
+    // Validation
+    if (!artist) {
+        showToast('Seleciona um artista', 'error');
+        artistSelect.focus();
+        return;
+    }
+    
+    if (!projectName) {
+        showToast('Insere o nome do projeto', 'error');
+        nameInput.focus();
+        return;
+    }
+    
+    if (!projectType) {
+        showToast('Seleciona o tipo de projeto', 'error');
+        typeSelect.focus();
+        return;
+    }
+    
+    if (!GOOGLE_SCRIPT_URL) {
+        showToast('Google Sheets não configurado', 'error');
+        return;
+    }
+    
+    // Disable button and show loading
+    createBtn.disabled = true;
+    createBtn.innerHTML = `
+        <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        A criar projeto...
+    `;
+    
+    try {
+        const payload = {
+            action: 'createProject',
+            artist: artist,
+            projectName: projectName,
+            projectType: projectType
+        };
+        
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            redirect: 'follow'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Show success
+            resultDiv.classList.remove('hidden');
+            document.getElementById('project-result-text').textContent = 
+                `Projeto "${projectName}" criado para ${artist}`;
+            document.getElementById('project-result-link').href = result.projectUrl;
+            
+            showToast('✅ Projeto criado com sucesso!', 'success');
+            
+            // Clear form
+            nameInput.value = '';
+            artistSelect.value = '';
+            typeSelect.value = '';
+            
+            // Refresh projects list
+            loadExistingProjects();
+            
+        } else {
+            showToast('Erro: ' + result.error, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error creating project:', error);
+        showToast('Erro ao criar projeto: ' + error.message, 'error');
+    } finally {
+        // Re-enable button
+        createBtn.disabled = false;
+        createBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                <line x1="12" y1="11" x2="12" y2="17"/>
+                <line x1="9" y1="14" x2="15" y2="14"/>
+            </svg>
+            Criar Projeto no Google Drive
+        `;
+    }
+}
+
+async function loadExistingProjects() {
+    const projectsList = document.getElementById('projects-list');
+    
+    if (!GOOGLE_SCRIPT_URL) {
+        projectsList.innerHTML = '<p class="loading-text">Google Sheets não configurado</p>';
+        return;
+    }
+    
+    projectsList.innerHTML = '<p class="loading-text">A carregar projetos...</p>';
+    
+    try {
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProjects`);
+        const data = await response.json();
+        
+        if (data.success && data.projects && data.projects.length > 0) {
+            projectsList.innerHTML = data.projects.map(proj => `
+                <div class="project-card">
+                    <div class="project-card-header">
+                        <span class="project-card-icon">📁</span>
+                        <div>
+                            <h4>${proj.project}</h4>
+                            <p class="project-card-artist">${proj.artist}</p>
+                        </div>
+                    </div>
+                    <a href="https://docs.google.com/spreadsheets/d/${proj.spreadsheetId}" target="_blank" class="project-card-link">
+                        📊 Abrir Spreadsheet →
+                    </a>
+                </div>
+            `).join('');
+        } else {
+            projectsList.innerHTML = `
+                <p class="loading-text">Nenhum projeto criado ainda.<br>
+                Usa o formulário acima para criar o primeiro!</p>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('Error loading projects:', error);
+        projectsList.innerHTML = '<p class="loading-text">Erro ao carregar projetos</p>';
+    }
+}
+
+// Load projects when switching to the tab
+document.addEventListener('DOMContentLoaded', () => {
+    // Listen for tab changes
+    document.querySelectorAll('.tab[data-tab="new-project"]').forEach(tab => {
+        tab.addEventListener('click', () => {
+            loadExistingProjects();
+        });
+    });
+});
+
 // Make functions globally accessible
 window.openEditModal = openEditModal;
 window.openDeleteModal = openDeleteModal;
@@ -2021,3 +2175,5 @@ window.openSyncModal = openSyncModal;
 window.closeSyncModal = closeSyncModal;
 window.copyAppsScriptCode = copyAppsScriptCode;
 window.showSetupGuide = showSetupGuide;
+window.createNewProject = createNewProject;
+window.loadExistingProjects = loadExistingProjects;

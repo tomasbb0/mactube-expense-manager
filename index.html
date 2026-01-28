@@ -68,6 +68,10 @@
                 <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
                 <span>Nova Despesa</span>
             </button>
+            <button class="tab" data-tab="new-project">
+                <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                <span>Novo Projeto</span>
+            </button>
             <button class="tab" data-tab="reports">
                 <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                 <span>Relatórios</span>
@@ -417,6 +421,88 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                     Exportar PDF
                 </button>
+            </div>
+        </div>
+        
+        <!-- New Project Tab -->
+        <div id="new-project" class="tab-content hidden">
+            <div class="content-header">
+                <h2>Novo Projeto</h2>
+                <p>Criar nova spreadsheet para um projeto</p>
+            </div>
+            
+            <div class="form-container project-form">
+                <div class="form-group">
+                    <label for="project-artist">🎵 Artista</label>
+                    <select id="project-artist" required>
+                        <option value="">Selecionar artista...</option>
+                        <option value="Bandidos do Cante">Bandidos do Cante</option>
+                        <option value="Buba Espinho">Buba Espinho</option>
+                        <option value="MAR">MAR</option>
+                        <option value="D.A.M.A">D.A.M.A</option>
+                        <option value="BRUCE">BRUCE</option>
+                        <option value="LUTZ">LUTZ</option>
+                        <option value="INÊS">INÊS</option>
+                        <option value="REAL GUNS">REAL GUNS</option>
+                        <option value="SUAVE">SUAVE</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="project-name">📁 Nome do Projeto</label>
+                    <input type="text" id="project-name" placeholder="Ex: Tanto Tempo, Tour 2026, EP Novo..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="project-type">📂 Tipo de Projeto</label>
+                    <select id="project-type" required>
+                        <option value="">Selecionar tipo...</option>
+                        <option value="Videoclipe">🎬 Videoclipe</option>
+                        <option value="Single">🎵 Single / Música</option>
+                        <option value="EP">💿 EP</option>
+                        <option value="Álbum">📀 Álbum</option>
+                        <option value="Tour">🚌 Tour / Digressão</option>
+                        <option value="Concerto">🎤 Concerto</option>
+                        <option value="Sessão Fotográfica">📸 Sessão Fotográfica</option>
+                        <option value="Outro">📋 Outro</option>
+                    </select>
+                </div>
+                
+                <div class="project-preview" id="project-preview">
+                    <h4>📊 O projeto irá incluir:</h4>
+                    <ul>
+                        <li>📊 <strong>DASHBOARD</strong> - com fórmulas automáticas (totais, investidores, balanço)</li>
+                        <li>🎯 <strong>Promoção</strong> - marketing, publicidade</li>
+                        <li>🚌 <strong>Tour</strong> - viagens, hotel, transporte</li>
+                        <li>🎤 <strong>Concerto</strong> - custos de espetáculos</li>
+                        <li>🎬 <strong>Videoclipe</strong> - produção audiovisual</li>
+                        <li>📋 <strong>Geral</strong> - outras despesas</li>
+                        <li>🎙️ <strong>Gravação</strong> - estúdio, produção</li>
+                    </ul>
+                </div>
+                
+                <button class="btn btn-primary btn-lg" id="create-project-btn" onclick="createNewProject()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                    Criar Projeto no Google Drive
+                </button>
+                
+                <div class="project-result hidden" id="project-result">
+                    <div class="success-message">
+                        <span class="success-icon">✅</span>
+                        <h4>Projeto Criado!</h4>
+                        <p id="project-result-text"></p>
+                        <a id="project-result-link" href="#" target="_blank" class="btn btn-secondary">
+                            📊 Abrir Spreadsheet
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="existing-projects">
+                <h3>📁 Projetos Existentes</h3>
+                <div id="projects-list" class="projects-grid">
+                    <p class="loading-text">A carregar projetos...</p>
+                </div>
             </div>
         </div>
         
