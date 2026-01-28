@@ -233,6 +233,43 @@ body {
     border-color: var(--green-primary);
 }
 
+/* Wide header buttons with labels */
+.header-btn-wide {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.header-btn-wide svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.header-btn-wide span {
+    white-space: nowrap;
+}
+
+/* Sync Button */
+.sync-btn {
+    background: linear-gradient(135deg, #1db954, #169c46);
+    border-color: #1db954;
+    color: #fff;
+}
+
+.sync-btn:hover {
+    background: linear-gradient(135deg, #169c46, #128c3f);
+    border-color: #169c46;
+    transform: scale(1.05);
+}
+
 /* Google Drive Button */
 .drive-btn {
     background: linear-gradient(135deg, #1a73e8, #1557b0);
