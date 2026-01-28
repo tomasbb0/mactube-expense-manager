@@ -266,13 +266,19 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
+const DATA_VERSION = 2; // Increment to force new demo data
+
 function loadData() {
     const saved = localStorage.getItem('maktub_expenses');
-    if (saved) {
+    const savedVersion = localStorage.getItem('maktub_data_version');
+    
+    // Force regenerate if version changed or no data
+    if (saved && savedVersion === String(DATA_VERSION)) {
         expenses = JSON.parse(saved);
     } else {
         expenses = generateDemoData(300);
         saveData();
+        localStorage.setItem('maktub_data_version', String(DATA_VERSION));
     }
     updateDashboard();
     updateFilterDropdowns();

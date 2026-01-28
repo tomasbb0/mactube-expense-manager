@@ -422,9 +422,14 @@ body {
 }
 
 .chart-bar-label {
-    min-width: 100px;
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
     font-size: 0.875rem;
     color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chart-bar-track {
@@ -446,11 +451,11 @@ body {
 }
 
 .chart-bar-segment.maktub {
-    background: var(--green-primary);
+    background: #33E933 !important;
 }
 
 .chart-bar-segment.outros {
-    background: var(--warning);
+    background: #ffbb33 !important;
 }
 
 .chart-bar-segment.combustivel { background: #ff6b6b; }
@@ -470,7 +475,8 @@ body {
 }
 
 .chart-bar-value {
-    min-width: 80px;
+    width: 100px;
+    min-width: 100px;
     text-align: right;
     font-size: 0.875rem;
     font-weight: 500;
