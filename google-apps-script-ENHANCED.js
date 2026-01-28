@@ -385,9 +385,36 @@ function syncArtistSheets(expenses) {
         byProject[projectName].push(e);
       });
       
+      // === DELETE OLD PROJECT SHEETS ===
+      // Get all sheet names that match artist project pattern
+      const artistShort = artist.replace(/ /g, '').substring(0, 10);
+      const existingSheets = ss.getSheets();
+      const validSheetNames = new Set();
+      
+      // Build list of valid sheet names from current data
+      Object.keys(byProject).forEach(project => {
+        const sheetName = artistShort + '_' + project.substring(0, 20);
+        validSheetNames.add(sheetName);
+      });
+      validSheetNames.add(artistShort + '_QG'); // Keep QG summary sheet
+      
+      // Delete sheets that match artist pattern but are not in valid list
+      existingSheets.forEach(sheet => {
+        const name = sheet.getName();
+        // Check if this is an artist project sheet (starts with artist prefix and underscore)
+        if (name.startsWith(artistShort + '_') && !validSheetNames.has(name)) {
+          Logger.log('DELETING old project sheet: ' + name);
+          try {
+            ss.deleteSheet(sheet);
+          } catch (e) {
+            Logger.log('Could not delete sheet ' + name + ': ' + e.toString());
+          }
+        }
+      });
+      Logger.log('Cleaned up old sheets for ' + artist + '. Valid projects: ' + Array.from(validSheetNames).join(', '));
+      
       // Process each project with Madalena's format
       Object.keys(byProject).forEach(project => {
-        const artistShort = artist.replace(/ /g, '').substring(0, 10);
         const sheetName = artistShort + '_' + project.substring(0, 20);
         let sheet = ss.getSheetByName(sheetName);
         if (!sheet) {
