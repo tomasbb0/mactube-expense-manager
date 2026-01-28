@@ -230,9 +230,14 @@ function loadCustomOptions() {
 // Artist to Projects mapping (based on real data - per artist only)
 const artistProjects = {
     'D.A.M.A': ['Beja 25 Abril', 'Festival Académico Lisboa', 'Salvaterra de Magos', 'Prémios Play', 'Benedita', 'Alvarães'],
-    'Buba Espinho': ['Beja 25 Abril', 'Festival Académico Lisboa', 'Porto', 'Coimbra', 'Videoclipe', 'Gravação Estúdio', 'Styling', 'Gastos Gerais'],
-    'MAR': ['Leiria', 'Faro', 'Porto', 'Videoclipe', 'Sessão Fotográfica', 'Styling', 'Gastos Gerais', 'Promoção'],
-    'Bandidos do Cante': ['Beja 25 Abril', 'Salvaterra de Magos', 'Coimbra', 'Videoclipe', 'Gravação Estúdio', 'Gastos Gerais']
+    'Buba Espinho': ['Coimbra', 'Festival Vilar de Mouros', 'Cascais', 'Videoclipe Novo Single'],
+    'MAR': ['Gondomar', 'Oliveira de Azeméis', 'Promoção', 'Sessão Fotográfica'],
+    'Bandidos do Cante': ['Beja 25 Abril', 'Serpa', 'Festival Cante Alentejano', 'Vidigueira'],
+    'BRUCE': ['Torres Vedras', 'Santarém', 'Videoclipe'],
+    'INÊS': ['Amadora', 'Sintra', 'Gravação Estúdio'],
+    'LUTZ': ['Almada', 'Setúbal', 'Promoção'],
+    'REAL GUNS': ['Barreiro', 'Montijo', 'Festival Rock'],
+    'SUAVE': ['Oeiras', 'Cascais', 'Videoclipe Verão']
 };
 
 // All available projects (for fallback)
@@ -243,17 +248,30 @@ const allProjects = [
     { value: 'Prémios Play', label: '🏆 Prémios Play' },
     { value: 'Benedita', label: '🎤 Benedita' },
     { value: 'Alvarães', label: '🎤 Alvarães' },
-    { value: 'Marinha Grande', label: '🎤 Marinha Grande' },
-    { value: 'Leiria', label: '🎤 Leiria' },
     { value: 'Coimbra', label: '🎤 Coimbra' },
-    { value: 'Porto', label: '🎤 Porto' },
-    { value: 'Faro', label: '🎤 Faro' },
-    { value: 'Videoclipe', label: '🎬 Videoclipe' },
-    { value: 'Gravação Estúdio', label: '🎧 Gravação Estúdio' },
-    { value: 'Sessão Fotográfica', label: '📸 Sessão Fotográfica' },
-    { value: 'Styling', label: '👕 Styling' },
+    { value: 'Festival Vilar de Mouros', label: '🎤 Festival Vilar de Mouros' },
+    { value: 'Cascais', label: '🎤 Cascais' },
+    { value: 'Videoclipe Novo Single', label: '🎬 Videoclipe Novo Single' },
+    { value: 'Gondomar', label: '🎤 Gondomar' },
+    { value: 'Oliveira de Azeméis', label: '🎤 Oliveira de Azeméis' },
     { value: 'Promoção', label: '📢 Promoção' },
-    { value: 'Gastos Gerais', label: '📋 Gastos Gerais' }
+    { value: 'Sessão Fotográfica', label: '📸 Sessão Fotográfica' },
+    { value: 'Serpa', label: '🎤 Serpa' },
+    { value: 'Festival Cante Alentejano', label: '🎤 Festival Cante Alentejano' },
+    { value: 'Vidigueira', label: '🎤 Vidigueira' },
+    { value: 'Torres Vedras', label: '🎤 Torres Vedras' },
+    { value: 'Santarém', label: '🎤 Santarém' },
+    { value: 'Videoclipe', label: '🎬 Videoclipe' },
+    { value: 'Amadora', label: '🎤 Amadora' },
+    { value: 'Sintra', label: '🎤 Sintra' },
+    { value: 'Gravação Estúdio', label: '🎧 Gravação Estúdio' },
+    { value: 'Almada', label: '🎤 Almada' },
+    { value: 'Setúbal', label: '🎤 Setúbal' },
+    { value: 'Barreiro', label: '🎤 Barreiro' },
+    { value: 'Montijo', label: '🎤 Montijo' },
+    { value: 'Festival Rock', label: '🎸 Festival Rock' },
+    { value: 'Oeiras', label: '🎤 Oeiras' },
+    { value: 'Videoclipe Verão', label: '🎬 Videoclipe Verão' }
 ];
 
 function filterProjectsByArtist() {
@@ -390,7 +408,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 3; // Increment to force reload - v3: Complete D.A.M.A Excel data for 6 concerts
+const DATA_VERSION = 4; // Increment to force reload - v4: Added all artists with demo projects
 
 function loadData() {
     const saved = localStorage.getItem('maktub_expenses');
@@ -719,6 +737,210 @@ function getRealDAMAData() {
     data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 175, date: '2024-05-29', entity: 'Safety Show - Apoio a Eventos, Lda.', investor: 'maktub', notes: 'Serviço de Apoio driver Gustavo - DAMA - Alvarães', createdAt: '2024-05-29T10:00:00Z' });
     data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 160, date: '2024-05-29', entity: 'Safety Show - Apoio a Eventos, Lda.', investor: 'maktub', notes: 'Serviço de Apoio VZ24019 AN - DAMA - Alvarães', createdAt: '2024-05-29T10:00:00Z' });
     data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'outros', amount: 71.87, date: '2024-06-11', entity: 'Tributação Autónoma (Prevista)', investor: 'maktub', notes: '', createdAt: '2024-06-11T10:00:00Z' });
+
+    // ============================================================
+    // === BUBA ESPINHO ===
+    // ============================================================
+    
+    // --- Coimbra (12.04.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'producao', amount: 8500, date: '2024-04-12', entity: 'Cachet Buba Espinho | Coimbra | 12 abril 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-04-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'producao', amount: 350, date: '2024-04-15', entity: 'João Silva - Técnico Som', investor: 'maktub', notes: 'Cachet técnico som', createdAt: '2024-04-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'producao', amount: 300, date: '2024-04-15', entity: 'Pedro Santos - Backline', investor: 'maktub', notes: 'Cachet backline', createdAt: '2024-04-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'equipamento', amount: 850, date: '2024-04-14', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material Audiovisual', createdAt: '2024-04-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'transporte', amount: 180, date: '2024-04-12', entity: 'Pieter Smit Theather Rock B.V', investor: 'maktub', notes: 'Transporte equipa', createdAt: '2024-04-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'combustivel', amount: 65.40, date: '2024-04-12', entity: 'Carrinha Músicos', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-04-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'transporte', amount: 28.50, date: '2024-04-12', entity: 'Via Verde', investor: 'maktub', notes: 'Portagens', createdAt: '2024-04-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Coimbra', type: 'alimentacao', amount: 45.80, date: '2024-04-12', entity: 'Alimentação comitiva', investor: 'maktub', notes: '', createdAt: '2024-04-12T10:00:00Z' });
+
+    // --- Festival Vilar de Mouros (23.08.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'producao', amount: 12000, date: '2024-08-23', entity: 'Cachet Buba Espinho | Vilar de Mouros | 23 agosto 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-08-23T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'producao', amount: 400, date: '2024-08-25', entity: 'Miguel Ferreira - Técnico', investor: 'maktub', notes: 'Cachet técnico', createdAt: '2024-08-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'equipamento', amount: 1200, date: '2024-08-22', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material Audiovisual', createdAt: '2024-08-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'transporte', amount: 380, date: '2024-08-22', entity: 'Pieter Smit Theather Rock B.V', investor: 'maktub', notes: 'Transporte', createdAt: '2024-08-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'combustivel', amount: 142.30, date: '2024-08-23', entity: 'Camião Material', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-08-23T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'alojamento', amount: 320, date: '2024-08-23', entity: 'Hotel Minho', investor: 'maktub', notes: '2 quartos', createdAt: '2024-08-23T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Festival Vilar de Mouros', type: 'transporte', amount: 76.40, date: '2024-08-24', entity: 'Via Verde', investor: 'maktub', notes: 'Portagens', createdAt: '2024-08-24T10:00:00Z' });
+
+    // --- Cascais (15.06.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Cascais', type: 'producao', amount: 9000, date: '2024-06-15', entity: 'Cachet Buba Espinho | Cascais | 15 junho 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-06-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Cascais', type: 'producao', amount: 350, date: '2024-06-17', entity: 'Ana Costa - Stylist', investor: 'maktub', notes: 'Cachet stylist', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Cascais', type: 'equipamento', amount: 950, date: '2024-06-14', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-06-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Cascais', type: 'transporte', amount: 85, date: '2024-06-15', entity: 'Uber/Bolt', investor: 'maktub', notes: 'TVDE', createdAt: '2024-06-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Cascais', type: 'combustivel', amount: 42.80, date: '2024-06-15', entity: 'Carrinha', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-06-15T10:00:00Z' });
+
+    // --- Videoclipe Novo Single ---
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Videoclipe Novo Single', type: 'producao', amount: 15000, date: '2024-05-10', entity: 'Produção Videoclipe - Investimento', investor: 'maktub', notes: 'CUSTO - Produção videoclipe', createdAt: '2024-05-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Videoclipe Novo Single', type: 'producao', amount: 2500, date: '2024-05-12', entity: 'Realizador Carlos Mendes', investor: 'maktub', notes: 'Cachet realizador', createdAt: '2024-05-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Videoclipe Novo Single', type: 'equipamento', amount: 1800, date: '2024-05-10', entity: 'Aluguer Câmaras e Luzes', investor: 'maktub', notes: 'Equipamento filmagem', createdAt: '2024-05-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Buba Espinho', project: 'Videoclipe Novo Single', type: 'outros', amount: 850, date: '2024-05-11', entity: 'Cenografia', investor: 'maktub', notes: 'Decoração set', createdAt: '2024-05-11T10:00:00Z' });
+
+    // ============================================================
+    // === MAR ===
+    // ============================================================
+    
+    // --- Gondomar (20.04.2024) ---
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Gondomar', type: 'producao', amount: 7500, date: '2024-04-20', entity: 'Cachet MAR | Gondomar | 20 abril 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-04-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Gondomar', type: 'producao', amount: 280, date: '2024-04-22', entity: 'Rui Almeida - Técnico', investor: 'maktub', notes: 'Cachet técnico', createdAt: '2024-04-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Gondomar', type: 'equipamento', amount: 720, date: '2024-04-19', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-04-19T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Gondomar', type: 'transporte', amount: 220, date: '2024-04-20', entity: 'Transporte equipa', investor: 'maktub', notes: '', createdAt: '2024-04-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Gondomar', type: 'combustivel', amount: 78.50, date: '2024-04-20', entity: 'Carrinha', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-04-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Gondomar', type: 'transporte', amount: 45.20, date: '2024-04-20', entity: 'Via Verde', investor: 'maktub', notes: 'Portagens', createdAt: '2024-04-20T10:00:00Z' });
+
+    // --- Oliveira de Azeméis (08.05.2024) ---
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Oliveira de Azeméis', type: 'producao', amount: 6800, date: '2024-05-08', entity: 'Cachet MAR | Oliveira de Azeméis | 8 maio 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-05-08T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Oliveira de Azeméis', type: 'producao', amount: 250, date: '2024-05-10', entity: 'Sofia Dias - Assistente', investor: 'maktub', notes: 'Cachet assistente', createdAt: '2024-05-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Oliveira de Azeméis', type: 'equipamento', amount: 680, date: '2024-05-07', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-05-07T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Oliveira de Azeméis', type: 'transporte', amount: 195, date: '2024-05-08', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-05-08T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Oliveira de Azeméis', type: 'combustivel', amount: 68.90, date: '2024-05-08', entity: 'Carrinha', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-08T10:00:00Z' });
+
+    // --- Promoção ---
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Promoção', type: 'outros', amount: 2500, date: '2024-03-15', entity: 'Campanha Digital', investor: 'maktub', notes: 'Meta Ads', createdAt: '2024-03-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Promoção', type: 'outros', amount: 1200, date: '2024-03-20', entity: 'Spotify Ads', investor: 'maktub', notes: 'Promoção streaming', createdAt: '2024-03-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Promoção', type: 'outros', amount: 800, date: '2024-04-01', entity: 'Press Release', investor: 'maktub', notes: 'Assessoria imprensa', createdAt: '2024-04-01T10:00:00Z' });
+
+    // --- Sessão Fotográfica ---
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Sessão Fotográfica', type: 'producao', amount: 1500, date: '2024-02-28', entity: 'Fotógrafo João Martins', investor: 'maktub', notes: 'Sessão promocional', createdAt: '2024-02-28T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Sessão Fotográfica', type: 'outros', amount: 450, date: '2024-02-28', entity: 'Maquilhagem', investor: 'maktub', notes: 'MUA profissional', createdAt: '2024-02-28T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'MAR', project: 'Sessão Fotográfica', type: 'outros', amount: 380, date: '2024-02-28', entity: 'Styling', investor: 'maktub', notes: 'Roupa sessão', createdAt: '2024-02-28T10:00:00Z' });
+
+    // ============================================================
+    // === BANDIDOS DO CANTE ===
+    // ============================================================
+    
+    // --- Beja 25 Abril (25.04.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Beja 25 Abril', type: 'producao', amount: 5500, date: '2024-04-25', entity: 'Cachet Bandidos do Cante | Beja | 25 abril 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-04-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Beja 25 Abril', type: 'producao', amount: 200, date: '2024-04-27', entity: 'Técnico som', investor: 'maktub', notes: 'Cachet', createdAt: '2024-04-27T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Beja 25 Abril', type: 'transporte', amount: 280, date: '2024-04-25', entity: 'Transporte grupo', investor: 'maktub', notes: '', createdAt: '2024-04-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Beja 25 Abril', type: 'combustivel', amount: 95.60, date: '2024-04-25', entity: 'Carrinha', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-04-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Beja 25 Abril', type: 'alimentacao', amount: 85.40, date: '2024-04-25', entity: 'Alimentação comitiva', investor: 'maktub', notes: '', createdAt: '2024-04-25T10:00:00Z' });
+
+    // --- Serpa (10.05.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Serpa', type: 'producao', amount: 4800, date: '2024-05-10', entity: 'Cachet Bandidos do Cante | Serpa | 10 maio 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-05-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Serpa', type: 'producao', amount: 180, date: '2024-05-12', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-05-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Serpa', type: 'transporte', amount: 240, date: '2024-05-10', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-05-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Serpa', type: 'combustivel', amount: 82.30, date: '2024-05-10', entity: 'Gasóleo', investor: 'maktub', notes: '', createdAt: '2024-05-10T10:00:00Z' });
+
+    // --- Festival Cante Alentejano (15.06.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Festival Cante Alentejano', type: 'producao', amount: 8000, date: '2024-06-15', entity: 'Cachet Bandidos do Cante | Festival Cante | 15 junho 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-06-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Festival Cante Alentejano', type: 'producao', amount: 350, date: '2024-06-17', entity: 'Técnicos', investor: 'maktub', notes: 'Cachets', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Festival Cante Alentejano', type: 'equipamento', amount: 450, date: '2024-06-14', entity: 'Material som', investor: 'maktub', notes: 'Aluguer', createdAt: '2024-06-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Festival Cante Alentejano', type: 'transporte', amount: 320, date: '2024-06-15', entity: 'Transporte grupo', investor: 'maktub', notes: '', createdAt: '2024-06-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Festival Cante Alentejano', type: 'alojamento', amount: 280, date: '2024-06-15', entity: 'Hotel Alentejo', investor: 'maktub', notes: '2 quartos', createdAt: '2024-06-15T10:00:00Z' });
+
+    // --- Vidigueira (22.07.2024) ---
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Vidigueira', type: 'producao', amount: 4200, date: '2024-07-22', entity: 'Cachet Bandidos do Cante | Vidigueira | 22 julho 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-07-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Vidigueira', type: 'transporte', amount: 195, date: '2024-07-22', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-07-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'Bandidos do Cante', project: 'Vidigueira', type: 'combustivel', amount: 68.40, date: '2024-07-22', entity: 'Gasóleo', investor: 'maktub', notes: '', createdAt: '2024-07-22T10:00:00Z' });
+
+    // ============================================================
+    // === BRUCE ===
+    // ============================================================
+    
+    // --- Torres Vedras (05.04.2024) ---
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Torres Vedras', type: 'producao', amount: 6500, date: '2024-04-05', entity: 'Cachet BRUCE | Torres Vedras | 5 abril 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-04-05T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Torres Vedras', type: 'producao', amount: 320, date: '2024-04-07', entity: 'Técnico som', investor: 'maktub', notes: 'Cachet', createdAt: '2024-04-07T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Torres Vedras', type: 'equipamento', amount: 780, date: '2024-04-04', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-04-04T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Torres Vedras', type: 'transporte', amount: 150, date: '2024-04-05', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-04-05T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Torres Vedras', type: 'combustivel', amount: 52.40, date: '2024-04-05', entity: 'Gasóleo', investor: 'maktub', notes: '', createdAt: '2024-04-05T10:00:00Z' });
+
+    // --- Santarém (18.05.2024) ---
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Santarém', type: 'producao', amount: 7200, date: '2024-05-18', entity: 'Cachet BRUCE | Santarém | 18 maio 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-05-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Santarém', type: 'producao', amount: 350, date: '2024-05-20', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-05-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Santarém', type: 'equipamento', amount: 850, date: '2024-05-17', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-05-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Santarém', type: 'transporte', amount: 120, date: '2024-05-18', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-05-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Santarém', type: 'combustivel', amount: 45.80, date: '2024-05-18', entity: 'Gasóleo', investor: 'maktub', notes: '', createdAt: '2024-05-18T10:00:00Z' });
+
+    // --- Videoclipe ---
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Videoclipe', type: 'producao', amount: 8500, date: '2024-06-01', entity: 'Produção Videoclipe', investor: 'maktub', notes: 'CUSTO - Produção', createdAt: '2024-06-01T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Videoclipe', type: 'producao', amount: 1800, date: '2024-06-03', entity: 'Realizador', investor: 'maktub', notes: 'Cachet', createdAt: '2024-06-03T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'BRUCE', project: 'Videoclipe', type: 'equipamento', amount: 1200, date: '2024-06-01', entity: 'Aluguer equipamento', investor: 'maktub', notes: 'Câmaras e luzes', createdAt: '2024-06-01T10:00:00Z' });
+
+    // ============================================================
+    // === INÊS ===
+    // ============================================================
+    
+    // --- Amadora (12.04.2024) ---
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Amadora', type: 'producao', amount: 5800, date: '2024-04-12', entity: 'Cachet INÊS | Amadora | 12 abril 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-04-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Amadora', type: 'producao', amount: 280, date: '2024-04-14', entity: 'Técnico som', investor: 'maktub', notes: 'Cachet', createdAt: '2024-04-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Amadora', type: 'equipamento', amount: 620, date: '2024-04-11', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-04-11T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Amadora', type: 'transporte', amount: 85, date: '2024-04-12', entity: 'TVDE', investor: 'maktub', notes: '', createdAt: '2024-04-12T10:00:00Z' });
+
+    // --- Sintra (28.05.2024) ---
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Sintra', type: 'producao', amount: 6200, date: '2024-05-28', entity: 'Cachet INÊS | Sintra | 28 maio 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-05-28T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Sintra', type: 'producao', amount: 300, date: '2024-05-30', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-05-30T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Sintra', type: 'equipamento', amount: 680, date: '2024-05-27', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-05-27T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Sintra', type: 'transporte', amount: 95, date: '2024-05-28', entity: 'TVDE', investor: 'maktub', notes: '', createdAt: '2024-05-28T10:00:00Z' });
+
+    // --- Gravação Estúdio ---
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Gravação Estúdio', type: 'producao', amount: 3500, date: '2024-03-15', entity: 'Estúdio Som Lisboa', investor: 'maktub', notes: 'Gravação EP', createdAt: '2024-03-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Gravação Estúdio', type: 'producao', amount: 1200, date: '2024-03-18', entity: 'Produtor musical', investor: 'maktub', notes: 'Cachet produtor', createdAt: '2024-03-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'INÊS', project: 'Gravação Estúdio', type: 'producao', amount: 800, date: '2024-03-20', entity: 'Mistura e Master', investor: 'maktub', notes: '', createdAt: '2024-03-20T10:00:00Z' });
+
+    // ============================================================
+    // === LUTZ ===
+    // ============================================================
+    
+    // --- Almada (22.04.2024) ---
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Almada', type: 'producao', amount: 5200, date: '2024-04-22', entity: 'Cachet LUTZ | Almada | 22 abril 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-04-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Almada', type: 'producao', amount: 260, date: '2024-04-24', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-04-24T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Almada', type: 'equipamento', amount: 580, date: '2024-04-21', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-04-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Almada', type: 'transporte', amount: 75, date: '2024-04-22', entity: 'TVDE', investor: 'maktub', notes: '', createdAt: '2024-04-22T10:00:00Z' });
+
+    // --- Setúbal (15.06.2024) ---
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Setúbal', type: 'producao', amount: 5800, date: '2024-06-15', entity: 'Cachet LUTZ | Setúbal | 15 junho 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-06-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Setúbal', type: 'producao', amount: 290, date: '2024-06-17', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Setúbal', type: 'equipamento', amount: 620, date: '2024-06-14', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-06-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Setúbal', type: 'transporte', amount: 95, date: '2024-06-15', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-06-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Setúbal', type: 'combustivel', amount: 42.80, date: '2024-06-15', entity: 'Gasóleo', investor: 'maktub', notes: '', createdAt: '2024-06-15T10:00:00Z' });
+
+    // --- Promoção ---
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Promoção', type: 'outros', amount: 1800, date: '2024-04-01', entity: 'Campanha Digital', investor: 'maktub', notes: 'Meta Ads', createdAt: '2024-04-01T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'LUTZ', project: 'Promoção', type: 'outros', amount: 950, date: '2024-04-10', entity: 'Spotify Ads', investor: 'maktub', notes: 'Promoção streaming', createdAt: '2024-04-10T10:00:00Z' });
+
+    // ============================================================
+    // === REAL GUNS ===
+    // ============================================================
+    
+    // --- Barreiro (08.05.2024) ---
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Barreiro', type: 'producao', amount: 4800, date: '2024-05-08', entity: 'Cachet REAL GUNS | Barreiro | 8 maio 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-05-08T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Barreiro', type: 'producao', amount: 240, date: '2024-05-10', entity: 'Técnico som', investor: 'maktub', notes: 'Cachet', createdAt: '2024-05-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Barreiro', type: 'equipamento', amount: 520, date: '2024-05-07', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-05-07T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Barreiro', type: 'transporte', amount: 85, date: '2024-05-08', entity: 'TVDE', investor: 'maktub', notes: '', createdAt: '2024-05-08T10:00:00Z' });
+
+    // --- Montijo (22.06.2024) ---
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Montijo', type: 'producao', amount: 5200, date: '2024-06-22', entity: 'Cachet REAL GUNS | Montijo | 22 junho 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-06-22T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Montijo', type: 'producao', amount: 260, date: '2024-06-24', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-06-24T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Montijo', type: 'equipamento', amount: 580, date: '2024-06-21', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-06-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Montijo', type: 'transporte', amount: 95, date: '2024-06-22', entity: 'Transporte', investor: 'maktub', notes: '', createdAt: '2024-06-22T10:00:00Z' });
+
+    // --- Festival Rock (10.08.2024) ---
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Festival Rock', type: 'producao', amount: 8500, date: '2024-08-10', entity: 'Cachet REAL GUNS | Festival Rock | 10 agosto 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-08-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Festival Rock', type: 'producao', amount: 450, date: '2024-08-12', entity: 'Técnicos', investor: 'maktub', notes: 'Cachets', createdAt: '2024-08-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Festival Rock', type: 'equipamento', amount: 1100, date: '2024-08-09', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-08-09T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Festival Rock', type: 'transporte', amount: 380, date: '2024-08-10', entity: 'Transporte equipa', investor: 'maktub', notes: '', createdAt: '2024-08-10T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'REAL GUNS', project: 'Festival Rock', type: 'alojamento', amount: 290, date: '2024-08-10', entity: 'Hotel', investor: 'maktub', notes: '2 quartos', createdAt: '2024-08-10T10:00:00Z' });
+
+    // ============================================================
+    // === SUAVE ===
+    // ============================================================
+    
+    // --- Oeiras (15.05.2024) ---
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Oeiras', type: 'producao', amount: 5500, date: '2024-05-15', entity: 'Cachet SUAVE | Oeiras | 15 maio 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-05-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Oeiras', type: 'producao', amount: 280, date: '2024-05-17', entity: 'Técnico som', investor: 'maktub', notes: 'Cachet', createdAt: '2024-05-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Oeiras', type: 'equipamento', amount: 620, date: '2024-05-14', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-05-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Oeiras', type: 'transporte', amount: 75, date: '2024-05-15', entity: 'TVDE', investor: 'maktub', notes: '', createdAt: '2024-05-15T10:00:00Z' });
+
+    // --- Cascais (28.06.2024) ---
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Cascais', type: 'producao', amount: 6200, date: '2024-06-28', entity: 'Cachet SUAVE | Cascais | 28 junho 2024', investor: 'outro', notes: 'PROVEITO', createdAt: '2024-06-28T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Cascais', type: 'producao', amount: 300, date: '2024-06-30', entity: 'Técnico', investor: 'maktub', notes: 'Cachet', createdAt: '2024-06-30T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Cascais', type: 'equipamento', amount: 680, date: '2024-06-27', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material', createdAt: '2024-06-27T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Cascais', type: 'transporte', amount: 85, date: '2024-06-28', entity: 'TVDE', investor: 'maktub', notes: '', createdAt: '2024-06-28T10:00:00Z' });
+
+    // --- Videoclipe Verão ---
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Videoclipe Verão', type: 'producao', amount: 7500, date: '2024-07-05', entity: 'Produção Videoclipe', investor: 'maktub', notes: 'CUSTO - Produção', createdAt: '2024-07-05T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Videoclipe Verão', type: 'producao', amount: 1500, date: '2024-07-07', entity: 'Realizador', investor: 'maktub', notes: 'Cachet', createdAt: '2024-07-07T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Videoclipe Verão', type: 'equipamento', amount: 980, date: '2024-07-05', entity: 'Aluguer equipamento', investor: 'maktub', notes: 'Câmaras', createdAt: '2024-07-05T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'SUAVE', project: 'Videoclipe Verão', type: 'outros', amount: 650, date: '2024-07-06', entity: 'Styling e MUA', investor: 'maktub', notes: '', createdAt: '2024-07-06T10:00:00Z' });
 
     return data;
 }
