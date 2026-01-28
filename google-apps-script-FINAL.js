@@ -422,6 +422,7 @@ function syncArtistSheets(expenses) {
         // Proveitos header
         sheet.getRange(currentRow, 1, 1, 4).setValues([['Data', 'Tipo', 'Nome', 'Valor']]);
         sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#e8e8e8');
+        const proveitosDataStartRow = currentRow + 1;
         currentRow++;
         
         let totalProveitos = 0;
@@ -442,9 +443,15 @@ function syncArtistSheets(expenses) {
           sheet.getRange(currentRow, 1).setFontStyle('italic').setFontColor('#888888');
           currentRow++;
         }
+        const proveitosDataEndRow = currentRow - 1;
         
-        // Total Proveitos
-        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL PROVEITOS ***', totalProveitos]]);
+        // Total Proveitos - USE FORMULA
+        const proveitosRow = currentRow;
+        if (proveitos.length > 0) {
+          sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL PROVEITOS ***', '=SUM(D' + proveitosDataStartRow + ':D' + proveitosDataEndRow + ')']]);
+        } else {
+          sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL PROVEITOS ***', 0]]);
+        }
         sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#c6efce');
         currentRow += 2;
         
@@ -456,6 +463,7 @@ function syncArtistSheets(expenses) {
         // Custos header
         sheet.getRange(currentRow, 1, 1, 4).setValues([['Data', 'Tipo', 'Nome', 'Valor']]);
         sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#e8e8e8');
+        const custosDataStartRow = currentRow + 1;
         currentRow++;
         
         let totalCustos = 0;
@@ -476,21 +484,41 @@ function syncArtistSheets(expenses) {
           sheet.getRange(currentRow, 1).setFontStyle('italic').setFontColor('#888888');
           currentRow++;
         }
+        const custosDataEndRow = currentRow - 1;
         
-        // Total Custos
-        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL CUSTOS ***', totalCustos]]);
+        // Total Custos - USE FORMULA
+        const custosRow = currentRow;
+        if (custos.length > 0) {
+          sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL CUSTOS ***', '=SUM(D' + custosDataStartRow + ':D' + custosDataEndRow + ')']]);
+        } else {
+          sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL CUSTOS ***', 0]]);
+        }
         sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#ffc7ce');
         currentRow += 2;
         
-        // === RESULTADO ===
+        // === RESULTADO - USE FORMULA ===
+        const resultadoRow = currentRow;
         const resultado = totalProveitos - totalCustos;
-        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', 'RESULTADO', resultado]]);
+        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', 'RESULTADO', '=D' + proveitosRow + '-D' + custosRow]]);
         sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setFontSize(11);
-        if (resultado >= 0) {
-          sheet.getRange(currentRow, 4).setFontColor('#006400').setBackground('#c6efce');
-        } else {
-          sheet.getRange(currentRow, 4).setFontColor('#8b0000').setBackground('#ffc7ce');
-        }
+        // Conditional formatting for resultado
+        const resultadoCell = sheet.getRange(currentRow, 4);
+        const rule = SpreadsheetApp.newConditionalFormatRule()
+          .whenNumberGreaterThanOrEqualTo(0)
+          .setBackground('#c6efce')
+          .setFontColor('#006400')
+          .setRanges([resultadoCell])
+          .build();
+        const rule2 = SpreadsheetApp.newConditionalFormatRule()
+          .whenNumberLessThan(0)
+          .setBackground('#ffc7ce')
+          .setFontColor('#8b0000')
+          .setRanges([resultadoCell])
+          .build();
+        const rules = sheet.getConditionalFormatRules();
+        rules.push(rule);
+        rules.push(rule2);
+        sheet.setConditionalFormatRules(rules);
         
         // Format value column
         sheet.getRange(1, 4, currentRow, 1).setNumberFormat('#,##0.00 €');
@@ -501,17 +529,21 @@ function syncArtistSheets(expenses) {
         sheet.setColumnWidth(3, 200);
         sheet.setColumnWidth(4, 120);
         
-        // Save summary for QG
+        // Save summary for QG - include sheet name for formula references
         allProjectSummaries.push({
           artist: artist,
           project: project,
+          sheetName: sheetName,
+          proveitosRow: proveitosRow,  // Row where TOTAL PROVEITOS is
+          custosRow: custosRow,        // Row where TOTAL CUSTOS is
+          resultadoRow: resultadoRow,  // Row where RESULTADO is
           proveitos: totalProveitos,
           custos: totalCustos,
           resultado: resultado
         });
       });
       
-      // Create QG (Quadro Geral) summary sheet for this artist
+      // Create QG (Quadro Geral) summary sheet for this artist WITH FORMULAS
       createArtistQGSheet(ss, artist, allProjectSummaries.filter(s => s.artist === artist));
       
       Logger.log('Updated ' + Object.keys(byProject).length + ' projects for ' + artist);
@@ -525,7 +557,7 @@ function syncArtistSheets(expenses) {
   createMainQGSheet(allProjectSummaries);
 }
 
-// Create QG summary sheet for an individual artist (like DAMA_QG)
+// Create QG summary sheet for an individual artist (like DAMA_QG) WITH FORMULAS
 function createArtistQGSheet(ss, artist, summaries) {
   const artistShort = artist.replace(/ /g, '').substring(0, 10);
   const sheetName = artistShort + '_QG';
@@ -545,48 +577,67 @@ function createArtistQGSheet(ss, artist, summaries) {
   // Headers
   sheet.getRange(currentRow, 1, 1, 6).setValues([['Projeto', 'Proveitos', 'Custos', 'Resultado', 'Inv. Maktub', 'Balanço Artista']]);
   sheet.getRange(currentRow, 1, 1, 6).setFontWeight('bold').setBackground('#e8e8e8');
+  const dataStartRow = currentRow + 1;
   currentRow++;
   
-  let totalProveitos = 0, totalCustos = 0, totalResultado = 0;
-  
+  // Add each project with FORMULAS referencing the project sheets
   summaries.forEach(s => {
+    // Create formulas that reference the project sheet
+    const projectSheetName = "'" + s.sheetName + "'";
+    const proveitosFormula = '=' + projectSheetName + '!D' + s.proveitosRow;
+    const custosFormula = '=' + projectSheetName + '!D' + s.custosRow;
+    const resultadoFormula = '=' + projectSheetName + '!D' + s.resultadoRow;
+    
     sheet.getRange(currentRow, 1, 1, 6).setValues([[
       s.project,
-      s.proveitos,
-      s.custos,
-      s.resultado,
-      s.custos, // Invested by Maktub
-      s.resultado
+      proveitosFormula,  // =DAMA_Concerto!D8 (links to TOTAL PROVEITOS)
+      custosFormula,     // =DAMA_Concerto!D15 (links to TOTAL CUSTOS)
+      resultadoFormula,  // =DAMA_Concerto!D17 (links to RESULTADO)
+      custosFormula,     // Inv. Maktub = same as Custos
+      resultadoFormula   // Balanço = same as Resultado
     ]]);
     
-    // Color code resultado
-    if (s.resultado >= 0) {
-      sheet.getRange(currentRow, 4).setFontColor('#006400');
-      sheet.getRange(currentRow, 6).setFontColor('#006400');
-    } else {
-      sheet.getRange(currentRow, 4).setFontColor('#8b0000');
-      sheet.getRange(currentRow, 6).setFontColor('#8b0000');
-    }
-    
-    totalProveitos += s.proveitos;
-    totalCustos += s.custos;
-    totalResultado += s.resultado;
     currentRow++;
   });
   
-  // Total row
-  sheet.getRange(currentRow, 1, 1, 6).setValues([['*** TOTAL ***', totalProveitos, totalCustos, totalResultado, totalCustos, totalResultado]]);
+  const dataEndRow = currentRow - 1;
+  
+  // Total row with SUM formulas
+  sheet.getRange(currentRow, 1, 1, 6).setValues([[
+    '*** TOTAL ***',
+    '=SUM(B' + dataStartRow + ':B' + dataEndRow + ')',
+    '=SUM(C' + dataStartRow + ':C' + dataEndRow + ')',
+    '=SUM(D' + dataStartRow + ':D' + dataEndRow + ')',
+    '=SUM(E' + dataStartRow + ':E' + dataEndRow + ')',
+    '=SUM(F' + dataStartRow + ':F' + dataEndRow + ')'
+  ]]);
   sheet.getRange(currentRow, 1, 1, 6).setFontWeight('bold').setBackground('#fff2cc');
   
   // Format currency
-  sheet.getRange(4, 2, currentRow - 3, 5).setNumberFormat('#,##0.00 €');
+  sheet.getRange(dataStartRow, 2, currentRow - dataStartRow + 1, 5).setNumberFormat('#,##0.00 €');
+  
+  // Add conditional formatting for resultado columns (D and F)
+  const resultadoRange = sheet.getRange(dataStartRow, 4, currentRow - dataStartRow + 1, 1);
+  const balancoRange = sheet.getRange(dataStartRow, 6, currentRow - dataStartRow + 1, 1);
+  
+  const rulePositive = SpreadsheetApp.newConditionalFormatRule()
+    .whenNumberGreaterThanOrEqualTo(0)
+    .setFontColor('#006400')
+    .setRanges([resultadoRange, balancoRange])
+    .build();
+  const ruleNegative = SpreadsheetApp.newConditionalFormatRule()
+    .whenNumberLessThan(0)
+    .setFontColor('#8b0000')
+    .setRanges([resultadoRange, balancoRange])
+    .build();
+  sheet.setConditionalFormatRules([rulePositive, ruleNegative]);
   
   // Column widths
   sheet.setColumnWidth(1, 180);
   for (let i = 2; i <= 6; i++) sheet.setColumnWidth(i, 130);
 }
 
-// Create main QG sheet with all artists
+// Create main QG sheet with all artists - USES INDIRECT REFERENCES to artist QG sheets
 function createMainQGSheet(allSummaries) {
   try {
     const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
@@ -606,6 +657,7 @@ function createMainQGSheet(allSummaries) {
     // Headers
     sheet.getRange(currentRow, 1, 1, 7).setValues([['Artista', 'Projeto', 'Proveitos', 'Custos', 'Resultado', 'Inv. Maktub', 'Balanço']]);
     sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#e8e8e8');
+    const dataStartRow = currentRow + 1;
     currentRow++;
     
     // Group by artist for subtotals
@@ -615,12 +667,14 @@ function createMainQGSheet(allSummaries) {
       byArtist[s.artist].push(s);
     });
     
-    let grandTotalProveitos = 0, grandTotalCustos = 0, grandTotalResultado = 0;
+    const subtotalRows = []; // Track subtotal rows for grand total formula
     
     Object.keys(byArtist).sort().forEach(artist => {
       const artistSummaries = byArtist[artist];
-      let artistProveitos = 0, artistCustos = 0, artistResultado = 0;
+      const artistStartRow = currentRow;
       
+      // Add each project row with static values (since they're from different spreadsheets)
+      // The artist's own spreadsheet has the live formulas
       artistSummaries.forEach(s => {
         sheet.getRange(currentRow, 1, 1, 7).setValues([[
           artist,
@@ -631,45 +685,70 @@ function createMainQGSheet(allSummaries) {
           s.custos,
           s.resultado
         ]]);
-        
-        if (s.resultado >= 0) {
-          sheet.getRange(currentRow, 5).setFontColor('#006400');
-          sheet.getRange(currentRow, 7).setFontColor('#006400');
-        } else {
-          sheet.getRange(currentRow, 5).setFontColor('#8b0000');
-          sheet.getRange(currentRow, 7).setFontColor('#8b0000');
-        }
-        
-        artistProveitos += s.proveitos;
-        artistCustos += s.custos;
-        artistResultado += s.resultado;
         currentRow++;
       });
       
-      // Artist subtotal
-      sheet.getRange(currentRow, 1, 1, 7).setValues([['Subtotal ' + artist, '', artistProveitos, artistCustos, artistResultado, artistCustos, artistResultado]]);
-      sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#e8f4f8').setFontStyle('italic');
-      currentRow++;
+      const artistEndRow = currentRow - 1;
       
-      grandTotalProveitos += artistProveitos;
-      grandTotalCustos += artistCustos;
-      grandTotalResultado += artistResultado;
+      // Artist subtotal with SUM formulas
+      sheet.getRange(currentRow, 1, 1, 7).setValues([[
+        'Subtotal ' + artist,
+        '',
+        '=SUM(C' + artistStartRow + ':C' + artistEndRow + ')',
+        '=SUM(D' + artistStartRow + ':D' + artistEndRow + ')',
+        '=SUM(E' + artistStartRow + ':E' + artistEndRow + ')',
+        '=SUM(F' + artistStartRow + ':F' + artistEndRow + ')',
+        '=SUM(G' + artistStartRow + ':G' + artistEndRow + ')'
+      ]]);
+      sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#e8f4f8').setFontStyle('italic');
+      subtotalRows.push(currentRow);
+      currentRow++;
     });
     
-    // Grand total
+    // Grand total using SUM of subtotal rows
     currentRow++;
-    sheet.getRange(currentRow, 1, 1, 7).setValues([['*** TOTAL GERAL ***', '', grandTotalProveitos, grandTotalCustos, grandTotalResultado, grandTotalCustos, grandTotalResultado]]);
+    const subtotalRefs = subtotalRows.map(r => 'C' + r).join('+');
+    const subtotalRefsD = subtotalRows.map(r => 'D' + r).join('+');
+    const subtotalRefsE = subtotalRows.map(r => 'E' + r).join('+');
+    const subtotalRefsF = subtotalRows.map(r => 'F' + r).join('+');
+    const subtotalRefsG = subtotalRows.map(r => 'G' + r).join('+');
+    
+    sheet.getRange(currentRow, 1, 1, 7).setValues([[
+      '*** TOTAL GERAL ***',
+      '',
+      '=' + subtotalRefs,
+      '=' + subtotalRefsD,
+      '=' + subtotalRefsE,
+      '=' + subtotalRefsF,
+      '=' + subtotalRefsG
+    ]]);
     sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#fff2cc').setFontSize(11);
     
     // Format currency
-    sheet.getRange(4, 3, currentRow - 3, 5).setNumberFormat('#,##0.00 €');
+    sheet.getRange(dataStartRow, 3, currentRow - dataStartRow + 1, 5).setNumberFormat('#,##0.00 €');
+    
+    // Add conditional formatting for resultado columns (E and G)
+    const resultadoRange = sheet.getRange(dataStartRow, 5, currentRow - dataStartRow + 1, 1);
+    const balancoRange = sheet.getRange(dataStartRow, 7, currentRow - dataStartRow + 1, 1);
+    
+    const rulePositive = SpreadsheetApp.newConditionalFormatRule()
+      .whenNumberGreaterThanOrEqualTo(0)
+      .setFontColor('#006400')
+      .setRanges([resultadoRange, balancoRange])
+      .build();
+    const ruleNegative = SpreadsheetApp.newConditionalFormatRule()
+      .whenNumberLessThan(0)
+      .setFontColor('#8b0000')
+      .setRanges([resultadoRange, balancoRange])
+      .build();
+    sheet.setConditionalFormatRules([rulePositive, ruleNegative]);
     
     // Column widths
     sheet.setColumnWidth(1, 150);
     sheet.setColumnWidth(2, 150);
     for (let i = 3; i <= 7; i++) sheet.setColumnWidth(i, 110);
     
-    Logger.log('Created main QG sheet');
+    Logger.log('Created main QG sheet with formulas');
     
   } catch (e) {
     Logger.log('Error creating main QG sheet: ' + e.toString());
