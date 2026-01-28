@@ -320,31 +320,21 @@ function saveData() {
 function deduplicateExpenses() {
     const beforeCount = expenses.length;
     
-    // Create a unique key for each expense based on its content (excluding ID)
+    // More aggressive deduplication - compare key fields with normalization
     const seen = new Map();
     const uniqueExpenses = [];
     
     expenses.forEach(exp => {
-        // Create a content-based key (date + artist + amount + type + entity + notes)
-        const contentKey = `${exp.date}|${exp.artist}|${exp.amount}|${exp.type}|${exp.entity || ''}|${exp.notes || ''}`;
+        // Normalize amount to 2 decimal places as string
+        const normalizedAmount = parseFloat(exp.amount || 0).toFixed(2);
+        
+        // Create a content-based key (date + artist + normalized amount + type)
+        // Use fewer fields to catch near-duplicates
+        const contentKey = `${(exp.date || '').trim()}|${(exp.artist || '').trim().toLowerCase()}|${normalizedAmount}|${(exp.type || '').trim().toLowerCase()}`;
         
         if (!seen.has(contentKey)) {
             seen.set(contentKey, exp);
             uniqueExpenses.push(exp);
-        } else {
-            // If we've seen this content before, keep the one with the earlier createdAt
-            const existing = seen.get(contentKey);
-            const existingTime = existing.createdAt ? new Date(existing.createdAt).getTime() : Infinity;
-            const currentTime = exp.createdAt ? new Date(exp.createdAt).getTime() : Infinity;
-            
-            if (currentTime < existingTime) {
-                // Replace with the older one
-                const idx = uniqueExpenses.indexOf(existing);
-                if (idx !== -1) {
-                    uniqueExpenses[idx] = exp;
-                    seen.set(contentKey, exp);
-                }
-            }
         }
     });
     
@@ -359,6 +349,25 @@ function deduplicateExpenses() {
     updateSettlement();
     
     return { before: beforeCount, after: uniqueExpenses.length, removed };
+}
+
+// Debug function to see what makes duplicates different
+function analyzeDuplicates() {
+    const groups = {};
+    expenses.forEach((exp, idx) => {
+        const key = `${exp.date}|${exp.artist}|${parseFloat(exp.amount).toFixed(2)}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push({ idx, exp });
+    });
+    
+    const duplicateGroups = Object.entries(groups).filter(([k, v]) => v.length > 1);
+    console.log(`Found ${duplicateGroups.length} groups with duplicates`);
+    
+    if (duplicateGroups.length > 0) {
+        console.log('Sample duplicate group:', duplicateGroups[0]);
+    }
+    
+    return duplicateGroups;
 }
 
 function generateDemoData(count) {
