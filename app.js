@@ -227,8 +227,76 @@ function loadCustomOptions() {
     }
 }
 
+// Artist to Projects mapping (based on real data)
+const artistProjects = {
+    'D.A.M.A': ['Benedita', 'Alvarães', 'Marinha Grande', 'Styling', 'Gastos Gerais', 'Beja 25 Abril', 'Festival Académico Lisboa', 'Salvaterra de Magos', 'Prémios Play'],
+    'Buba Espinho': ['Beja 25 Abril', 'Festival Académico Lisboa', 'Porto', 'Coimbra', 'Videoclipe', 'Gravação Estúdio', 'Styling', 'Gastos Gerais'],
+    'MAR': ['Leiria', 'Faro', 'Porto', 'Videoclipe', 'Sessão Fotográfica', 'Styling', 'Gastos Gerais', 'Promoção'],
+    'Bandidos do Cante': ['Beja 25 Abril', 'Salvaterra de Magos', 'Coimbra', 'Videoclipe', 'Gravação Estúdio', 'Gastos Gerais']
+};
+
+// All available projects (for fallback)
+const allProjects = [
+    { value: 'Beja 25 Abril', label: '🎤 Beja 25 Abril' },
+    { value: 'Festival Académico Lisboa', label: '🎤 Festival Académico Lisboa' },
+    { value: 'Salvaterra de Magos', label: '🎤 Salvaterra de Magos' },
+    { value: 'Prémios Play', label: '🏆 Prémios Play' },
+    { value: 'Benedita', label: '🎤 Benedita' },
+    { value: 'Alvarães', label: '🎤 Alvarães' },
+    { value: 'Marinha Grande', label: '🎤 Marinha Grande' },
+    { value: 'Leiria', label: '🎤 Leiria' },
+    { value: 'Coimbra', label: '🎤 Coimbra' },
+    { value: 'Porto', label: '🎤 Porto' },
+    { value: 'Faro', label: '🎤 Faro' },
+    { value: 'Videoclipe', label: '🎬 Videoclipe' },
+    { value: 'Gravação Estúdio', label: '🎧 Gravação Estúdio' },
+    { value: 'Sessão Fotográfica', label: '📸 Sessão Fotográfica' },
+    { value: 'Styling', label: '👕 Styling' },
+    { value: 'Promoção', label: '📢 Promoção' },
+    { value: 'Gastos Gerais', label: '📋 Gastos Gerais' }
+];
+
+function filterProjectsByArtist() {
+    const artistSelect = document.getElementById('artist');
+    const projectSelect = document.getElementById('project');
+    const selectedArtist = artistSelect.value;
+    
+    // Save current value
+    const currentProject = projectSelect.value;
+    
+    // Clear and rebuild options
+    projectSelect.innerHTML = '<option value="">Selecionar...</option>';
+    
+    // Get projects for this artist (or all if not mapped)
+    const allowedProjects = artistProjects[selectedArtist] || allProjects.map(p => p.value);
+    
+    // Add filtered projects
+    allProjects.forEach(proj => {
+        if (allowedProjects.includes(proj.value)) {
+            const option = document.createElement('option');
+            option.value = proj.value;
+            option.textContent = proj.label;
+            projectSelect.appendChild(option);
+        }
+    });
+    
+    // Add custom projects
+    customProjects.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p;
+        option.textContent = p;
+        projectSelect.appendChild(option);
+    });
+    
+    // Restore value if still valid
+    if (currentProject && allowedProjects.includes(currentProject)) {
+        projectSelect.value = currentProject;
+    }
+}
+
 // Make global
 window.addNewOption = addNewOption;
+window.filterProjectsByArtist = filterProjectsByArtist;
 
 // ==========================================
 // EXPENSE FORM
@@ -257,6 +325,10 @@ function initForm() {
     
     form.addEventListener('submit', handleFormSubmit);
     loadCustomOptions();
+    
+    // Add artist change listener to filter projects
+    const artistSelect = document.getElementById('artist');
+    artistSelect.addEventListener('change', filterProjectsByArtist);
 }
 
 function setDefaultDate() {
