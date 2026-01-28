@@ -271,7 +271,7 @@ function loadData() {
     if (saved) {
         expenses = JSON.parse(saved);
     } else {
-        expenses = generateDemoData(200);
+        expenses = generateDemoData(300);
         saveData();
     }
     updateDashboard();

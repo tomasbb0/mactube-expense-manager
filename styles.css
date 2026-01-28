@@ -460,7 +460,7 @@ body {
 .chart-bar-segment.producao { background: #33E933; }
 .chart-bar-segment.promocao { background: #4dabf7; }
 .chart-bar-segment.transporte { background: #9775fa; }
-.chart-bar-segment.outros { background: #868e96; }
+.chart-bar-segment.other { background: #868e96; }
 
 .chart-bar-fill {
     height: 100%;
