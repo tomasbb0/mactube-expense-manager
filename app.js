@@ -316,24 +316,17 @@ function saveData() {
     localStorage.setItem('maktub_expenses', JSON.stringify(expenses));
 }
 
-// Deduplicate expenses - removes duplicates based on content matching
+// Deduplicate expenses - removes duplicates by ID (the simplest approach!)
 function deduplicateExpenses() {
     const beforeCount = expenses.length;
     
-    // More aggressive deduplication - compare key fields with normalization
-    const seen = new Map();
+    // Simply keep first occurrence of each ID
+    const seenIds = new Set();
     const uniqueExpenses = [];
     
     expenses.forEach(exp => {
-        // Normalize amount to 2 decimal places as string
-        const normalizedAmount = parseFloat(exp.amount || 0).toFixed(2);
-        
-        // Create a content-based key (date + artist + normalized amount + type)
-        // Use fewer fields to catch near-duplicates
-        const contentKey = `${(exp.date || '').trim()}|${(exp.artist || '').trim().toLowerCase()}|${normalizedAmount}|${(exp.type || '').trim().toLowerCase()}`;
-        
-        if (!seen.has(contentKey)) {
-            seen.set(contentKey, exp);
+        if (!seenIds.has(exp.id)) {
+            seenIds.add(exp.id);
             uniqueExpenses.push(exp);
         }
     });
@@ -349,25 +342,6 @@ function deduplicateExpenses() {
     updateSettlement();
     
     return { before: beforeCount, after: uniqueExpenses.length, removed };
-}
-
-// Debug function to see what makes duplicates different
-function analyzeDuplicates() {
-    const groups = {};
-    expenses.forEach((exp, idx) => {
-        const key = `${exp.date}|${exp.artist}|${parseFloat(exp.amount).toFixed(2)}`;
-        if (!groups[key]) groups[key] = [];
-        groups[key].push({ idx, exp });
-    });
-    
-    const duplicateGroups = Object.entries(groups).filter(([k, v]) => v.length > 1);
-    console.log(`Found ${duplicateGroups.length} groups with duplicates`);
-    
-    if (duplicateGroups.length > 0) {
-        console.log('Sample duplicate group:', duplicateGroups[0]);
-    }
-    
-    return duplicateGroups;
 }
 
 function generateDemoData(count) {
