@@ -26,6 +26,18 @@ const SPREADSHEET_IDS = {
 const MAIN_COLUMNS = ['id', 'date', 'artist', 'project', 'type', 'entity', 'investor', 'amount', 'notes', 'createdAt'];
 const MAIN_HEADERS = ['ID', 'DATA', 'ARTISTA', 'PROJETO', 'TIPO', 'ENTIDADE', 'INVESTIDOR', 'VALOR', 'NOTAS', 'CRIADO EM'];
 
+// Type translations
+const TYPE_NAMES = {
+  combustivel: 'Combustível',
+  alimentacao: 'Alimentação - comitivas',
+  alojamento: 'Alojamento',
+  equipamento: 'Desgaste rápido 23% + Equipamento técnico',
+  producao: 'Produção',
+  promocao: 'Marketing e Promoção',
+  transporte: 'Transporte',
+  outros: 'Outros Gastos'
+};
+
 // ============================================
 // WEB APP HANDLERS
 // ============================================
@@ -353,6 +365,9 @@ function syncArtistSheets(expenses) {
   
   Logger.log('Grouped into ' + Object.keys(byArtist).length + ' artists');
   
+  // Track all project summaries for QG sheet
+  const allProjectSummaries = [];
+  
   // Update each artist's sheet
   Object.keys(byArtist).forEach(artist => {
     const artistSpreadsheetId = SPREADSHEET_IDS.artists[artist];
@@ -369,44 +384,135 @@ function syncArtistSheets(expenses) {
       // Group by project
       const byProject = {};
       artistExpenses.forEach(e => {
-        const projectName = e.project || 'Sem Projeto';
+        const projectName = e.project || 'Gastos Gerais';
         if (!byProject[projectName]) byProject[projectName] = [];
         byProject[projectName].push(e);
       });
       
-      // Update each project sheet
+      // Process each project with Madalena's format
       Object.keys(byProject).forEach(project => {
-        let sheet = ss.getSheetByName(project);
+        const artistShort = artist.replace(/ /g, '').substring(0, 10);
+        const sheetName = artistShort + '_' + project.substring(0, 20); // e.g., "DAMA_Beja"
+        let sheet = ss.getSheetByName(sheetName);
         if (!sheet) {
-          sheet = ss.insertSheet(project);
+          sheet = ss.insertSheet(sheetName);
         }
         
-        // Clear and rewrite
+        // Clear and format like Madalena's Excel
         sheet.clear();
-        sheet.appendRow(['TIPO', 'VALOR', 'DATA', 'ENTIDADE', 'INVESTIDOR', 'NOTAS', 'ID']);
-        sheet.getRange(1, 1, 1, 7).setFontWeight('bold');
         
-        // Add data rows
         const projectExpenses = byProject[project];
-        const rows = projectExpenses.map(expense => [
-          getTypeName(expense.type),
-          expense.amount,
-          expense.date,
-          expense.entity || '',
-          expense.investor === 'maktub' ? 'Maktub' : 'Terceiros',
-          expense.notes || '',
-          expense.id
-        ]);
         
-        if (rows.length > 0) {
-          sheet.getRange(2, 1, rows.length, 7).setValues(rows);
+        // Separate by investor: Maktub (CUSTOS for artist) vs Outros (PROVEITOS)
+        const custos = projectExpenses.filter(e => e.investor === 'maktub');
+        const proveitos = projectExpenses.filter(e => e.investor !== 'maktub');
+        
+        let currentRow = 1;
+        
+        // === TITLE ROW ===
+        sheet.getRange(currentRow, 1).setValue('Resultado ' + artist + ' - ' + project);
+        sheet.getRange(currentRow, 1, 1, 4).merge().setFontWeight('bold').setFontSize(12);
+        currentRow += 2;
+        
+        // === PROVEITOS SECTION ===
+        sheet.getRange(currentRow, 1).setValue('PROVEITOS');
+        sheet.getRange(currentRow, 1).setFontWeight('bold').setBackground('#c6efce');
+        currentRow++;
+        
+        // Proveitos header
+        sheet.getRange(currentRow, 1, 1, 4).setValues([['Data', 'Tipo', 'Nome', 'Valor']]);
+        sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#e8e8e8');
+        currentRow++;
+        
+        let totalProveitos = 0;
+        if (proveitos.length > 0) {
+          proveitos.forEach(e => {
+            const amount = Number(e.amount) || 0;
+            sheet.getRange(currentRow, 1, 1, 4).setValues([[
+              formatDate(e.date),
+              TYPE_NAMES[e.type] || e.type || 'Outros',
+              e.entity || '',
+              amount
+            ]]);
+            totalProveitos += amount;
+            currentRow++;
+          });
+        } else {
+          sheet.getRange(currentRow, 1).setValue('(Sem proveitos registados)');
+          sheet.getRange(currentRow, 1).setFontStyle('italic').setFontColor('#888888');
+          currentRow++;
         }
         
-        // Add total row
-        const lastRow = sheet.getLastRow();
-        sheet.appendRow(['', '', '', '', '', 'TOTAL:', '=SUM(B2:B' + lastRow + ')']);
-        sheet.getRange(lastRow + 1, 6, 1, 2).setFontWeight('bold');
+        // Total Proveitos
+        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL PROVEITOS ***', totalProveitos]]);
+        sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#c6efce');
+        currentRow += 2;
+        
+        // === CUSTOS SECTION ===
+        sheet.getRange(currentRow, 1).setValue('CUSTOS');
+        sheet.getRange(currentRow, 1).setFontWeight('bold').setBackground('#ffc7ce');
+        currentRow++;
+        
+        // Custos header
+        sheet.getRange(currentRow, 1, 1, 4).setValues([['Data', 'Tipo', 'Nome', 'Valor']]);
+        sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#e8e8e8');
+        currentRow++;
+        
+        let totalCustos = 0;
+        if (custos.length > 0) {
+          custos.forEach(e => {
+            const amount = Number(e.amount) || 0;
+            sheet.getRange(currentRow, 1, 1, 4).setValues([[
+              formatDate(e.date),
+              TYPE_NAMES[e.type] || e.type || 'Outros',
+              e.entity || e.notes || '',
+              amount
+            ]]);
+            totalCustos += amount;
+            currentRow++;
+          });
+        } else {
+          sheet.getRange(currentRow, 1).setValue('(Sem custos registados)');
+          sheet.getRange(currentRow, 1).setFontStyle('italic').setFontColor('#888888');
+          currentRow++;
+        }
+        
+        // Total Custos
+        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', '*** TOTAL CUSTOS ***', totalCustos]]);
+        sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setBackground('#ffc7ce');
+        currentRow += 2;
+        
+        // === RESULTADO ===
+        const resultado = totalProveitos - totalCustos;
+        sheet.getRange(currentRow, 1, 1, 4).setValues([['', '', 'RESULTADO', resultado]]);
+        sheet.getRange(currentRow, 1, 1, 4).setFontWeight('bold').setFontSize(11);
+        if (resultado >= 0) {
+          sheet.getRange(currentRow, 4).setFontColor('#006400').setBackground('#c6efce');
+        } else {
+          sheet.getRange(currentRow, 4).setFontColor('#8b0000').setBackground('#ffc7ce');
+        }
+        
+        // Format value column
+        sheet.getRange(1, 4, currentRow, 1).setNumberFormat('#,##0.00 €');
+        
+        // Auto-resize columns
+        sheet.setColumnWidth(1, 100);
+        sheet.setColumnWidth(2, 250);
+        sheet.setColumnWidth(3, 200);
+        sheet.setColumnWidth(4, 120);
+        
+        // Save summary for QG
+        allProjectSummaries.push({
+          artist: artist,
+          project: project,
+          proveitos: totalProveitos,
+          custos: totalCustos,
+          resultado: resultado
+        });
       });
+      
+      // Create QG (Quadro Geral) summary sheet for this artist
+      createArtistQGSheet(ss, artist, allProjectSummaries.filter(s => s.artist === artist));
       
       Logger.log('Updated ' + Object.keys(byProject).length + ' projects for ' + artist);
       
@@ -414,6 +520,174 @@ function syncArtistSheets(expenses) {
       Logger.log('Error updating artist sheet ' + artist + ': ' + e.toString());
     }
   });
+  
+  // Create main QG sheet in main spreadsheet
+  createMainQGSheet(allProjectSummaries);
+}
+
+// Create QG summary sheet for an individual artist (like DAMA_QG)
+function createArtistQGSheet(ss, artist, summaries) {
+  const artistShort = artist.replace(/ /g, '').substring(0, 10);
+  const sheetName = artistShort + '_QG';
+  let sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+  }
+  sheet.clear();
+  
+  let currentRow = 1;
+  
+  // Title
+  sheet.getRange(currentRow, 1).setValue('QUADRO GERAL - ' + artist);
+  sheet.getRange(currentRow, 1, 1, 6).merge().setFontWeight('bold').setFontSize(14).setBackground('#4a86e8').setFontColor('#ffffff');
+  currentRow += 2;
+  
+  // Headers
+  sheet.getRange(currentRow, 1, 1, 6).setValues([['Projeto', 'Proveitos', 'Custos', 'Resultado', 'Inv. Maktub', 'Balanço Artista']]);
+  sheet.getRange(currentRow, 1, 1, 6).setFontWeight('bold').setBackground('#e8e8e8');
+  currentRow++;
+  
+  let totalProveitos = 0, totalCustos = 0, totalResultado = 0;
+  
+  summaries.forEach(s => {
+    sheet.getRange(currentRow, 1, 1, 6).setValues([[
+      s.project,
+      s.proveitos,
+      s.custos,
+      s.resultado,
+      s.custos, // Invested by Maktub
+      s.resultado
+    ]]);
+    
+    // Color code resultado
+    if (s.resultado >= 0) {
+      sheet.getRange(currentRow, 4).setFontColor('#006400');
+      sheet.getRange(currentRow, 6).setFontColor('#006400');
+    } else {
+      sheet.getRange(currentRow, 4).setFontColor('#8b0000');
+      sheet.getRange(currentRow, 6).setFontColor('#8b0000');
+    }
+    
+    totalProveitos += s.proveitos;
+    totalCustos += s.custos;
+    totalResultado += s.resultado;
+    currentRow++;
+  });
+  
+  // Total row
+  sheet.getRange(currentRow, 1, 1, 6).setValues([['*** TOTAL ***', totalProveitos, totalCustos, totalResultado, totalCustos, totalResultado]]);
+  sheet.getRange(currentRow, 1, 1, 6).setFontWeight('bold').setBackground('#fff2cc');
+  
+  // Format currency
+  sheet.getRange(4, 2, currentRow - 3, 5).setNumberFormat('#,##0.00 €');
+  
+  // Column widths
+  sheet.setColumnWidth(1, 180);
+  for (let i = 2; i <= 6; i++) sheet.setColumnWidth(i, 130);
+}
+
+// Create main QG sheet with all artists
+function createMainQGSheet(allSummaries) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    let sheet = ss.getSheetByName('QG_GERAL');
+    if (!sheet) {
+      sheet = ss.insertSheet('QG_GERAL');
+    }
+    sheet.clear();
+    
+    let currentRow = 1;
+    
+    // Title
+    sheet.getRange(currentRow, 1).setValue('QUADRO GERAL - TODOS OS ARTISTAS');
+    sheet.getRange(currentRow, 1, 1, 7).merge().setFontWeight('bold').setFontSize(14).setBackground('#4a86e8').setFontColor('#ffffff');
+    currentRow += 2;
+    
+    // Headers
+    sheet.getRange(currentRow, 1, 1, 7).setValues([['Artista', 'Projeto', 'Proveitos', 'Custos', 'Resultado', 'Inv. Maktub', 'Balanço']]);
+    sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#e8e8e8');
+    currentRow++;
+    
+    // Group by artist for subtotals
+    const byArtist = {};
+    allSummaries.forEach(s => {
+      if (!byArtist[s.artist]) byArtist[s.artist] = [];
+      byArtist[s.artist].push(s);
+    });
+    
+    let grandTotalProveitos = 0, grandTotalCustos = 0, grandTotalResultado = 0;
+    
+    Object.keys(byArtist).sort().forEach(artist => {
+      const artistSummaries = byArtist[artist];
+      let artistProveitos = 0, artistCustos = 0, artistResultado = 0;
+      
+      artistSummaries.forEach(s => {
+        sheet.getRange(currentRow, 1, 1, 7).setValues([[
+          artist,
+          s.project,
+          s.proveitos,
+          s.custos,
+          s.resultado,
+          s.custos,
+          s.resultado
+        ]]);
+        
+        if (s.resultado >= 0) {
+          sheet.getRange(currentRow, 5).setFontColor('#006400');
+          sheet.getRange(currentRow, 7).setFontColor('#006400');
+        } else {
+          sheet.getRange(currentRow, 5).setFontColor('#8b0000');
+          sheet.getRange(currentRow, 7).setFontColor('#8b0000');
+        }
+        
+        artistProveitos += s.proveitos;
+        artistCustos += s.custos;
+        artistResultado += s.resultado;
+        currentRow++;
+      });
+      
+      // Artist subtotal
+      sheet.getRange(currentRow, 1, 1, 7).setValues([['Subtotal ' + artist, '', artistProveitos, artistCustos, artistResultado, artistCustos, artistResultado]]);
+      sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#e8f4f8').setFontStyle('italic');
+      currentRow++;
+      
+      grandTotalProveitos += artistProveitos;
+      grandTotalCustos += artistCustos;
+      grandTotalResultado += artistResultado;
+    });
+    
+    // Grand total
+    currentRow++;
+    sheet.getRange(currentRow, 1, 1, 7).setValues([['*** TOTAL GERAL ***', '', grandTotalProveitos, grandTotalCustos, grandTotalResultado, grandTotalCustos, grandTotalResultado]]);
+    sheet.getRange(currentRow, 1, 1, 7).setFontWeight('bold').setBackground('#fff2cc').setFontSize(11);
+    
+    // Format currency
+    sheet.getRange(4, 3, currentRow - 3, 5).setNumberFormat('#,##0.00 €');
+    
+    // Column widths
+    sheet.setColumnWidth(1, 150);
+    sheet.setColumnWidth(2, 150);
+    for (let i = 3; i <= 7; i++) sheet.setColumnWidth(i, 110);
+    
+    Logger.log('Created main QG sheet');
+    
+  } catch (e) {
+    Logger.log('Error creating main QG sheet: ' + e.toString());
+  }
+}
+
+// Format date for display (DD/MM/YYYY)
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return day + '/' + month + '/' + year;
+  } catch (e) {
+    return dateStr;
+  }
 }
 
 // ============================================
@@ -421,17 +695,7 @@ function syncArtistSheets(expenses) {
 // ============================================
 
 function getTypeName(type) {
-  const types = {
-    combustivel: 'Combustível',
-    alimentacao: 'Alimentação',
-    alojamento: 'Alojamento',
-    equipamento: 'Equipamento',
-    producao: 'Produção',
-    promocao: 'Promoção',
-    transporte: 'Transporte',
-    outros: 'Outros'
-  };
-  return types[type] || type || 'Outros';
+  return TYPE_NAMES[type] || type || 'Outros';
 }
 
 // ============================================
