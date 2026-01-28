@@ -369,77 +369,138 @@ function deduplicateExpenses() {
 }
 
 function generateDemoData(count) {
-    const artists = ['Buba Espinho', 'MAR', 'D.A.M.A', 'Bandidos do Cante'];
+    // Return REAL D.A.M.A data from Madalena's Excel "Apuramento DAMA_Abril e Maio.xlsx"
+    const realDAMAData = getRealDAMAData();
     
-    // Real projects/events - like Madalena's Excel (mix of concerts + general categories)
-    const concerts = [
-        'Beja 25 Abril', 
-        'Festival Académico Lisboa', 
-        'Salvaterra de Magos', 
-        'Prémios Play', 
-        'Benedita', 
-        'Alvarães', 
-        'Marinha Grande',
-        'Leiria',
-        'Coimbra',
-        'Porto',
-        'Faro'
-    ];
-    const specialProjects = ['Videoclipe', 'Gravação Estúdio', 'Sessão Fotográfica'];
-    const generalCategories = ['Styling', 'Promoção', 'Gastos Gerais'];
-    
-    // Weight: 60% concerts, 20% special projects, 20% general
-    const getProject = () => {
-        const rand = Math.random();
-        if (rand < 0.6) return concerts[Math.floor(Math.random() * concerts.length)];
-        if (rand < 0.8) return specialProjects[Math.floor(Math.random() * specialProjects.length)];
-        return generalCategories[Math.floor(Math.random() * generalCategories.length)];
-    };
-    
-    const types = ['combustivel', 'alimentacao', 'alojamento', 'equipamento', 'producao', 'promocao', 'transporte', 'outros'];
-    const entities = ['Galp', 'BP', 'Hotel Lisboa', 'Hotel Porto', 'Airbnb', 'Studio XYZ', 'Thomann', 'Amazon', 'Meta Ads', 'Google Ads', 'Catering Pro', 'Uber', 'Bolt', 'TAP', 'Ryanair', 'FNAC', 'Worten', 'El Corte Inglés', 'Continente', 'Pingo Doce'];
-    const investors = ['maktub', 'outro'];
-    
-    const data = [];
-    const startDate = new Date('2024-01-01');
-    const endDate = new Date('2026-01-28');
-    
-    for (let i = 0; i < count; i++) {
-        const randomDate = new Date(startDate.getTime() + Math.random() * (endDate.getTime() - startDate.getTime()));
-        const artist = artists[Math.floor(Math.random() * artists.length)];
-        const type = types[Math.floor(Math.random() * types.length)];
-        
-        // Weighted investor selection - 70% maktub, 30% outro
-        const investor = Math.random() < 0.7 ? 'maktub' : 'outro';
-        
-        // Different amount ranges for different types
-        let amount;
-        switch(type) {
-            case 'producao': amount = 500 + Math.random() * 4500; break;
-            case 'alojamento': amount = 80 + Math.random() * 400; break;
-            case 'equipamento': amount = 50 + Math.random() * 1500; break;
-            case 'promocao': amount = 200 + Math.random() * 2000; break;
-            case 'combustivel': amount = 30 + Math.random() * 150; break;
-            case 'alimentacao': amount = 20 + Math.random() * 200; break;
-            case 'transporte': amount = 50 + Math.random() * 500; break;
-            default: amount = 20 + Math.random() * 300;
-        }
-        
-        data.push({
-            id: (Date.now() + i).toString(),
-            artist,
-            project: getProject(),
-            type,
-            amount: Math.round(amount * 100) / 100,
-            date: randomDate.toISOString().split('T')[0],
-            entity: entities[Math.floor(Math.random() * entities.length)],
-            investor,
-            notes: '',
-            createdAt: randomDate.toISOString()
-        });
+    // If we have enough real data, use it
+    if (realDAMAData.length >= count) {
+        return realDAMAData.slice(0, count).sort((a, b) => new Date(b.date) - new Date(a.date));
     }
     
-    return data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // Return all real data
+    return realDAMAData.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// REAL DATA from "Apuramento DAMA_Abril e Maio.xlsx"
+function getRealDAMAData() {
+    const data = [];
+    let id = 1700000000000;
+    
+    // === DAMA_Be Cultura (Benedita) - 17/05/2024 ===
+    // PROVEITO: Cachet 25,250€
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 25250, date: '2024-05-15', entity: 'Cachet D.A.M.A Be Cultura', investor: 'outro', notes: 'PROVEITO - Cachet concerto', createdAt: '2024-05-15T10:00:00Z' });
+    // CUSTOS
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'alimentacao', amount: 22.25, date: '2024-05-17', entity: 'Alimentação comitivas', investor: 'maktub', notes: '', createdAt: '2024-05-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'equipamento', amount: 250, date: '2024-05-21', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer equipamento iluminação', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'equipamento', amount: 2000, date: '2024-05-21', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material Audiovisual', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'equipamento', amount: 32, date: '2024-05-21', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Rampa de carga', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 225, date: '2024-06-03', entity: 'ANA RITA CORREIA GOMES', investor: 'maktub', notes: 'Cachet Ana Rita Gomes', createdAt: '2024-06-03T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 175, date: '2024-05-21', entity: 'P S PORTUGAL EVENTS SERVICE LDA', investor: 'maktub', notes: 'Cachet Andre Silva', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 400, date: '2024-06-04', entity: 'PRO NOBIS, CRL', investor: 'maktub', notes: 'Cachet Daniel Fialho', createdAt: '2024-06-04T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 600, date: '2024-05-21', entity: 'Interpele, Lda', investor: 'maktub', notes: 'Cachet Francesco Meoli', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 350, date: '2024-05-29', entity: 'Bronzeado Poderoso Unipessoal Lda', investor: 'maktub', notes: 'Cachet Gabriel Salles', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 400, date: '2024-05-31', entity: 'MCORE UNIPESSOAL LDA', investor: 'maktub', notes: 'Cachet Mário Correia', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 300, date: '2024-05-31', entity: 'Nuno Filipe Martins Ribeiro Lopes', investor: 'maktub', notes: 'Cachet Nuno Lopes', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 500, date: '2024-05-31', entity: 'ESTRADA TOUR MANAGEMENT', investor: 'maktub', notes: 'Cachet Pedro Canarias', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 400, date: '2024-06-17', entity: 'Pedro Joaninho Lopes', investor: 'maktub', notes: 'Cachet Pedro Joaninho', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'producao', amount: 350, date: '2024-06-17', entity: 'TIAGO JOANINHO LOPES', investor: 'maktub', notes: 'Cachet Tiago Joaninho', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'transporte', amount: 380, date: '2024-05-16', entity: 'Pieter Smit Theather Rock B.V', investor: 'maktub', notes: 'Transporte', createdAt: '2024-05-16T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'combustivel', amount: 107.94, date: '2024-05-18', entity: 'Carrinha Músicos', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'combustivel', amount: 131.63, date: '2024-05-18', entity: 'Carrinha Técnicos Backline', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'transporte', amount: 175, date: '2024-05-29', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio driver Gustavo', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Benedita', type: 'transporte', amount: 160, date: '2024-05-29', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio VZ24019', createdAt: '2024-05-29T10:00:00Z' });
+
+    // === DAMA_Alvarães - 18/05/2024 ===
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 22600, date: '2024-05-15', entity: 'Cachet D.A.M.A Alvarães', investor: 'outro', notes: 'PROVEITO - Cachet concerto', createdAt: '2024-05-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'alimentacao', amount: 22.25, date: '2024-05-18', entity: 'Alimentação comitivas', investor: 'maktub', notes: '', createdAt: '2024-05-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'equipamento', amount: 250, date: '2024-05-20', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer equipamento iluminação', createdAt: '2024-05-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'equipamento', amount: 2000, date: '2024-05-20', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material Audiovisual', createdAt: '2024-05-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 225, date: '2024-06-03', entity: 'ANA RITA CORREIA GOMES', investor: 'maktub', notes: 'Cachet Ana Rita Gomes', createdAt: '2024-06-03T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 175, date: '2024-05-21', entity: 'P S PORTUGAL EVENTS SERVICE LDA', investor: 'maktub', notes: 'Cachet Andre Silva', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 150, date: '2024-06-27', entity: 'Cátia Figueiredo', investor: 'maktub', notes: 'Cachet Cátia Figueiredo', createdAt: '2024-06-27T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 400, date: '2024-06-04', entity: 'PRO NOBIS, CRL', investor: 'maktub', notes: 'Cachet Daniel Fialho', createdAt: '2024-06-04T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 600, date: '2024-05-21', entity: 'Interpele, Lda', investor: 'maktub', notes: 'Cachet Francesco Meoli', createdAt: '2024-05-21T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 250, date: '2024-06-20', entity: 'Francisco Guimarães', investor: 'maktub', notes: 'Cachet Francisco Guimarães', createdAt: '2024-06-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 350, date: '2024-05-29', entity: 'Bronzeado Poderoso Unipessoal Lda', investor: 'maktub', notes: 'Cachet Gabriel Salles', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 150, date: '2024-05-20', entity: 'João Maria Amaral Nunes', investor: 'maktub', notes: 'Cachet João Nunes', createdAt: '2024-05-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 350, date: '2024-06-06', entity: 'Luis Alberto da Ascenção Batista', investor: 'maktub', notes: 'Cachet Luis Batista', createdAt: '2024-06-06T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 400, date: '2024-05-31', entity: 'MCORE UNIPESSOAL LDA', investor: 'maktub', notes: 'Cachet Mário Correia', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 300, date: '2024-05-31', entity: 'Nuno Filipe Martins Ribeiro Lopes', investor: 'maktub', notes: 'Cachet Nuno Lopes', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 500, date: '2024-05-31', entity: 'ESTRADA TOUR MANAGEMENT', investor: 'maktub', notes: 'Cachet Pedro Canarias', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 400, date: '2024-06-17', entity: 'Pedro Joaninho Lopes', investor: 'maktub', notes: 'Cachet Pedro Joaninho', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 300, date: '2024-06-20', entity: 'Tiago Pereira de Carvalho', investor: 'maktub', notes: 'Cachet Tiago Carvalho', createdAt: '2024-06-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'producao', amount: 350, date: '2024-06-17', entity: 'TIAGO JOANINHO LOPES', investor: 'maktub', notes: 'Cachet Tiago Joaninho', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 380, date: '2024-05-16', entity: 'Pieter Smit Theather Rock B.V', investor: 'maktub', notes: '', createdAt: '2024-05-16T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'combustivel', amount: 29.5, date: '2024-05-19', entity: 'Carrinha Músicos', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-19T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'combustivel', amount: 107.94, date: '2024-05-19', entity: 'Carrinha Músicos', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-19T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'combustivel', amount: 131.63, date: '2024-05-19', entity: 'Carrinha Técnicos Backline', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-19T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'combustivel', amount: 164.96, date: '2024-05-19', entity: 'Camião Material Pixel', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-19T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 76.59, date: '2024-05-31', entity: 'Pieter Smit', investor: 'maktub', notes: 'Portagens', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 270, date: '2024-05-29', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio 80PS55', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 337.5, date: '2024-05-29', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio driver André', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 175, date: '2024-05-29', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio driver Gustavo', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Alvarães', type: 'transporte', amount: 160, date: '2024-05-29', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio VZ24019', createdAt: '2024-05-29T10:00:00Z' });
+
+    // === DAMA_Marinha Grande - 29/05/2024 ===
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 21000, date: '2024-05-20', entity: 'Cachet D.A.M.A Marinha Grande', investor: 'outro', notes: 'PROVEITO - Cachet concerto', createdAt: '2024-05-20T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'equipamento', amount: 2000, date: '2024-05-31', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Material Audiovisual', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'equipamento', amount: 32, date: '2024-05-31', entity: 'PIXEL LIGHT, LDA', investor: 'maktub', notes: 'Aluguer Rampa de carga', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 225, date: '2024-06-03', entity: 'ANA RITA CORREIA GOMES', investor: 'maktub', notes: 'Cachet Ana Rita Gomes', createdAt: '2024-06-03T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 175, date: '2024-05-31', entity: 'P S PORTUGAL EVENTS SERVICE LDA', investor: 'maktub', notes: 'Cachet Andre Silva', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 150, date: '2024-06-27', entity: 'Cátia Figueiredo', investor: 'maktub', notes: 'Cachet Cátia Figueiredo', createdAt: '2024-06-27T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 400, date: '2024-06-04', entity: 'PRO NOBIS, CRL', investor: 'maktub', notes: 'Cachet Daniel Fialho', createdAt: '2024-06-04T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 600, date: '2024-05-31', entity: 'Interpele, Lda', investor: 'maktub', notes: 'Cachet Francesco Meoli', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 350, date: '2024-05-29', entity: 'Bronzeado Poderoso Unipessoal Lda', investor: 'maktub', notes: 'Cachet Gabriel Salles', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 150, date: '2024-06-18', entity: 'João Maria Amaral Nunes', investor: 'maktub', notes: 'Cachet João Nunes', createdAt: '2024-06-18T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 250, date: '2024-06-12', entity: 'João Oliveira', investor: 'maktub', notes: 'Cachet João Oliveira', createdAt: '2024-06-12T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 400, date: '2024-05-31', entity: 'MCORE UNIPESSOAL LDA', investor: 'maktub', notes: 'Cachet Mário Correia', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 350, date: '2024-06-04', entity: 'Miguel Batista', investor: 'maktub', notes: 'Cachet Miguel Batista', createdAt: '2024-06-04T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 300, date: '2024-05-31', entity: 'Nuno Filipe Martins Ribeiro Lopes', investor: 'maktub', notes: 'Cachet Nuno Lopes', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 300, date: '2024-06-04', entity: 'Pedro Borges', investor: 'maktub', notes: 'Cachet Pedro Borges', createdAt: '2024-06-04T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 500, date: '2024-05-31', entity: 'ESTRADA TOUR MANAGEMENT', investor: 'maktub', notes: 'Cachet Pedro Canarias', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 400, date: '2024-06-17', entity: 'Pedro Joaninho Lopes', investor: 'maktub', notes: 'Cachet Pedro Joaninho', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'producao', amount: 350, date: '2024-06-17', entity: 'TIAGO JOANINHO LOPES', investor: 'maktub', notes: 'Cachet Tiago Joaninho', createdAt: '2024-06-17T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'transporte', amount: 380, date: '2024-05-16', entity: 'Pieter Smit', investor: 'maktub', notes: '', createdAt: '2024-05-16T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'combustivel', amount: 55.02, date: '2024-05-29', entity: 'Carrinha DAMA', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'combustivel', amount: 53.93, date: '2024-05-30', entity: 'Carrinha Músicos', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-30T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'combustivel', amount: 54.13, date: '2024-05-29', entity: 'Camião Material Pixel', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'transporte', amount: 34.4, date: '2024-05-31', entity: 'Pieter Smit', investor: 'maktub', notes: 'Portagens', createdAt: '2024-05-31T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'transporte', amount: 360, date: '2024-06-11', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio 80PS55', createdAt: '2024-06-11T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'transporte', amount: 450, date: '2024-06-11', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio driver camião', createdAt: '2024-06-11T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Marinha Grande', type: 'transporte', amount: 160, date: '2024-06-11', entity: 'Safety Show', investor: 'maktub', notes: 'Serviço de Apoio VZ24021', createdAt: '2024-06-11T10:00:00Z' });
+
+    // === DAMA_Styling ===
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 75.61, date: '2024-05-02', entity: 'WALKING GENERATION, LDA', investor: 'maktub', notes: 'Calças ganga com riscas', createdAt: '2024-05-02T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 56.1, date: '2024-05-02', entity: 'WALKING GENERATION, LDA', investor: 'maktub', notes: 'Calças pretas com argolas metal', createdAt: '2024-05-02T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 129.27, date: '2024-05-02', entity: 'WALKING GENERATION, LDA', investor: 'maktub', notes: 'Calças pretas texturadas', createdAt: '2024-05-02T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 70.73, date: '2024-05-02', entity: 'WALKING GENERATION, LDA', investor: 'maktub', notes: 'Camisa de ganga riscas', createdAt: '2024-05-02T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 32.51, date: '2024-03-25', entity: 'Parfois', investor: 'maktub', notes: 'Equipamento técnico', createdAt: '2024-03-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 16.22, date: '2024-03-25', entity: 'ZARA', investor: 'maktub', notes: 'Roupas', createdAt: '2024-03-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 10.56, date: '2024-03-25', entity: 'Bershka', investor: 'maktub', notes: 'Roupas', createdAt: '2024-03-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 32.48, date: '2024-03-25', entity: 'ZARA', investor: 'maktub', notes: 'Roupas', createdAt: '2024-03-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Styling', type: 'outros', amount: 51.46, date: '2024-05-06', entity: 'Ana Rita Gomes - CTT', investor: 'maktub', notes: 'CTT 23%', createdAt: '2024-05-06T10:00:00Z' });
+
+    // === DAMA_Gastos Gerais ===
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 350, date: '2024-06-08', entity: 'MURO 2620, UNIPESSOAL LDA', investor: 'maktub', notes: 'Armazém Backline Maio/Junho 2024', createdAt: '2024-06-08T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 175, date: '2024-03-27', entity: 'MURO 2620, UNIPESSOAL LDA', investor: 'maktub', notes: 'Armazém Backline Abril 2024', createdAt: '2024-03-27T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 350, date: '2024-02-14', entity: 'MURO 2620, UNIPESSOAL LDA', investor: 'maktub', notes: 'Armazém Backline Jan/Fev 2024', createdAt: '2024-02-14T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 175, date: '2024-02-29', entity: 'MURO 2620, UNIPESSOAL LDA', investor: 'maktub', notes: 'Armazém Backline Março 2024', createdAt: '2024-02-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'producao', amount: 450, date: '2024-03-29', entity: 'ESTRADA TOUR MANAGEMENT', investor: 'maktub', notes: 'Cachet Pedro Canarias - São Miguel Açores', createdAt: '2024-03-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'producao', amount: 450, date: '2024-03-28', entity: 'ESTRADA TOUR MANAGEMENT', investor: 'maktub', notes: 'Cachet Pedro Canarias - Vilar Formoso', createdAt: '2024-03-28T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'producao', amount: 400, date: '2024-05-01', entity: 'Pedro Joaninho Lopes', investor: 'maktub', notes: 'Cachet Pedro Joaninho - Castro Verde', createdAt: '2024-05-01T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'producao', amount: 250, date: '2024-03-25', entity: 'Sebastian-Vlad Mustiuc', investor: 'maktub', notes: 'Cachet Sebastian-Vlad - RFM', createdAt: '2024-03-25T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'producao', amount: 400, date: '2024-05-06', entity: 'Sebastião Ogando Pereira Gois', investor: 'maktub', notes: 'Cachet Sebastião Gois - Dia das Mães', createdAt: '2024-05-06T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'outros', amount: 1273.85, date: '2024-03-15', entity: 'Reparação Viaturas', investor: 'maktub', notes: 'Cons. e Reparação Viaturas Alugadas', createdAt: '2024-03-15T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 48.77, date: '2024-03-13', entity: 'FNAC AMOREIRAS', investor: 'maktub', notes: 'Equipamento técnico', createdAt: '2024-03-13T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'combustivel', amount: 78.73, date: '2024-03-30', entity: 'Castro Verde', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-03-30T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'combustivel', amount: 50.78, date: '2024-03-16', entity: 'Bianca Barros - Figueira da Foz', investor: 'maktub', notes: 'Gasóleo', createdAt: '2024-03-16T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'combustivel', amount: 75.55, date: '2024-05-24', entity: 'Carrinha', investor: 'maktub', notes: 'Gasóleo transporte', createdAt: '2024-05-24T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'transporte', amount: 385, date: '2024-05-03', entity: 'Vanessa Bernardes', investor: 'maktub', notes: 'Passagens aéreas', createdAt: '2024-05-03T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 451.2, date: '2024-05-29', entity: 'LIGHTSET', investor: 'maktub', notes: 'Pro GAFF', createdAt: '2024-05-29T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'transporte', amount: 70.67, date: '2024-05-05', entity: 'Vanessa - Aveiro', investor: 'maktub', notes: 'Taxis (TVDE) - Ação dia da mãe RFM', createdAt: '2024-05-05T10:00:00Z' });
+    data.push({ id: (id++).toString(), artist: 'D.A.M.A', project: 'Gastos Gerais', type: 'equipamento', amount: 250, date: '2024-04-22', entity: 'Vicente Alpalhão Unipessoal Lda', investor: 'maktub', notes: 'Venda de escada', createdAt: '2024-04-22T10:00:00Z' });
+
+    return data;
 }
 
 // ==========================================
