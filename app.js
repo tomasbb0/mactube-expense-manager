@@ -316,6 +316,51 @@ function saveData() {
     localStorage.setItem('maktub_expenses', JSON.stringify(expenses));
 }
 
+// Deduplicate expenses - removes duplicates based on content matching
+function deduplicateExpenses() {
+    const beforeCount = expenses.length;
+    
+    // Create a unique key for each expense based on its content (excluding ID)
+    const seen = new Map();
+    const uniqueExpenses = [];
+    
+    expenses.forEach(exp => {
+        // Create a content-based key (date + artist + amount + type + entity + notes)
+        const contentKey = `${exp.date}|${exp.artist}|${exp.amount}|${exp.type}|${exp.entity || ''}|${exp.notes || ''}`;
+        
+        if (!seen.has(contentKey)) {
+            seen.set(contentKey, exp);
+            uniqueExpenses.push(exp);
+        } else {
+            // If we've seen this content before, keep the one with the earlier createdAt
+            const existing = seen.get(contentKey);
+            const existingTime = existing.createdAt ? new Date(existing.createdAt).getTime() : Infinity;
+            const currentTime = exp.createdAt ? new Date(exp.createdAt).getTime() : Infinity;
+            
+            if (currentTime < existingTime) {
+                // Replace with the older one
+                const idx = uniqueExpenses.indexOf(existing);
+                if (idx !== -1) {
+                    uniqueExpenses[idx] = exp;
+                    seen.set(contentKey, exp);
+                }
+            }
+        }
+    });
+    
+    const removed = beforeCount - uniqueExpenses.length;
+    expenses = uniqueExpenses;
+    saveData();
+    
+    console.log(`✅ Deduplication complete: ${beforeCount} → ${uniqueExpenses.length} (removed ${removed} duplicates)`);
+    
+    updateDashboard();
+    updateReportsTable();
+    updateSettlement();
+    
+    return { before: beforeCount, after: uniqueExpenses.length, removed };
+}
+
 function generateDemoData(count) {
     const artists = ['Buba Espinho', 'MAR', 'D.A.M.A', 'Bandidos do Cante'];
     const projects = ['Videoclipe', 'Concerto', 'Gravação', 'Tour', 'Promoção', 'Geral'];
