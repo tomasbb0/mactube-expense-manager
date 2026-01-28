@@ -7,23 +7,47 @@ const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfpLBAUIxgE2
 
 // Helper function to send data to Google Sheets
 async function sendToGoogleSheets(payload) {
-    // Use text/plain to avoid CORS preflight
-    const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8',
-        },
-        body: JSON.stringify(payload),
-        redirect: 'follow'
-    });
+    console.log('🔵 [DEBUG] sendToGoogleSheets called');
+    console.log('🔵 [DEBUG] URL:', GOOGLE_SCRIPT_URL);
+    console.log('🔵 [DEBUG] Payload action:', payload.action);
+    console.log('🔵 [DEBUG] Payload expenses count:', payload.expenses?.length);
+    console.log('🔵 [DEBUG] First expense sample:', JSON.stringify(payload.expenses?.[0]));
     
+    // Use text/plain to avoid CORS preflight
     try {
+        console.log('🔵 [DEBUG] About to fetch...');
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(payload),
+            redirect: 'follow'
+        });
+        
+        console.log('🔵 [DEBUG] Fetch completed');
+        console.log('🔵 [DEBUG] Response status:', response.status);
+        console.log('🔵 [DEBUG] Response ok:', response.ok);
+        console.log('🔵 [DEBUG] Response type:', response.type);
+        console.log('🔵 [DEBUG] Response headers:', [...response.headers.entries()]);
+        
         const text = await response.text();
-        console.log('Response:', text);
-        return JSON.parse(text);
-    } catch (e) {
-        console.log('Could not parse response, but request was sent');
-        return { success: true };
+        console.log('🔵 [DEBUG] Response text:', text);
+        console.log('🔵 [DEBUG] Response text length:', text.length);
+        
+        try {
+            const parsed = JSON.parse(text);
+            console.log('🟢 [DEBUG] Parsed response:', parsed);
+            return parsed;
+        } catch (e) {
+            console.log('🟡 [DEBUG] Could not parse as JSON:', e.message);
+            return { success: true, raw: text };
+        }
+    } catch (fetchError) {
+        console.error('🔴 [DEBUG] Fetch error:', fetchError);
+        console.error('🔴 [DEBUG] Error name:', fetchError.name);
+        console.error('🔴 [DEBUG] Error message:', fetchError.message);
+        throw fetchError;
     }
 }
 
