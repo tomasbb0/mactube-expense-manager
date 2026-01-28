@@ -233,6 +233,21 @@ body {
     border-color: var(--green-primary);
 }
 
+/* Google Drive Button */
+.drive-btn {
+    background: linear-gradient(135deg, #1a73e8, #1557b0);
+    border-color: #1a73e8;
+    color: #fff;
+    text-decoration: none;
+}
+
+.drive-btn:hover {
+    background: linear-gradient(135deg, #1557b0, #0d47a1);
+    border-color: #1557b0;
+    color: #fff;
+    transform: scale(1.05);
+}
+
 /* Hero Sync Button */
 .sync-hero-btn {
     display: inline-flex;

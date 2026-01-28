@@ -1,0 +1,553 @@
+// ============================================
+// GOOGLE APPS SCRIPT - MAKTUB EXPENSE SYNC
+// ============================================
+// CÓDIGO COMPLETO - COPIA TUDO PARA O APPS SCRIPT
+// ============================================
+
+// CONFIGURATION - JÁ CONFIGURADO COM OS TEUS IDs!
+const SPREADSHEET_IDS = {
+  main: '1O8uOe3q8J6rHifQTJim0ZYjg0N7m1mO7ocUVzUdVfN8',
+  artists: {
+    'Bandidos do Cante': '1YAb_pfCrkwtakYTsIUjIQjN0NAyWCOyGPmB4TLttZsk',
+    'Buba Espinho': '1JarYr6SGdwI7s3oJ9qP7Q6LguK-fftMWLHpgkArUYKw',
+    'MAR': '1NlqDQ7QNmrUuJiQRbhtK2OCm5VklTEw7POUmbv21Hvc',
+    'D.A.M.A': '1_Iy9LaYzehG6H-UfNfp2BjpnHCZxbtewt_faJss2Hq8',
+    'BRUCE': '10Wd4ZcBFHTHaBlwpoZU7UbzboxwRl3B9fqjXQ4ubUjk',
+    'LUTZ': '1sNk_G7WTzogOk7hbKErmzWeRQZIlIQANyb4M7-88n-c',
+    'INÊS': '1pkS0xoxJUjunD0DLHDwaJ8FM74pJcLN6jcOHHOetpQw',
+    'REAL GUNS': '1CP0zTkLTCP1xs6gYcpqvaP4rNBXyNip-0yEX1pp_ZXo',
+    'SUAVE': '1FLSpGAOPggvNiIXzsenoEglAy5ooyTTlwo0UEghCm4k',
+    'Gerais Maktub': '1vW3_q1urRCtkGqjBlah-UiU1WLHKSclZoxq4gGKPKxw'
+  }
+};
+
+// Column mapping for the main sheet
+const MAIN_COLUMNS = ['id', 'date', 'artist', 'project', 'type', 'entity', 'investor', 'amount', 'notes', 'createdAt'];
+
+// ============================================
+// WEB APP HANDLERS
+// ============================================
+
+function doGet(e) {
+  try {
+    const action = e.parameter ? e.parameter.action : 'getAll';
+    let result;
+    
+    switch(action) {
+      case 'getAll':
+      case 'getAllExpenses':
+        result = { success: true, expenses: getAllExpenses() };
+        break;
+      case 'getByArtist':
+        result = { success: true, expenses: getExpensesByArtist(e.parameter.artist) };
+        break;
+      case 'getArtists':
+        result = { success: true, artists: getArtistsList() };
+        break;
+      default:
+        result = { success: true, expenses: getAllExpenses() };
+    }
+    
+    return ContentService
+      .createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('Error in doGet: ' + error.toString());
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    Logger.log('=== POST REQUEST RECEIVED ===');
+    
+    // Parse the incoming data
+    let data;
+    if (e.postData && e.postData.contents) {
+      Logger.log('Raw data received, length: ' + e.postData.contents.length);
+      data = JSON.parse(e.postData.contents);
+    } else if (e.parameter && e.parameter.data) {
+      data = JSON.parse(e.parameter.data);
+    } else {
+      throw new Error('No data received');
+    }
+    
+    const action = data.action;
+    Logger.log('Action: ' + action);
+    
+    let result;
+    
+    switch(action) {
+      case 'add':
+        result = addExpense(data.expense);
+        break;
+      case 'update':
+        result = updateExpense(data.expense);
+        break;
+      case 'delete':
+        result = deleteExpense(data.id);
+        break;
+      case 'syncFromWebsite':
+        // Handle expenses array - make sure it exists
+        const expenses = data.expenses || [];
+        Logger.log('Syncing ' + expenses.length + ' expenses from website');
+        result = syncFromWebsite(expenses);
+        break;
+      case 'syncToWebsite':
+        result = { success: true, expenses: getAllExpenses() };
+        break;
+      default:
+        result = { success: false, error: 'Unknown action: ' + action };
+    }
+    
+    Logger.log('Result: ' + JSON.stringify(result));
+    
+    return ContentService
+      .createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (error) {
+    Logger.log('Error in doPost: ' + error.toString());
+    Logger.log('Stack: ' + error.stack);
+    return ContentService
+      .createTextOutput(JSON.stringify({ success: false, error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ============================================
+// DATA OPERATIONS
+// ============================================
+
+function getAllExpenses() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    const sheet = ss.getSheetByName('Despesas') || ss.getSheets()[0];
+    const data = sheet.getDataRange().getValues();
+    
+    if (data.length <= 1) return []; // Only header or empty
+    
+    const headers = data[0];
+    const expenses = [];
+    
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (!row[0]) continue; // Skip empty rows
+      
+      const expense = {};
+      headers.forEach((header, index) => {
+        let value = row[index];
+        // Format date
+        if (header === 'date' || header === 'createdAt') {
+          if (value instanceof Date) {
+            value = value.toISOString().split('T')[0];
+          }
+        }
+        expense[header] = value;
+      });
+      expenses.push(expense);
+    }
+    
+    return expenses;
+  } catch (error) {
+    Logger.log('Error in getAllExpenses: ' + error.toString());
+    return [];
+  }
+}
+
+function getExpensesByArtist(artist) {
+  const all = getAllExpenses();
+  return all.filter(e => e.artist === artist);
+}
+
+function getArtistsList() {
+  return Object.keys(SPREADSHEET_IDS.artists);
+}
+
+function addExpense(expense) {
+  try {
+    // Add to main sheet
+    addToMainSheet(expense);
+    
+    // Add to artist-specific sheet
+    if (SPREADSHEET_IDS.artists[expense.artist]) {
+      addToArtistSheet(expense);
+    }
+    
+    return { success: true, id: expense.id };
+  } catch (error) {
+    Logger.log('Error in addExpense: ' + error.toString());
+    return { success: false, error: error.toString() };
+  }
+}
+
+function addToMainSheet(expense) {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+  let sheet = ss.getSheetByName('Despesas');
+  
+  // Create sheet if it doesn't exist
+  if (!sheet) {
+    sheet = ss.insertSheet('Despesas');
+    sheet.appendRow(MAIN_COLUMNS);
+    // Format header
+    sheet.getRange(1, 1, 1, MAIN_COLUMNS.length).setFontWeight('bold');
+  }
+  
+  const row = MAIN_COLUMNS.map(col => expense[col] || '');
+  sheet.appendRow(row);
+}
+
+function addToArtistSheet(expense) {
+  const artistSpreadsheetId = SPREADSHEET_IDS.artists[expense.artist];
+  if (!artistSpreadsheetId) return;
+  
+  try {
+    const ss = SpreadsheetApp.openById(artistSpreadsheetId);
+    
+    // Find or create project sheet
+    let sheet = ss.getSheetByName(expense.project);
+    if (!sheet) {
+      sheet = ss.insertSheet(expense.project);
+      sheet.appendRow(['TIPO', 'VALOR', 'DATA', 'ENTIDADE', 'INVESTIDOR', 'NOTAS', 'ID']);
+      sheet.getRange(1, 1, 1, 7).setFontWeight('bold');
+    }
+    
+    sheet.appendRow([
+      getTypeName(expense.type),
+      expense.amount,
+      expense.date,
+      expense.entity || '',
+      expense.investor === 'maktub' ? 'Maktub' : 'Terceiros',
+      expense.notes || '',
+      expense.id
+    ]);
+    
+  } catch (e) {
+    Logger.log('Error adding to artist sheet: ' + e.toString());
+  }
+}
+
+function updateExpense(expense) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    const sheet = ss.getSheetByName('Despesas') || ss.getSheets()[0];
+    const data = sheet.getDataRange().getValues();
+    
+    const headers = data[0];
+    const idIndex = headers.indexOf('id');
+    
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][idIndex] === expense.id) {
+        const row = MAIN_COLUMNS.map(col => expense[col] || '');
+        sheet.getRange(i + 1, 1, 1, row.length).setValues([row]);
+        break;
+      }
+    }
+    
+    return { success: true };
+  } catch (error) {
+    Logger.log('Error in updateExpense: ' + error.toString());
+    return { success: false, error: error.toString() };
+  }
+}
+
+function deleteExpense(id) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    const sheet = ss.getSheetByName('Despesas') || ss.getSheets()[0];
+    const data = sheet.getDataRange().getValues();
+    
+    const headers = data[0];
+    const idIndex = headers.indexOf('id');
+    
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][idIndex] === id) {
+        sheet.deleteRow(i + 1);
+        break;
+      }
+    }
+    
+    return { success: true };
+  } catch (error) {
+    Logger.log('Error in deleteExpense: ' + error.toString());
+    return { success: false, error: error.toString() };
+  }
+}
+
+function syncFromWebsite(expenses) {
+  Logger.log('=== SYNC FROM WEBSITE STARTED ===');
+  Logger.log('Received ' + (expenses ? expenses.length : 0) + ' expenses');
+  
+  // Validate input
+  if (!expenses || !Array.isArray(expenses)) {
+    Logger.log('ERROR: expenses is not an array');
+    return { success: false, error: 'Invalid expenses data', count: 0 };
+  }
+  
+  if (expenses.length === 0) {
+    Logger.log('WARNING: No expenses to sync');
+    return { success: true, count: 0, message: 'No expenses to sync' };
+  }
+  
+  try {
+    // Open main spreadsheet
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    let sheet = ss.getSheetByName('Despesas');
+    
+    // Create sheet if it doesn't exist
+    if (!sheet) {
+      Logger.log('Creating Despesas sheet');
+      sheet = ss.insertSheet('Despesas');
+      sheet.appendRow(MAIN_COLUMNS);
+      sheet.getRange(1, 1, 1, MAIN_COLUMNS.length).setFontWeight('bold');
+    } else {
+      // Clear existing data (keep header)
+      const lastRow = sheet.getLastRow();
+      if (lastRow > 1) {
+        Logger.log('Clearing ' + (lastRow - 1) + ' existing rows');
+        sheet.deleteRows(2, lastRow - 1);
+      }
+    }
+    
+    // Add all expenses to main sheet
+    Logger.log('Adding expenses to main sheet...');
+    const rows = [];
+    for (let i = 0; i < expenses.length; i++) {
+      const expense = expenses[i];
+      const row = MAIN_COLUMNS.map(col => expense[col] || '');
+      rows.push(row);
+    }
+    
+    // Batch write for performance
+    if (rows.length > 0) {
+      sheet.getRange(2, 1, rows.length, MAIN_COLUMNS.length).setValues(rows);
+    }
+    
+    Logger.log('Main sheet updated with ' + rows.length + ' rows');
+    
+    // Update artist sheets
+    Logger.log('Updating artist sheets...');
+    syncArtistSheets(expenses);
+    
+    Logger.log('=== SYNC COMPLETED SUCCESSFULLY ===');
+    return { success: true, count: expenses.length };
+    
+  } catch (error) {
+    Logger.log('ERROR in syncFromWebsite: ' + error.toString());
+    Logger.log('Stack: ' + error.stack);
+    return { success: false, error: error.toString(), count: 0 };
+  }
+}
+
+function syncArtistSheets(expenses) {
+  // Group by artist
+  const byArtist = {};
+  expenses.forEach(e => {
+    if (!byArtist[e.artist]) byArtist[e.artist] = [];
+    byArtist[e.artist].push(e);
+  });
+  
+  Logger.log('Grouped into ' + Object.keys(byArtist).length + ' artists');
+  
+  // Update each artist's sheet
+  Object.keys(byArtist).forEach(artist => {
+    const artistSpreadsheetId = SPREADSHEET_IDS.artists[artist];
+    if (!artistSpreadsheetId) {
+      Logger.log('No sheet configured for artist: ' + artist);
+      return;
+    }
+    
+    try {
+      Logger.log('Updating sheet for: ' + artist);
+      const ss = SpreadsheetApp.openById(artistSpreadsheetId);
+      const artistExpenses = byArtist[artist];
+      
+      // Group by project
+      const byProject = {};
+      artistExpenses.forEach(e => {
+        const projectName = e.project || 'Sem Projeto';
+        if (!byProject[projectName]) byProject[projectName] = [];
+        byProject[projectName].push(e);
+      });
+      
+      // Update each project sheet
+      Object.keys(byProject).forEach(project => {
+        let sheet = ss.getSheetByName(project);
+        if (!sheet) {
+          sheet = ss.insertSheet(project);
+        }
+        
+        // Clear and rewrite
+        sheet.clear();
+        sheet.appendRow(['TIPO', 'VALOR', 'DATA', 'ENTIDADE', 'INVESTIDOR', 'NOTAS', 'ID']);
+        sheet.getRange(1, 1, 1, 7).setFontWeight('bold');
+        
+        // Add data rows
+        const projectExpenses = byProject[project];
+        const rows = projectExpenses.map(expense => [
+          getTypeName(expense.type),
+          expense.amount,
+          expense.date,
+          expense.entity || '',
+          expense.investor === 'maktub' ? 'Maktub' : 'Terceiros',
+          expense.notes || '',
+          expense.id
+        ]);
+        
+        if (rows.length > 0) {
+          sheet.getRange(2, 1, rows.length, 7).setValues(rows);
+        }
+        
+        // Add total row
+        const lastRow = sheet.getLastRow();
+        sheet.appendRow(['', '', '', '', '', 'TOTAL:', '=SUM(B2:B' + lastRow + ')']);
+        sheet.getRange(lastRow + 1, 6, 1, 2).setFontWeight('bold');
+      });
+      
+      Logger.log('Updated ' + Object.keys(byProject).length + ' projects for ' + artist);
+      
+    } catch (e) {
+      Logger.log('Error updating artist sheet ' + artist + ': ' + e.toString());
+    }
+  });
+}
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+function getTypeName(type) {
+  const types = {
+    combustivel: 'Combustível',
+    alimentacao: 'Alimentação',
+    alojamento: 'Alojamento',
+    equipamento: 'Equipamento',
+    producao: 'Produção',
+    promocao: 'Promoção',
+    transporte: 'Transporte',
+    outros: 'Outros'
+  };
+  return types[type] || type || 'Outros';
+}
+
+// ============================================
+// GOOGLE SHEETS MENU & SYNC BUTTON
+// ============================================
+
+function onOpen() {
+  createSyncMenu();
+}
+
+function createSyncMenu() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('🔄 Maktub Sync')
+      .addItem('📤 Sincronizar para Website', 'syncToWebsiteUI')
+      .addItem('📥 Importar do Website', 'syncFromWebsiteUI')
+      .addSeparator()
+      .addItem('📊 Criar Resumo', 'createSummary')
+      .addToUi();
+  } catch (e) {
+    Logger.log('Could not create menu: ' + e.toString());
+  }
+}
+
+function syncToWebsiteUI() {
+  const ui = SpreadsheetApp.getUi();
+  const expenses = getAllExpenses();
+  
+  // Store in Properties for the website to fetch
+  const props = PropertiesService.getScriptProperties();
+  props.setProperty('lastSync', JSON.stringify({
+    timestamp: new Date().toISOString(),
+    expenses: expenses
+  }));
+  
+  ui.alert(
+    '✅ Sincronização Preparada',
+    expenses.length + ' despesas prontas para sincronizar.\n\nAbra o website e clique em "Sincronizar do Sheets" para completar.',
+    ui.ButtonSet.OK
+  );
+}
+
+function syncFromWebsiteUI() {
+  const ui = SpreadsheetApp.getUi();
+  ui.alert(
+    'ℹ️ Importar do Website',
+    'Para importar dados do website:\n\n1. Abra o website Maktub\n2. Clique em "Sincronizar para Sheets"\n3. Os dados serão atualizados automaticamente',
+    ui.ButtonSet.OK
+  );
+}
+
+function createSummary() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let summarySheet = ss.getSheetByName('RESUMO');
+  
+  if (!summarySheet) {
+    summarySheet = ss.insertSheet('RESUMO');
+  } else {
+    summarySheet.clear();
+  }
+  
+  const expenses = getAllExpenses();
+  
+  // Summary by Artist
+  summarySheet.appendRow(['RESUMO POR ARTISTA']);
+  summarySheet.getRange(1, 1).setFontWeight('bold').setFontSize(14);
+  summarySheet.appendRow(['Artista', 'Maktub', 'Terceiros', 'Total']);
+  summarySheet.getRange(2, 1, 1, 4).setFontWeight('bold');
+  
+  const byArtist = {};
+  expenses.forEach(e => {
+    if (!byArtist[e.artist]) byArtist[e.artist] = { maktub: 0, outros: 0 };
+    const amount = Number(e.amount) || 0;
+    if (e.investor === 'maktub') byArtist[e.artist].maktub += amount;
+    else byArtist[e.artist].outros += amount;
+  });
+  
+  let totalMaktub = 0, totalOutros = 0;
+  Object.keys(byArtist).sort().forEach(artist => {
+    const data = byArtist[artist];
+    summarySheet.appendRow([artist, data.maktub, data.outros, data.maktub + data.outros]);
+    totalMaktub += data.maktub;
+    totalOutros += data.outros;
+  });
+  
+  summarySheet.appendRow(['TOTAL', totalMaktub, totalOutros, totalMaktub + totalOutros]);
+  const lastRow = summarySheet.getLastRow();
+  summarySheet.getRange(lastRow, 1, 1, 4).setFontWeight('bold').setBackground('#e8f5e9');
+  
+  // Format currency columns
+  const dataRange = summarySheet.getRange(3, 2, lastRow - 2, 3);
+  dataRange.setNumberFormat('#,##0.00 €');
+  
+  SpreadsheetApp.getUi().alert('✅ Resumo criado na folha "RESUMO"');
+}
+
+// ============================================
+// TEST FUNCTION - Run this to test
+// ============================================
+
+function testSync() {
+  // Test with sample data
+  const testExpenses = [
+    {
+      id: 'test_1',
+      date: '2026-01-28',
+      artist: 'MAR',
+      project: 'Teste',
+      type: 'producao',
+      entity: 'Teste Entity',
+      investor: 'maktub',
+      amount: 100,
+      notes: 'Teste',
+      createdAt: new Date().toISOString()
+    }
+  ];
+  
+  const result = syncFromWebsite(testExpenses);
+  Logger.log('Test result: ' + JSON.stringify(result));
+}
