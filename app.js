@@ -1591,6 +1591,10 @@ async function syncToGoogleSheets() {
         
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
             body: JSON.stringify(payload),
             redirect: 'follow'
         });
