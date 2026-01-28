@@ -1,991 +1,579 @@
-// ============ MacTube Expense Manager - Application Logic ============
+// Maktub Art Group - Expense Manager App
+// ==========================================
 
-// ============ DATA MANAGEMENT ============
-const APP_STATE = {
-    user: null,
-    expenses: [],
-    categories: {
-        'Madalena Cruz': ['Videoclip "Amor"', 'Single "Sol"', 'EP "Lua"', 'Sessão Fotográfica'],
-        'João Silva': ['Album "Noite"', 'Tour 2024', 'Merchandising'],
-        'Ana Santos': ['Single "Mar"', 'Festival Verão']
-    }
-};
+// State
+let expenses = [];
+let currentUser = null;
+let editingId = null;
 
-// Demo data for testing
-const DEMO_EXPENSES = [
-    { id: 1, category: 'Madalena Cruz', subcategory: 'Videoclip "Amor"', type: 'producao', value: 1500, entity: 'Produtora XYZ', date: '2024-01-15', investor: 'MacTube', notes: 'Filmagens dia 1' },
-    { id: 2, category: 'Madalena Cruz', subcategory: 'Videoclip "Amor"', type: 'alojamento', value: 350, entity: 'Hotel Lisboa', date: '2024-01-15', investor: 'MacTube', notes: 'Equipa técnica' },
-    { id: 3, category: 'Madalena Cruz', subcategory: 'Videoclip "Amor"', type: 'alimentacao', value: 200, entity: 'Catering ABC', date: '2024-01-15', investor: 'Outro', notes: 'Almoço equipa' },
-    { id: 4, category: 'Madalena Cruz', subcategory: 'Single "Sol"', type: 'producao', value: 2000, entity: 'Studio Som', date: '2024-01-20', investor: 'MacTube', notes: 'Gravação estúdio' },
-    { id: 5, category: 'Madalena Cruz', subcategory: 'Single "Sol"', type: 'promocao', value: 800, entity: 'Agência Marketing', date: '2024-01-22', investor: 'Outro', notes: 'Campanha digital' },
-    { id: 6, category: 'João Silva', subcategory: 'Album "Noite"', type: 'producao', value: 5000, entity: 'Studio Pro', date: '2024-01-25', investor: 'MacTube', notes: 'Produção completa' },
-    { id: 7, category: 'João Silva', subcategory: 'Tour 2024', type: 'transporte', value: 1200, entity: 'Transportes Lda', date: '2024-02-01', investor: 'MacTube', notes: 'Aluguer carrinha' },
-    { id: 8, category: 'João Silva', subcategory: 'Tour 2024', type: 'equipamento', value: 600, entity: 'Som & Luz', date: '2024-02-02', investor: 'Outro', notes: 'Aluguer PA' },
-    { id: 9, category: 'Ana Santos', subcategory: 'Single "Mar"', type: 'producao', value: 1800, entity: 'Beach Studio', date: '2024-02-05', investor: 'MacTube', notes: 'Gravação' },
-    { id: 10, category: 'Ana Santos', subcategory: 'Festival Verão', type: 'combustivel', value: 150, entity: 'Galp', date: '2024-02-10', investor: 'MacTube', notes: 'Deslocação' }
-];
+// DOM Elements
+const authScreen = document.getElementById('auth-screen');
+const appScreen = document.getElementById('app-screen');
+const loginBtn = document.getElementById('login-btn');
+const logoutBtn = document.getElementById('logout-btn');
+const refreshBtn = document.getElementById('refresh-btn');
+const toast = document.getElementById('toast');
 
-// ============ LOCAL STORAGE ============
-function saveData() {
-    localStorage.setItem('mactube_expenses', JSON.stringify(APP_STATE.expenses));
-    localStorage.setItem('mactube_categories', JSON.stringify(APP_STATE.categories));
-}
-
-function loadData() {
-    const expenses = localStorage.getItem('mactube_expenses');
-    const categories = localStorage.getItem('mactube_categories');
-    
-    if (expenses) {
-        APP_STATE.expenses = JSON.parse(expenses);
-    } else {
-        // Load demo data on first run
-        APP_STATE.expenses = [...DEMO_EXPENSES];
-        saveData();
-    }
-    
-    if (categories) {
-        APP_STATE.categories = JSON.parse(categories);
-    }
-}
-
-// ============ INITIALIZATION ============
-document.addEventListener('DOMContentLoaded', function() {
-    loadData();
-    initAuth();
+// Initialize App
+document.addEventListener('DOMContentLoaded', () => {
     initTabs();
-    initExpenseForm();
-    initModals();
+    initForm();
     initFilters();
-    initSearch();
-    updateAllViews();
-    
-    // Hide splash screen
-    setTimeout(() => {
-        const splash = document.querySelector('.splash-screen');
-        if (splash) {
-            splash.classList.add('hidden');
-        }
-    }, 1800);
+    initModals();
+    initAuth();
+    setDefaultDate();
+    loadData();
 });
 
-// ============ AUTHENTICATION ============
+// ==========================================
+// AUTH
+// ==========================================
+
 function initAuth() {
-    const authForm = document.getElementById('auth-form');
-    const loginBtn = document.querySelector('.auth-btn');
+    loginBtn.addEventListener('click', handleLogin);
+    logoutBtn.addEventListener('click', handleLogout);
+    refreshBtn.addEventListener('click', () => {
+        loadData();
+        showToast('Dados atualizados', 'success');
+    });
     
-    if (loginBtn) {
-        loginBtn.addEventListener('click', function() {
-            const emailInput = document.getElementById('email');
-            const email = emailInput ? emailInput.value : 'demo@mactube.pt';
-            
-            // Demo login - accept any input
-            APP_STATE.user = email || 'demo@mactube.pt';
-            
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('app-screen').classList.remove('hidden');
-            
-            const greeting = document.getElementById('user-greeting');
-            if (greeting) {
-                const name = APP_STATE.user.split('@')[0];
-                greeting.textContent = name.charAt(0).toUpperCase() + name.slice(1);
-            }
-            
-            updateAllViews();
-        });
+    // Check if already logged in
+    const savedUser = localStorage.getItem('maktub_user');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showApp();
     }
 }
 
-// ============ TABS ============
+function handleLogin() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    // Demo login - accept any input
+    if (email && password) {
+        currentUser = {
+            email: email,
+            name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1)
+        };
+        localStorage.setItem('maktub_user', JSON.stringify(currentUser));
+        showApp();
+        showToast('Bem-vindo(a), ' + currentUser.name + '!', 'success');
+    }
+}
+
+function handleLogout() {
+    currentUser = null;
+    localStorage.removeItem('maktub_user');
+    hideApp();
+}
+
+function showApp() {
+    authScreen.classList.add('hidden');
+    authScreen.classList.remove('active');
+    appScreen.classList.remove('hidden');
+    document.getElementById('user-greeting').textContent = currentUser.name;
+    updateDashboard();
+}
+
+function hideApp() {
+    appScreen.classList.add('hidden');
+    authScreen.classList.remove('hidden');
+    authScreen.classList.add('active');
+}
+
+// ==========================================
+// TABS NAVIGATION - FIXED!
+// ==========================================
+
 function initTabs() {
     const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
     
     tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-tab');
+        tab.addEventListener('click', () => {
+            const targetId = tab.getAttribute('data-tab');
             
-            // Update tab states
+            // Remove active from all tabs
             tabs.forEach(t => t.classList.remove('active'));
-            this.classList.add('active');
             
-            // Show correct content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.add('hidden');
+            // Hide all content
+            contents.forEach(c => {
+                c.classList.remove('active');
+                c.classList.add('hidden');
             });
             
+            // Activate clicked tab
+            tab.classList.add('active');
+            
+            // Show target content - IDs now match data-tab values exactly!
             const targetContent = document.getElementById(targetId);
             if (targetContent) {
+                targetContent.classList.add('active');
                 targetContent.classList.remove('hidden');
             }
             
-            // Update view when switching tabs
-            if (targetId === 'dashboard-tab') {
-                updateDashboard();
-            } else if (targetId === 'reports-tab') {
-                updateReportsTable();
-            } else if (targetId === 'settlement-tab') {
+            // Update data when switching to certain tabs
+            if (targetId === 'reports') {
+                renderTable();
+            } else if (targetId === 'settlement') {
                 updateSettlement();
+            } else if (targetId === 'dashboard') {
+                updateDashboard();
             }
         });
     });
 }
 
-// ============ EXPENSE FORM ============
-function initExpenseForm() {
-    // Expense type selection
-    document.querySelectorAll('.expense-types .option').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.expense-types .option').forEach(b => b.classList.remove('selected'));
-            this.classList.add('selected');
+// ==========================================
+// EXPENSE FORM
+// ==========================================
+
+function initForm() {
+    const form = document.getElementById('expense-form');
+    const typeButtons = document.querySelectorAll('.type-btn');
+    const investorButtons = document.querySelectorAll('.investor-btn');
+    
+    // Type selection
+    typeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            typeButtons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('expense-type').value = btn.getAttribute('data-type');
         });
     });
     
     // Investor selection
-    document.querySelectorAll('.investor-option').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.investor-option').forEach(b => b.classList.remove('selected'));
-            this.classList.add('selected');
+    investorButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            investorButtons.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            document.getElementById('investor').value = btn.getAttribute('data-investor');
         });
     });
     
-    // Category change - update subcategories
-    const categorySelect = document.getElementById('category');
-    if (categorySelect) {
-        // Populate categories
-        updateCategoryDropdown();
-        
-        categorySelect.addEventListener('change', function() {
-            updateSubcategoryDropdown(this.value);
-        });
-    }
-    
-    // Submit form
-    const submitBtn = document.querySelector('.btn-submit');
-    if (submitBtn) {
-        submitBtn.addEventListener('click', addExpense);
-    }
-    
-    // Add new category button
-    const addCategoryBtn = document.getElementById('add-category-btn');
-    if (addCategoryBtn) {
-        addCategoryBtn.addEventListener('click', () => openModal('add-category-modal'));
-    }
-    
-    // Add new subcategory button
-    const addSubcategoryBtn = document.getElementById('add-subcategory-btn');
-    if (addSubcategoryBtn) {
-        addSubcategoryBtn.addEventListener('click', () => openModal('add-subcategory-modal'));
-    }
+    // Form submit
+    form.addEventListener('submit', handleFormSubmit);
 }
 
-function updateCategoryDropdown(selectElement = null) {
-    const select = selectElement || document.getElementById('category');
-    const filterSelect = document.getElementById('filter-category');
-    const settlementSelect = document.getElementById('settlement-category');
-    
-    const options = '<option value="">Selecionar artista...</option>' +
-        Object.keys(APP_STATE.categories).map(cat => 
-            `<option value="${cat}">${cat}</option>`
-        ).join('');
-    
-    if (select) select.innerHTML = options;
-    if (filterSelect) filterSelect.innerHTML = '<option value="">Todos os artistas</option>' + 
-        Object.keys(APP_STATE.categories).map(cat => `<option value="${cat}">${cat}</option>`).join('');
-    if (settlementSelect) settlementSelect.innerHTML = options;
+function setDefaultDate() {
+    const dateInput = document.getElementById('expense-date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
 }
 
-function updateSubcategoryDropdown(category, selectElement = null) {
-    const select = selectElement || document.getElementById('subcategory');
-    const filterSelect = document.getElementById('filter-subcategory');
+function handleFormSubmit(e) {
+    e.preventDefault();
     
-    if (!select) return;
-    
-    if (!category || !APP_STATE.categories[category]) {
-        select.innerHTML = '<option value="">Primeiro selecione o artista</option>';
-        if (filterSelect) filterSelect.innerHTML = '<option value="">Todos os projetos</option>';
-        return;
-    }
-    
-    const options = '<option value="">Selecionar projeto...</option>' +
-        APP_STATE.categories[category].map(sub => 
-            `<option value="${sub}">${sub}</option>`
-        ).join('');
-    
-    select.innerHTML = options;
-    
-    if (filterSelect) {
-        filterSelect.innerHTML = '<option value="">Todos os projetos</option>' +
-            APP_STATE.categories[category].map(sub => `<option value="${sub}">${sub}</option>`).join('');
-    }
-}
-
-function addExpense() {
-    const category = document.getElementById('category').value;
-    const subcategory = document.getElementById('subcategory').value;
-    const typeBtn = document.querySelector('.expense-types .option.selected');
-    const value = parseFloat(document.getElementById('value').value);
+    const artist = document.getElementById('artist').value;
+    const project = document.getElementById('project').value;
+    const type = document.getElementById('expense-type').value;
+    const amount = parseFloat(document.getElementById('amount').value);
+    const date = document.getElementById('expense-date').value;
     const entity = document.getElementById('entity').value;
-    const date = document.getElementById('date').value;
-    const investorBtn = document.querySelector('.investor-option.selected');
+    const investor = document.getElementById('investor').value;
     const notes = document.getElementById('notes').value;
     
-    // Validation
-    if (!category) {
-        showToast('Por favor, selecione um artista', 'error');
-        return;
-    }
-    if (!subcategory) {
-        showToast('Por favor, selecione um projeto', 'error');
-        return;
-    }
-    if (!typeBtn) {
-        showToast('Por favor, selecione o tipo de despesa', 'error');
-        return;
-    }
-    if (!value || isNaN(value)) {
-        showToast('Por favor, insira um valor válido', 'error');
-        return;
-    }
-    if (!entity) {
-        showToast('Por favor, insira a entidade', 'error');
-        return;
-    }
-    if (!date) {
-        showToast('Por favor, selecione a data', 'error');
-        return;
-    }
-    if (!investorBtn) {
-        showToast('Por favor, selecione quem investiu', 'error');
+    if (!artist || !project || !type || !amount || !date) {
+        showToast('Preencha todos os campos obrigatórios', 'error');
         return;
     }
     
     const expense = {
-        id: Date.now(),
-        category,
-        subcategory,
-        type: typeBtn.getAttribute('data-type'),
-        value,
-        entity,
+        id: Date.now().toString(),
+        artist,
+        project,
+        type,
+        amount,
         date,
-        investor: investorBtn.getAttribute('data-investor'),
-        notes
+        entity,
+        investor,
+        notes,
+        createdAt: new Date().toISOString()
     };
     
-    APP_STATE.expenses.push(expense);
+    expenses.push(expense);
     saveData();
-    
-    // Reset form
-    document.getElementById('category').value = '';
-    document.getElementById('subcategory').innerHTML = '<option value="">Primeiro selecione o artista</option>';
-    document.querySelectorAll('.expense-types .option').forEach(b => b.classList.remove('selected'));
-    document.getElementById('value').value = '';
-    document.getElementById('entity').value = '';
-    document.getElementById('date').value = '';
-    document.querySelectorAll('.investor-option').forEach(b => b.classList.remove('selected'));
-    document.getElementById('notes').value = '';
-    
-    showToast('Despesa adicionada com sucesso!');
-    updateAllViews();
-}
-
-// ============ MODALS ============
-function initModals() {
-    // Close buttons
-    document.querySelectorAll('.modal-close').forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.closest('.modal').classList.add('hidden');
-        });
-    });
-    
-    // Click outside to close
-    document.querySelectorAll('.modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-            }
-        });
-    });
-    
-    // Add category confirm
-    const addCategoryConfirm = document.getElementById('add-category-confirm');
-    if (addCategoryConfirm) {
-        addCategoryConfirm.addEventListener('click', addNewCategory);
-    }
-    
-    // Add subcategory confirm
-    const addSubcategoryConfirm = document.getElementById('add-subcategory-confirm');
-    if (addSubcategoryConfirm) {
-        addSubcategoryConfirm.addEventListener('click', addNewSubcategory);
-    }
-    
-    // Edit expense confirm
-    const editExpenseConfirm = document.getElementById('edit-expense-confirm');
-    if (editExpenseConfirm) {
-        editExpenseConfirm.addEventListener('click', saveEditedExpense);
-    }
-    
-    // Delete expense confirm
-    const deleteExpenseConfirm = document.getElementById('delete-expense-confirm');
-    if (deleteExpenseConfirm) {
-        deleteExpenseConfirm.addEventListener('click', confirmDeleteExpense);
-    }
-    
-    // Logout button
-    const logoutBtn = document.querySelector('.header-icon-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function() {
-            document.getElementById('app-screen').classList.add('hidden');
-            document.getElementById('auth-screen').classList.remove('hidden');
-        });
-    }
-}
-
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('hidden');
-    }
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('hidden');
-    }
-}
-
-function addNewCategory() {
-    const input = document.getElementById('new-category-input');
-    const name = input.value.trim();
-    
-    if (!name) {
-        showToast('Por favor, insira o nome do artista', 'error');
-        return;
-    }
-    
-    if (APP_STATE.categories[name]) {
-        showToast('Este artista já existe', 'error');
-        return;
-    }
-    
-    APP_STATE.categories[name] = [];
-    saveData();
-    updateCategoryDropdown();
-    
-    input.value = '';
-    closeModal('add-category-modal');
-    showToast('Artista adicionado com sucesso!');
-}
-
-function addNewSubcategory() {
-    const input = document.getElementById('new-subcategory-input');
-    const category = document.getElementById('category').value;
-    const name = input.value.trim();
-    
-    if (!category) {
-        showToast('Por favor, selecione primeiro um artista', 'error');
-        return;
-    }
-    
-    if (!name) {
-        showToast('Por favor, insira o nome do projeto', 'error');
-        return;
-    }
-    
-    if (APP_STATE.categories[category].includes(name)) {
-        showToast('Este projeto já existe', 'error');
-        return;
-    }
-    
-    APP_STATE.categories[category].push(name);
-    saveData();
-    updateSubcategoryDropdown(category);
-    
-    input.value = '';
-    closeModal('add-subcategory-modal');
-    showToast('Projeto adicionado com sucesso!');
-}
-
-// Edit expense
-let currentEditId = null;
-
-function editExpense(id) {
-    const expense = APP_STATE.expenses.find(e => e.id === id);
-    if (!expense) return;
-    
-    currentEditId = id;
-    
-    document.getElementById('edit-value').value = expense.value;
-    document.getElementById('edit-entity').value = expense.entity;
-    document.getElementById('edit-notes').value = expense.notes || '';
-    
-    openModal('edit-expense-modal');
-}
-
-function saveEditedExpense() {
-    if (!currentEditId) return;
-    
-    const expense = APP_STATE.expenses.find(e => e.id === currentEditId);
-    if (!expense) return;
-    
-    const value = parseFloat(document.getElementById('edit-value').value);
-    const entity = document.getElementById('edit-entity').value;
-    const notes = document.getElementById('edit-notes').value;
-    
-    if (!value || isNaN(value)) {
-        showToast('Por favor, insira um valor válido', 'error');
-        return;
-    }
-    
-    if (!entity) {
-        showToast('Por favor, insira a entidade', 'error');
-        return;
-    }
-    
-    expense.value = value;
-    expense.entity = entity;
-    expense.notes = notes;
-    
-    saveData();
-    updateAllViews();
-    closeModal('edit-expense-modal');
-    showToast('Despesa atualizada com sucesso!');
-    currentEditId = null;
-}
-
-// Delete expense
-let currentDeleteId = null;
-
-function deleteExpense(id) {
-    currentDeleteId = id;
-    openModal('delete-expense-modal');
-}
-
-function confirmDeleteExpense() {
-    if (!currentDeleteId) return;
-    
-    APP_STATE.expenses = APP_STATE.expenses.filter(e => e.id !== currentDeleteId);
-    saveData();
-    updateAllViews();
-    closeModal('delete-expense-modal');
-    showToast('Despesa eliminada com sucesso!');
-    currentDeleteId = null;
-}
-
-// ============ FILTERS & SEARCH ============
-function initFilters() {
-    const filterCategory = document.getElementById('filter-category');
-    const filterSubcategory = document.getElementById('filter-subcategory');
-    const filterInvestor = document.getElementById('filter-investor');
-    const settlementCategory = document.getElementById('settlement-category');
-    
-    if (filterCategory) {
-        filterCategory.addEventListener('change', function() {
-            updateSubcategoryDropdown(this.value);
-            updateReportsTable();
-        });
-    }
-    
-    if (filterSubcategory) {
-        filterSubcategory.addEventListener('change', updateReportsTable);
-    }
-    
-    if (filterInvestor) {
-        filterInvestor.addEventListener('change', updateReportsTable);
-    }
-    
-    if (settlementCategory) {
-        settlementCategory.addEventListener('change', function() {
-            updateSettlement(this.value);
-        });
-    }
-}
-
-function initSearch() {
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            updateReportsTable(this.value);
-        });
-    }
-}
-
-// ============ UPDATE VIEWS ============
-function updateAllViews() {
+    resetForm();
     updateDashboard();
-    updateReportsTable();
-    updateSettlement();
+    showToast('Despesa registada com sucesso!', 'success');
+    
+    // Switch to dashboard
+    document.querySelector('[data-tab="dashboard"]').click();
 }
 
-// ============ DASHBOARD ============
+function resetForm() {
+    document.getElementById('expense-form').reset();
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.investor-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector('[data-investor="maktub"]').classList.add('selected');
+    document.getElementById('investor').value = 'maktub';
+    setDefaultDate();
+}
+
+// ==========================================
+// DATA MANAGEMENT
+// ==========================================
+
+function loadData() {
+    const saved = localStorage.getItem('maktub_expenses');
+    if (saved) {
+        expenses = JSON.parse(saved);
+    } else {
+        // Load demo data
+        expenses = getDemoData();
+        saveData();
+    }
+    updateDashboard();
+}
+
+function saveData() {
+    localStorage.setItem('maktub_expenses', JSON.stringify(expenses));
+}
+
+function getDemoData() {
+    return [
+        {
+            id: '1',
+            artist: 'Buba Espinho',
+            project: 'Videoclipe',
+            type: 'producao',
+            amount: 2500,
+            date: '2025-01-10',
+            entity: 'Studio XYZ',
+            investor: 'maktub',
+            notes: 'Produção videoclipe "Novo Single"',
+            createdAt: '2025-01-10T10:00:00Z'
+        },
+        {
+            id: '2',
+            artist: 'MAR',
+            project: 'Concerto',
+            type: 'alojamento',
+            amount: 450,
+            date: '2025-01-12',
+            entity: 'Hotel Lisboa',
+            investor: 'maktub',
+            notes: '2 noites para banda',
+            createdAt: '2025-01-12T14:00:00Z'
+        },
+        {
+            id: '3',
+            artist: 'D.A.M.A',
+            project: 'Tour',
+            type: 'combustivel',
+            amount: 180,
+            date: '2025-01-14',
+            entity: 'Galp',
+            investor: 'outro',
+            notes: 'Viagem Lisboa-Porto',
+            createdAt: '2025-01-14T09:00:00Z'
+        },
+        {
+            id: '4',
+            artist: 'Buba Espinho',
+            project: 'Promoção',
+            type: 'promocao',
+            amount: 800,
+            date: '2025-01-15',
+            entity: 'Meta Ads',
+            investor: 'maktub',
+            notes: 'Campanha Instagram',
+            createdAt: '2025-01-15T11:00:00Z'
+        },
+        {
+            id: '5',
+            artist: 'Bandidos do Cante',
+            project: 'Gravação',
+            type: 'equipamento',
+            amount: 350,
+            date: '2025-01-16',
+            entity: 'Thomann',
+            investor: 'outro',
+            notes: 'Cordas e acessórios',
+            createdAt: '2025-01-16T16:00:00Z'
+        },
+        {
+            id: '6',
+            artist: 'MAR',
+            project: 'Videoclipe',
+            type: 'alimentacao',
+            amount: 220,
+            date: '2025-01-18',
+            entity: 'Catering Pro',
+            investor: 'maktub',
+            notes: 'Catering dia de filmagem',
+            createdAt: '2025-01-18T12:00:00Z'
+        }
+    ];
+}
+
+// ==========================================
+// DASHBOARD
+// ==========================================
+
 function updateDashboard() {
-    const totalExpenses = APP_STATE.expenses.reduce((sum, e) => sum + e.value, 0);
-    const mactubeExpenses = APP_STATE.expenses.filter(e => e.investor === 'MacTube').reduce((sum, e) => sum + e.value, 0);
-    const otherExpenses = APP_STATE.expenses.filter(e => e.investor === 'Outro').reduce((sum, e) => sum + e.value, 0);
-    const expenseCount = APP_STATE.expenses.length;
-    
-    // Update stat cards
-    const statTotal = document.getElementById('stat-total');
-    const statMactube = document.getElementById('stat-mactube');
-    const statOthers = document.getElementById('stat-others');
-    const statCount = document.getElementById('stat-count');
-    
-    if (statTotal) statTotal.textContent = formatCurrency(totalExpenses);
-    if (statMactube) statMactube.textContent = formatCurrency(mactubeExpenses);
-    if (statOthers) statOthers.textContent = formatCurrency(otherExpenses);
-    if (statCount) statCount.textContent = expenseCount;
-    
-    // Update charts
-    updateCategoryChart();
-    updateTypeChart();
-    
-    // Update activity
-    updateRecentActivity();
+    updateStats();
+    updateCharts();
+    updateRecentList();
 }
 
-function updateCategoryChart() {
-    const container = document.getElementById('category-chart');
-    if (!container) return;
+function updateStats() {
+    const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const maktub = expenses.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
+    const others = expenses.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
     
-    const categoryTotals = {};
-    APP_STATE.expenses.forEach(e => {
-        categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.value;
+    document.getElementById('stat-total').textContent = formatCurrency(total);
+    document.getElementById('stat-maktub').textContent = formatCurrency(maktub);
+    document.getElementById('stat-others').textContent = formatCurrency(others);
+    document.getElementById('stat-count').textContent = expenses.length;
+}
+
+function updateCharts() {
+    updateArtistChart();
+    updateTypeChart();
+}
+
+function updateArtistChart() {
+    const container = document.getElementById('chart-artists');
+    const byArtist = {};
+    
+    expenses.forEach(e => {
+        byArtist[e.artist] = (byArtist[e.artist] || 0) + e.amount;
     });
     
-    const maxValue = Math.max(...Object.values(categoryTotals), 1);
-    const colors = ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899'];
+    const sorted = Object.entries(byArtist).sort((a, b) => b[1] - a[1]);
+    const max = sorted.length > 0 ? sorted[0][1] : 0;
     
-    let html = '';
-    Object.entries(categoryTotals).slice(0, 5).forEach(([category, value], i) => {
-        const percentage = (value / maxValue) * 100;
-        html += `
-            <div class="chart-bar">
-                <span class="chart-bar-label">${category}</span>
-                <div class="chart-bar-track">
-                    <div class="chart-bar-fill" style="width: ${percentage}%; background: ${colors[i % colors.length]}"></div>
-                </div>
-                <span class="chart-bar-value">${formatCurrency(value)}</span>
+    if (sorted.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sem dados</p>';
+        return;
+    }
+    
+    container.innerHTML = sorted.map(([artist, amount]) => `
+        <div class="chart-bar-item">
+            <span class="chart-bar-label">${artist}</span>
+            <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="width: ${(amount / max * 100)}%"></div>
             </div>
-        `;
-    });
-    
-    container.innerHTML = html || '<p style="color: var(--text-light); text-align: center; padding: 40px 0;">Sem dados para mostrar</p>';
+            <span class="chart-bar-value">${formatCurrency(amount)}</span>
+        </div>
+    `).join('');
 }
 
 function updateTypeChart() {
-    const container = document.getElementById('type-chart');
-    if (!container) return;
+    const container = document.getElementById('chart-types');
+    const byType = {};
     
-    const typeTotals = {};
-    const typeNames = {
-        'combustivel': 'Combustível',
-        'alimentacao': 'Alimentação',
-        'alojamento': 'Alojamento',
-        'equipamento': 'Equipamento',
-        'producao': 'Produção',
-        'promocao': 'Promoção',
-        'transporte': 'Transporte',
-        'outros': 'Outros'
-    };
-    
-    APP_STATE.expenses.forEach(e => {
-        typeTotals[e.type] = (typeTotals[e.type] || 0) + e.value;
+    expenses.forEach(e => {
+        byType[e.type] = (byType[e.type] || 0) + e.amount;
     });
     
-    const maxValue = Math.max(...Object.values(typeTotals), 1);
-    const colors = ['#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899', '#94a3b8'];
+    const sorted = Object.entries(byType).sort((a, b) => b[1] - a[1]);
+    const max = sorted.length > 0 ? sorted[0][1] : 0;
     
-    let html = '';
-    Object.entries(typeTotals).slice(0, 5).forEach(([type, value], i) => {
-        const percentage = (value / maxValue) * 100;
-        html += `
-            <div class="chart-bar">
-                <span class="chart-bar-label">${typeNames[type] || type}</span>
-                <div class="chart-bar-track">
-                    <div class="chart-bar-fill" style="width: ${percentage}%; background: ${colors[i % colors.length]}"></div>
-                </div>
-                <span class="chart-bar-value">${formatCurrency(value)}</span>
+    if (sorted.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sem dados</p>';
+        return;
+    }
+    
+    container.innerHTML = sorted.map(([type, amount]) => `
+        <div class="chart-bar-item">
+            <span class="chart-bar-label">${getTypeName(type)}</span>
+            <div class="chart-bar-track">
+                <div class="chart-bar-fill" style="width: ${(amount / max * 100)}%"></div>
             </div>
-        `;
-    });
-    
-    container.innerHTML = html || '<p style="color: var(--text-light); text-align: center; padding: 40px 0;">Sem dados para mostrar</p>';
+            <span class="chart-bar-value">${formatCurrency(amount)}</span>
+        </div>
+    `).join('');
 }
 
-function updateRecentActivity() {
-    const container = document.getElementById('recent-activity');
-    if (!container) return;
+function updateRecentList() {
+    const container = document.getElementById('recent-list');
+    const recent = [...expenses].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
     
-    const recentExpenses = [...APP_STATE.expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
-    
-    const typeIcons = {
-        'combustivel': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22h18"/><path d="M4 3h8v14H4z"/><path d="M8 3v2"/><path d="M8 17v5"/><path d="M12 9h4a2 2 0 0 1 2 2v5h-6"/><path d="M18 16v5"/></svg>',
-        'alimentacao': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
-        'alojamento': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>',
-        'equipamento': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
-        'producao': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
-        'promocao': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>',
-        'transporte': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
-        'outros': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-    };
-    
-    let html = '';
-    recentExpenses.forEach(expense => {
-        const icon = typeIcons[expense.type] || typeIcons['outros'];
-        html += `
-            <div class="activity-item">
-                <div class="activity-icon">${icon}</div>
-                <div class="activity-content">
-                    <div class="activity-title">${expense.entity}</div>
-                    <div class="activity-meta">${expense.category} • ${formatDate(expense.date)}</div>
-                </div>
-                <div class="activity-amount ${expense.investor === 'MacTube' ? 'mactube' : 'other'}">${formatCurrency(expense.value)}</div>
+    if (recent.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <p>Nenhuma despesa registada</p>
             </div>
         `;
-    });
+        return;
+    }
     
-    container.innerHTML = html || '<p style="color: var(--text-light); text-align: center; padding: 40px 0;">Sem atividade recente</p>';
+    container.innerHTML = recent.map(e => `
+        <div class="activity-item">
+            <div class="activity-type">
+                ${getTypeIcon(e.type)}
+            </div>
+            <div class="activity-info">
+                <div class="activity-title">${e.artist} - ${getTypeName(e.type)}</div>
+                <div class="activity-meta">${e.project} • ${formatDate(e.date)}</div>
+            </div>
+            <div class="activity-amount ${e.investor === 'maktub' ? 'maktub' : 'other'}">
+                ${formatCurrency(e.amount)}
+            </div>
+        </div>
+    `).join('');
 }
 
-// ============ REPORTS TABLE ============
-function updateReportsTable(searchQuery = '') {
-    const filterCategory = document.getElementById('filter-category')?.value || '';
-    const filterSubcategory = document.getElementById('filter-subcategory')?.value || '';
-    const filterInvestor = document.getElementById('filter-investor')?.value || '';
+// ==========================================
+// REPORTS / TABLE
+// ==========================================
+
+function initFilters() {
+    document.getElementById('search-input').addEventListener('input', renderTable);
+    document.getElementById('filter-artist').addEventListener('change', renderTable);
+    document.getElementById('filter-type').addEventListener('change', renderTable);
+    document.getElementById('filter-investor').addEventListener('change', renderTable);
     
-    let filtered = [...APP_STATE.expenses];
+    document.getElementById('export-csv').addEventListener('click', exportCSV);
+    document.getElementById('export-pdf').addEventListener('click', exportPDF);
+    document.getElementById('view-all-btn').addEventListener('click', () => {
+        document.querySelector('[data-tab="reports"]').click();
+    });
+}
+
+function renderTable() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const artistFilter = document.getElementById('filter-artist').value;
+    const typeFilter = document.getElementById('filter-type').value;
+    const investorFilter = document.getElementById('filter-investor').value;
     
-    // Apply filters
-    if (filterCategory) {
-        filtered = filtered.filter(e => e.category === filterCategory);
-    }
-    if (filterSubcategory) {
-        filtered = filtered.filter(e => e.subcategory === filterSubcategory);
-    }
-    if (filterInvestor) {
-        filtered = filtered.filter(e => e.investor === filterInvestor);
-    }
+    let filtered = expenses.filter(e => {
+        const matchSearch = !search || 
+            e.artist.toLowerCase().includes(search) ||
+            e.project.toLowerCase().includes(search) ||
+            e.entity.toLowerCase().includes(search) ||
+            e.notes.toLowerCase().includes(search);
+        
+        const matchArtist = artistFilter === 'all' || e.artist === artistFilter;
+        const matchType = typeFilter === 'all' || e.type === typeFilter;
+        const matchInvestor = investorFilter === 'all' || e.investor === investorFilter;
+        
+        return matchSearch && matchArtist && matchType && matchInvestor;
+    });
     
-    // Apply search
-    if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        filtered = filtered.filter(e => 
-            e.category.toLowerCase().includes(query) ||
-            e.subcategory.toLowerCase().includes(query) ||
-            e.entity.toLowerCase().includes(query) ||
-            (e.notes && e.notes.toLowerCase().includes(query))
-        );
-    }
+    // Update summary
+    const total = filtered.reduce((sum, e) => sum + e.amount, 0);
+    const maktub = filtered.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
+    const others = filtered.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
+    
+    document.getElementById('summary-total').textContent = formatCurrency(total);
+    document.getElementById('summary-maktub').textContent = formatCurrency(maktub);
+    document.getElementById('summary-others').textContent = formatCurrency(others);
     
     // Sort by date descending
     filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
     
-    // Update summary cards
-    const totalFiltered = filtered.reduce((sum, e) => sum + e.value, 0);
-    const mactubeFiltered = filtered.filter(e => e.investor === 'MacTube').reduce((sum, e) => sum + e.value, 0);
-    const otherFiltered = filtered.filter(e => e.investor === 'Outro').reduce((sum, e) => sum + e.value, 0);
+    // Render table
+    const tbody = document.getElementById('expenses-body');
     
-    const summaryTotal = document.getElementById('summary-total');
-    const summaryMactube = document.getElementById('summary-mactube');
-    const summaryOther = document.getElementById('summary-other');
-    
-    if (summaryTotal) summaryTotal.textContent = formatCurrency(totalFiltered);
-    if (summaryMactube) summaryMactube.textContent = formatCurrency(mactubeFiltered);
-    if (summaryOther) summaryOther.textContent = formatCurrency(otherFiltered);
-    
-    // Update table
-    const tbody = document.getElementById('expenses-tbody');
-    if (!tbody) return;
-    
-    const typeNames = {
-        'combustivel': 'Combustível',
-        'alimentacao': 'Alimentação',
-        'alojamento': 'Alojamento',
-        'equipamento': 'Equipamento',
-        'producao': 'Produção',
-        'promocao': 'Promoção',
-        'transporte': 'Transporte',
-        'outros': 'Outros'
-    };
-    
-    let html = '';
-    filtered.forEach(expense => {
-        html += `
+    if (filtered.length === 0) {
+        tbody.innerHTML = `
             <tr>
-                <td>${formatDate(expense.date)}</td>
-                <td>${expense.category}</td>
-                <td>${expense.subcategory}</td>
-                <td>${typeNames[expense.type] || expense.type}</td>
-                <td>${formatCurrency(expense.value)}</td>
-                <td>${expense.entity}</td>
-                <td><span class="investor-badge ${expense.investor.toLowerCase()}">${expense.investor}</span></td>
-                <td>
-                    <button class="action-btn" onclick="editExpense(${expense.id})" title="Editar">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                        </svg>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteExpense(${expense.id})" title="Eliminar">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="3,6 5,6 21,6"/>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                            <line x1="10" y1="11" x2="10" y2="17"/>
-                            <line x1="14" y1="11" x2="14" y2="17"/>
-                        </svg>
-                    </button>
+                <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    Nenhuma despesa encontrada
                 </td>
             </tr>
-        `;
-    });
-    
-    tbody.innerHTML = html || '<tr><td colspan="8" style="text-align: center; color: var(--text-light); padding: 40px 0;">Nenhuma despesa encontrada</td></tr>';
-}
-
-// ============ SETTLEMENT ============
-function updateSettlement(selectedCategory = null) {
-    const category = selectedCategory || document.getElementById('settlement-category')?.value;
-    const container = document.getElementById('settlement-content');
-    
-    if (!container) return;
-    
-    if (!category) {
-        container.innerHTML = `
-            <div style="text-align: center; padding: 60px 20px; color: var(--text-light);">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 16px; opacity: 0.5;">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-                <p>Selecione um artista para ver o acerto de contas</p>
-            </div>
         `;
         return;
     }
     
-    const expenses = APP_STATE.expenses.filter(e => e.category === category);
-    const mactubeTotal = expenses.filter(e => e.investor === 'MacTube').reduce((sum, e) => sum + e.value, 0);
-    const otherTotal = expenses.filter(e => e.investor === 'Outro').reduce((sum, e) => sum + e.value, 0);
-    const total = mactubeTotal + otherTotal;
-    const difference = mactubeTotal - otherTotal;
-    
-    // Calculate per project
-    const projectTotals = {};
-    expenses.forEach(e => {
-        if (!projectTotals[e.subcategory]) {
-            projectTotals[e.subcategory] = { mactube: 0, other: 0 };
-        }
-        if (e.investor === 'MacTube') {
-            projectTotals[e.subcategory].mactube += e.value;
-        } else {
-            projectTotals[e.subcategory].other += e.value;
-        }
-    });
-    
-    // Visual bar percentages
-    const mactubePercent = total > 0 ? (mactubeTotal / total) * 100 : 50;
-    const otherPercent = total > 0 ? (otherTotal / total) * 100 : 50;
-    
-    // Determine settlement status
-    let resultIcon, resultClass, resultNote;
-    if (difference > 0) {
-        resultIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19,12 12,19 5,12"/></svg>';
-        resultClass = 'positive';
-        resultNote = `${category} deve à MacTube`;
-    } else if (difference < 0) {
-        resultIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg>';
-        resultClass = 'negative';
-        resultNote = `MacTube deve a ${category}`;
-    } else {
-        resultIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>';
-        resultClass = 'neutral';
-        resultNote = 'Contas acertadas';
-    }
-    
-    // Build project breakdown HTML
-    let projectBreakdownHtml = '';
-    Object.entries(projectTotals).forEach(([project, totals]) => {
-        const projectDiff = totals.mactube - totals.other;
-        projectBreakdownHtml += `
-            <div class="project-item">
-                <span class="project-name">${project}</span>
-                <span class="project-amount" style="color: ${projectDiff > 0 ? 'var(--primary)' : projectDiff < 0 ? 'var(--success)' : 'var(--text)'}">${formatCurrency(projectDiff)}</span>
-            </div>
-        `;
-    });
-    
-    container.innerHTML = `
-        <div class="settlement-box">
-            <div class="settlement-artist-name">${category}</div>
-            
-            <div class="settlement-visual">
-                <div class="settlement-bar">
-                    <div class="settlement-bar-mactube" style="width: ${mactubePercent}%"></div>
-                    <div class="settlement-bar-others" style="width: ${otherPercent}%"></div>
-                </div>
-                <div class="settlement-bar-legend">
-                    <span class="legend-mactube">MacTube: ${formatCurrency(mactubeTotal)}</span>
-                    <span class="legend-others">Terceiros: ${formatCurrency(otherTotal)}</span>
-                </div>
-            </div>
-            
-            <div class="settlement-divider"></div>
-            
-            <div class="settlement-result">
-                <div class="settlement-result-icon ${resultClass}">${resultIcon}</div>
-                <div class="settlement-result-content">
-                    <div class="settlement-result-label">Balanço</div>
-                    <div class="settlement-result-value">${formatCurrency(Math.abs(difference))}</div>
-                    <div class="settlement-note">${resultNote}</div>
-                </div>
-            </div>
-            
-            <div class="settlement-breakdown">
-                <h4>Detalhes por Projeto</h4>
-                ${projectBreakdownHtml || '<p style="color: var(--text-light);">Nenhum projeto encontrado</p>'}
-            </div>
-        </div>
-    `;
-}
-
-// ============ EXPORT FUNCTIONS ============
-function exportToExcel() {
-    const filterCategory = document.getElementById('filter-category')?.value || '';
-    const filterSubcategory = document.getElementById('filter-subcategory')?.value || '';
-    const filterInvestor = document.getElementById('filter-investor')?.value || '';
-    
-    let data = [...APP_STATE.expenses];
-    
-    // Apply filters
-    if (filterCategory) data = data.filter(e => e.category === filterCategory);
-    if (filterSubcategory) data = data.filter(e => e.subcategory === filterSubcategory);
-    if (filterInvestor) data = data.filter(e => e.investor === filterInvestor);
-    
-    // Sort by date
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    const typeNames = {
-        'combustivel': 'Combustível',
-        'alimentacao': 'Alimentação',
-        'alojamento': 'Alojamento',
-        'equipamento': 'Equipamento',
-        'producao': 'Produção',
-        'promocao': 'Promoção',
-        'transporte': 'Transporte',
-        'outros': 'Outros'
-    };
-    
-    // Build CSV
-    let csv = 'Data,Artista,Projeto,Tipo,Valor,Entidade,Investidor,Notas\n';
-    data.forEach(e => {
-        csv += `${e.date},"${e.category}","${e.subcategory}","${typeNames[e.type] || e.type}",${e.value},"${e.entity}",${e.investor},"${e.notes || ''}"\n`;
-    });
-    
-    // Add totals
-    const total = data.reduce((sum, e) => sum + e.value, 0);
-    const mactube = data.filter(e => e.investor === 'MacTube').reduce((sum, e) => sum + e.value, 0);
-    const other = data.filter(e => e.investor === 'Outro').reduce((sum, e) => sum + e.value, 0);
-    
-    csv += '\n';
-    csv += `Total,,,,${total},,MacTube: ${mactube} | Terceiros: ${other},\n`;
-    
-    // Download file
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `MacTube_Despesas_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    
-    showToast('Ficheiro Excel exportado com sucesso!');
-}
-
-function exportToPDF() {
-    // Simple PDF generation using browser print
-    const filterCategory = document.getElementById('filter-category')?.value || 'Todos os artistas';
-    const filterSubcategory = document.getElementById('filter-subcategory')?.value || 'Todos os projetos';
-    
-    let data = [...APP_STATE.expenses];
-    
-    // Apply filters
-    const categoryFilter = document.getElementById('filter-category')?.value;
-    const subcategoryFilter = document.getElementById('filter-subcategory')?.value;
-    const investorFilter = document.getElementById('filter-investor')?.value;
-    
-    if (categoryFilter) data = data.filter(e => e.category === categoryFilter);
-    if (subcategoryFilter) data = data.filter(e => e.subcategory === subcategoryFilter);
-    if (investorFilter) data = data.filter(e => e.investor === investorFilter);
-    
-    data.sort((a, b) => new Date(b.date) - new Date(a.date));
-    
-    const total = data.reduce((sum, e) => sum + e.value, 0);
-    const mactube = data.filter(e => e.investor === 'MacTube').reduce((sum, e) => sum + e.value, 0);
-    const other = data.filter(e => e.investor === 'Outro').reduce((sum, e) => sum + e.value, 0);
-    
-    const typeNames = {
-        'combustivel': 'Combustível',
-        'alimentacao': 'Alimentação',
-        'alojamento': 'Alojamento',
-        'equipamento': 'Equipamento',
-        'producao': 'Produção',
-        'promocao': 'Promoção',
-        'transporte': 'Transporte',
-        'outros': 'Outros'
-    };
-    
-    let tableRows = data.map(e => `
+    tbody.innerHTML = filtered.map(e => `
         <tr>
             <td>${formatDate(e.date)}</td>
-            <td>${e.category}</td>
-            <td>${e.subcategory}</td>
-            <td>${typeNames[e.type] || e.type}</td>
-            <td style="text-align: right;">${formatCurrency(e.value)}</td>
-            <td>${e.entity}</td>
-            <td>${e.investor}</td>
+            <td>${e.artist}</td>
+            <td>${e.project}</td>
+            <td>${getTypeName(e.type)}</td>
+            <td>${e.entity || '-'}</td>
+            <td><span class="badge ${e.investor === 'maktub' ? 'badge-maktub' : 'badge-other'}">${e.investor === 'maktub' ? 'Maktub' : 'Terceiros'}</span></td>
+            <td>${formatCurrency(e.amount)}</td>
+            <td>
+                <div class="table-actions">
+                    <button onclick="openEditModal('${e.id}')" title="Editar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="delete-btn" onclick="openDeleteModal('${e.id}')" title="Eliminar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                </div>
+            </td>
         </tr>
     `).join('');
+}
+
+function exportCSV() {
+    const headers = ['Data', 'Artista', 'Projeto', 'Tipo', 'Entidade', 'Investidor', 'Valor', 'Notas'];
+    const rows = expenses.map(e => [
+        e.date,
+        e.artist,
+        e.project,
+        getTypeName(e.type),
+        e.entity,
+        e.investor === 'maktub' ? 'Maktub' : 'Terceiros',
+        e.amount.toFixed(2),
+        e.notes
+    ]);
     
+    const csv = [headers, ...rows].map(row => row.join(';')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `maktub_despesas_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    
+    showToast('CSV exportado!', 'success');
+}
+
+function exportPDF() {
+    // Simple print-based PDF export
     const printWindow = window.open('', '_blank');
+    const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const maktub = expenses.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
+    const others = expenses.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
+    
     printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-            <title>MacTube - Relatório de Despesas</title>
+            <title>Maktub Art Group - Relatório de Despesas</title>
             <style>
                 body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
-                h1 { color: #6366f1; margin-bottom: 8px; }
-                .subtitle { color: #666; margin-bottom: 30px; }
-                .summary { display: flex; gap: 30px; margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-radius: 8px; }
-                .summary-item { }
-                .summary-label { font-size: 12px; color: #666; }
-                .summary-value { font-size: 24px; font-weight: bold; color: #333; }
-                .summary-value.primary { color: #6366f1; }
-                .summary-value.success { color: #10b981; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                h1 { color: #111; margin-bottom: 8px; }
+                .subtitle { color: #666; margin-bottom: 32px; }
+                .summary { display: flex; gap: 24px; margin-bottom: 32px; }
+                .summary-item { padding: 16px; background: #f5f5f5; border-radius: 8px; }
+                .summary-label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
+                .summary-value { font-size: 20px; font-weight: bold; }
+                table { width: 100%; border-collapse: collapse; }
                 th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-                th { background: #f5f5f5; font-size: 12px; text-transform: uppercase; color: #666; }
-                .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
-                @media print { body { padding: 20px; } }
+                th { background: #f5f5f5; font-weight: 600; }
+                .maktub { color: #33E933; }
+                .outros { color: #ffbb33; }
             </style>
         </head>
         <body>
-            <h1>MacTube - Relatório de Despesas</h1>
-            <p class="subtitle">Filtros: ${categoryFilter || 'Todos'} / ${subcategoryFilter || 'Todos'}</p>
+            <h1>Maktub Art Group</h1>
+            <p class="subtitle">Relatório de Despesas - ${new Date().toLocaleDateString('pt-PT')}</p>
             
             <div class="summary">
                 <div class="summary-item">
-                    <div class="summary-label">Total</div>
-                    <div class="summary-value">${formatCurrency(total)}</div>
+                    <span class="summary-label">Total</span>
+                    <span class="summary-value">${formatCurrency(total)}</span>
                 </div>
                 <div class="summary-item">
-                    <div class="summary-label">MacTube</div>
-                    <div class="summary-value primary">${formatCurrency(mactube)}</div>
+                    <span class="summary-label">Maktub</span>
+                    <span class="summary-value maktub">${formatCurrency(maktub)}</span>
                 </div>
                 <div class="summary-item">
-                    <div class="summary-label">Terceiros</div>
-                    <div class="summary-value success">${formatCurrency(other)}</div>
+                    <span class="summary-label">Terceiros</span>
+                    <span class="summary-value outros">${formatCurrency(others)}</span>
                 </div>
             </div>
             
@@ -996,72 +584,260 @@ function exportToPDF() {
                         <th>Artista</th>
                         <th>Projeto</th>
                         <th>Tipo</th>
-                        <th style="text-align: right;">Valor</th>
-                        <th>Entidade</th>
                         <th>Investidor</th>
+                        <th>Valor</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${tableRows}
+                    ${expenses.sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
+                        <tr>
+                            <td>${formatDate(e.date)}</td>
+                            <td>${e.artist}</td>
+                            <td>${e.project}</td>
+                            <td>${getTypeName(e.type)}</td>
+                            <td class="${e.investor === 'maktub' ? 'maktub' : 'outros'}">${e.investor === 'maktub' ? 'Maktub' : 'Terceiros'}</td>
+                            <td>${formatCurrency(e.amount)}</td>
+                        </tr>
+                    `).join('')}
                 </tbody>
             </table>
-            
-            <div class="footer">
-                Gerado em ${new Date().toLocaleString('pt-PT')} | MacTube Expense Manager
-            </div>
         </body>
         </html>
     `);
-    
     printWindow.document.close();
-    setTimeout(() => {
-        printWindow.print();
-    }, 500);
+    printWindow.print();
     
-    showToast('A abrir janela de impressão para PDF...');
+    showToast('A preparar PDF...', 'success');
 }
 
-// ============ UTILITIES ============
-function formatCurrency(value) {
-    return new Intl.NumberFormat('pt-PT', {
-        style: 'currency',
-        currency: 'EUR'
-    }).format(value);
+// ==========================================
+// SETTLEMENT
+// ==========================================
+
+function updateSettlement() {
+    const maktub = expenses.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
+    const others = expenses.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
+    const total = maktub + others;
+    
+    document.getElementById('settle-maktub').textContent = formatCurrency(maktub);
+    document.getElementById('settle-others').textContent = formatCurrency(others);
+    
+    // Balance bar
+    const pctMaktub = total > 0 ? (maktub / total * 100) : 50;
+    const pctOthers = total > 0 ? (others / total * 100) : 50;
+    
+    document.getElementById('bar-maktub').style.width = pctMaktub + '%';
+    document.getElementById('bar-others').style.width = pctOthers + '%';
+    document.getElementById('pct-maktub').textContent = pctMaktub.toFixed(1) + '%';
+    document.getElementById('pct-others').textContent = pctOthers.toFixed(1) + '%';
+    
+    // Summary text
+    const summaryEl = document.getElementById('settlement-summary');
+    if (total === 0) {
+        summaryEl.innerHTML = '<p>Carregue dados para ver o resumo do acerto.</p>';
+    } else {
+        const diff = Math.abs(maktub - others);
+        const whoOwes = maktub > others ? 'terceiros devem ao Maktub' : 'Maktub deve a terceiros';
+        summaryEl.innerHTML = `
+            <p>
+                O <strong>Maktub Art Group</strong> investiu <span class="highlight">${formatCurrency(maktub)}</span> 
+                (${pctMaktub.toFixed(1)}% do total).
+            </p>
+            <p>
+                Os <strong>terceiros</strong> investiram <span class="highlight">${formatCurrency(others)}</span> 
+                (${pctOthers.toFixed(1)}% do total).
+            </p>
+            <p style="margin-top: 16px;">
+                ${diff > 0 ? `Para equilibrar as contas, os <strong>${whoOwes}</strong> um total de <span class="highlight">${formatCurrency(diff)}</span>.` : 'As contas estão equilibradas!'}
+            </p>
+        `;
+    }
+    
+    // Artist breakdown
+    updateArtistBreakdown();
+}
+
+function updateArtistBreakdown() {
+    const container = document.getElementById('artist-breakdown-list');
+    const byArtist = {};
+    
+    expenses.forEach(e => {
+        if (!byArtist[e.artist]) {
+            byArtist[e.artist] = { maktub: 0, others: 0 };
+        }
+        if (e.investor === 'maktub') {
+            byArtist[e.artist].maktub += e.amount;
+        } else {
+            byArtist[e.artist].others += e.amount;
+        }
+    });
+    
+    const artists = Object.entries(byArtist);
+    
+    if (artists.length === 0) {
+        container.innerHTML = '<p class="empty-state">Sem dados</p>';
+        return;
+    }
+    
+    container.innerHTML = artists.map(([artist, data]) => `
+        <div class="breakdown-item">
+            <span class="breakdown-artist">${artist}</span>
+            <div class="breakdown-values">
+                <span class="breakdown-maktub">Maktub: ${formatCurrency(data.maktub)}</span>
+                <span class="breakdown-others">Terceiros: ${formatCurrency(data.others)}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ==========================================
+// MODALS
+// ==========================================
+
+function initModals() {
+    // Edit modal
+    document.getElementById('close-edit').addEventListener('click', closeEditModal);
+    document.getElementById('cancel-edit').addEventListener('click', closeEditModal);
+    document.getElementById('edit-form').addEventListener('submit', handleEdit);
+    
+    // Delete modal
+    document.getElementById('close-delete').addEventListener('click', closeDeleteModal);
+    document.getElementById('cancel-delete').addEventListener('click', closeDeleteModal);
+    document.getElementById('confirm-delete').addEventListener('click', handleDelete);
+    
+    // Close on backdrop click
+    document.getElementById('edit-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'edit-modal') closeEditModal();
+    });
+    document.getElementById('delete-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'delete-modal') closeDeleteModal();
+    });
+}
+
+function openEditModal(id) {
+    const expense = expenses.find(e => e.id === id);
+    if (!expense) return;
+    
+    editingId = id;
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-artist').value = expense.artist;
+    document.getElementById('edit-project').value = expense.project;
+    document.getElementById('edit-type').value = expense.type;
+    document.getElementById('edit-amount').value = expense.amount;
+    document.getElementById('edit-date').value = expense.date;
+    document.getElementById('edit-entity').value = expense.entity;
+    document.getElementById('edit-investor').value = expense.investor;
+    document.getElementById('edit-notes').value = expense.notes;
+    
+    document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('edit-modal').classList.add('hidden');
+    editingId = null;
+}
+
+function handleEdit(e) {
+    e.preventDefault();
+    
+    const index = expenses.findIndex(exp => exp.id === editingId);
+    if (index === -1) return;
+    
+    expenses[index] = {
+        ...expenses[index],
+        artist: document.getElementById('edit-artist').value,
+        project: document.getElementById('edit-project').value,
+        type: document.getElementById('edit-type').value,
+        amount: parseFloat(document.getElementById('edit-amount').value),
+        date: document.getElementById('edit-date').value,
+        entity: document.getElementById('edit-entity').value,
+        investor: document.getElementById('edit-investor').value,
+        notes: document.getElementById('edit-notes').value
+    };
+    
+    saveData();
+    closeEditModal();
+    renderTable();
+    updateDashboard();
+    showToast('Despesa atualizada!', 'success');
+}
+
+function openDeleteModal(id) {
+    document.getElementById('delete-id').value = id;
+    document.getElementById('delete-modal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+    document.getElementById('delete-modal').classList.add('hidden');
+}
+
+function handleDelete() {
+    const id = document.getElementById('delete-id').value;
+    expenses = expenses.filter(e => e.id !== id);
+    saveData();
+    closeDeleteModal();
+    renderTable();
+    updateDashboard();
+    showToast('Despesa eliminada!', 'success');
+}
+
+// ==========================================
+// UTILITIES
+// ==========================================
+
+function formatCurrency(amount) {
+    return amount.toLocaleString('pt-PT', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + ' EUR';
 }
 
 function formatDate(dateStr) {
     const date = new Date(dateStr);
     return date.toLocaleDateString('pt-PT', {
         day: '2-digit',
-        month: 'short',
+        month: '2-digit',
         year: 'numeric'
     });
 }
 
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
-    const toastIcon = toast.querySelector('.toast-icon');
-    
-    if (toastMessage) toastMessage.textContent = message;
-    
-    if (toastIcon) {
-        if (type === 'error') {
-            toastIcon.style.color = 'var(--error)';
-        } else {
-            toastIcon.style.color = 'var(--success)';
-        }
-    }
-    
-    toast.classList.remove('hidden');
+function getTypeName(type) {
+    const types = {
+        combustivel: 'Combustível',
+        alimentacao: 'Alimentação',
+        alojamento: 'Alojamento',
+        equipamento: 'Equipamento',
+        producao: 'Produção',
+        promocao: 'Promoção',
+        transporte: 'Transporte',
+        outros: 'Outros'
+    };
+    return types[type] || type;
+}
+
+function getTypeIcon(type) {
+    const icons = {
+        combustivel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 22V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M13 10h4a2 2 0 0 1 2 2v8a2 2 0 0 0 2 2"/><circle cx="8" cy="10" r="2"/></svg>',
+        alimentacao: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>',
+        alojamento: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20v-8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v8"/><path d="M4 10V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M12 4v6"/><path d="M2 18h20"/></svg>',
+        equipamento: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5.5" cy="17.5" r="2.5"/><circle cx="17.5" cy="15.5" r="2.5"/><path d="M8 17V5l12-2v12"/></svg>',
+        producao: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>',
+        promocao: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+        transporte: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10H6l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>',
+        outros: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>'
+    };
+    return icons[type] || icons.outros;
+}
+
+function showToast(message, type = '') {
+    toast.textContent = message;
+    toast.className = 'toast' + (type ? ' ' + type : '');
     
     setTimeout(() => {
         toast.classList.add('hidden');
     }, 3000);
 }
 
-// Make functions globally available
-window.editExpense = editExpense;
-window.deleteExpense = deleteExpense;
-window.exportToExcel = exportToExcel;
-window.exportToPDF = exportToPDF;
+// Make functions globally accessible for onclick handlers
+window.openEditModal = openEditModal;
+window.openDeleteModal = openDeleteModal;
