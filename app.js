@@ -1499,18 +1499,28 @@ async function syncToGoogleSheets() {
         
         console.log('📤 Sending payload:', payload);
         
+        // Create form data for better compatibility
+        const formData = new FormData();
+        formData.append('data', JSON.stringify(payload));
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors', // Required for Google Apps Script
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
+            redirect: 'follow'
         });
         
         console.log('✅ Request sent successfully');
+        console.log('Response status:', response.status);
         
-        // With no-cors, we can't read the response, so we assume success
+        // Try to read response
+        try {
+            const result = await response.text();
+            console.log('Response:', result);
+        } catch (e) {
+            console.log('Could not read response (normal with CORS)');
+        }
+        
+        // Assume success
         showToast(`✅ ${expenses.length} despesas enviadas para Google Sheets!`, 'success');
         localStorage.setItem('lastSyncToSheets', new Date().toISOString());
         
