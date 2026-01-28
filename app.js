@@ -444,18 +444,15 @@ function updateArtistInvestorChart() {
     let html = sorted.map(([artist, data]) => {
         const maktubPct = (data.maktub / data.total * 100);
         const outrosPct = (data.outros / data.total * 100);
-        const widthPct = (data.total / maxTotal * 100);
         
         return `
-            <div class="stacked-bar-item">
-                <div class="stacked-bar-label">
-                    <span>${artist}</span>
-                    <span>${formatCurrency(data.total)}</span>
+            <div class="chart-bar-item">
+                <span class="chart-bar-label">${artist}</span>
+                <div class="chart-bar-track stacked">
+                    <div class="chart-bar-segment maktub" style="width: ${maktubPct}%" title="Maktub: ${formatCurrency(data.maktub)}"></div>
+                    <div class="chart-bar-segment outros" style="width: ${outrosPct}%" title="Terceiros: ${formatCurrency(data.outros)}"></div>
                 </div>
-                <div class="stacked-bar-track" style="width: ${widthPct}%">
-                    <div class="stacked-bar-segment maktub" style="width: ${maktubPct}%" title="Maktub: ${formatCurrency(data.maktub)}"></div>
-                    <div class="stacked-bar-segment outros" style="width: ${outrosPct}%" title="Terceiros: ${formatCurrency(data.outros)}"></div>
-                </div>
+                <span class="chart-bar-value">${formatCurrency(data.total)}</span>
             </div>
         `;
     }).join('');
@@ -495,7 +492,6 @@ function updateArtistCategoryChart() {
     });
     
     const sorted = Object.entries(byArtist).sort((a, b) => b[1].total - a[1].total);
-    const maxTotal = sorted.length > 0 ? sorted[0][1].total : 0;
     
     if (sorted.length === 0) {
         container.innerHTML = '<p class="empty-state">Sem dados</p>';
@@ -503,25 +499,21 @@ function updateArtistCategoryChart() {
     }
     
     let html = sorted.map(([artist, data]) => {
-        const widthPct = (data.total / maxTotal * 100);
-        
         let segments = types.map(type => {
             const pct = (data[type] / data.total * 100);
             if (pct > 0) {
-                return `<div class="stacked-bar-segment ${type}" style="width: ${pct}%" title="${getTypeName(type)}: ${formatCurrency(data[type])}"></div>`;
+                return `<div class="chart-bar-segment ${type}" style="width: ${pct}%" title="${getTypeName(type)}: ${formatCurrency(data[type])}"></div>`;
             }
             return '';
         }).join('');
         
         return `
-            <div class="stacked-bar-item">
-                <div class="stacked-bar-label">
-                    <span>${artist}</span>
-                    <span>${formatCurrency(data.total)}</span>
-                </div>
-                <div class="stacked-bar-track" style="width: ${widthPct}%">
+            <div class="chart-bar-item">
+                <span class="chart-bar-label">${artist}</span>
+                <div class="chart-bar-track stacked">
                     ${segments}
                 </div>
+                <span class="chart-bar-value">${formatCurrency(data.total)}</span>
             </div>
         `;
     }).join('');
@@ -647,6 +639,7 @@ function renderTable() {
     const sorted = [...filtered].sort((a, b) => new Date(b.date) - new Date(a.date));
     
     const tbody = document.getElementById('expenses-body');
+    const tfoot = document.getElementById('expenses-footer');
     
     if (sorted.length === 0) {
         tbody.innerHTML = `
@@ -656,6 +649,7 @@ function renderTable() {
                 </td>
             </tr>
         `;
+        tfoot.innerHTML = '';
         return;
     }
     
@@ -680,6 +674,16 @@ function renderTable() {
             </td>
         </tr>
     `).join('');
+    
+    // Add total row in footer
+    tfoot.innerHTML = `
+        <tr class="table-total-row">
+            <td colspan="5"><strong>TOTAL (${filtered.length} registos)</strong></td>
+            <td></td>
+            <td><strong>${formatCurrency(total)}</strong></td>
+            <td></td>
+        </tr>
+    `;
 }
 
 function renderPivotTables() {
@@ -843,69 +847,180 @@ function exportPDF() {
     const maktub = filtered.filter(e => e.investor === 'maktub').reduce((sum, e) => sum + e.amount, 0);
     const others = filtered.filter(e => e.investor === 'outro').reduce((sum, e) => sum + e.amount, 0);
     
+    // Build chart data for artists
+    const byArtist = {};
+    filtered.forEach(e => {
+        if (!byArtist[e.artist]) byArtist[e.artist] = { total: 0, maktub: 0, outros: 0 };
+        byArtist[e.artist].total += e.amount;
+        if (e.investor === 'maktub') byArtist[e.artist].maktub += e.amount;
+        else byArtist[e.artist].outros += e.amount;
+    });
+    const artistData = Object.entries(byArtist).sort((a, b) => b[1].total - a[1].total);
+    const maxArtist = artistData.length > 0 ? artistData[0][1].total : 0;
+    
+    // Build chart data for types
+    const byType = {};
+    filtered.forEach(e => { byType[e.type] = (byType[e.type] || 0) + e.amount; });
+    const typeData = Object.entries(byType).sort((a, b) => b[1] - a[1]);
+    const maxType = typeData.length > 0 ? typeData[0][1] : 0;
+    
+    const typeColors = {
+        combustivel: '#ff6b6b', alimentacao: '#ffa94d', alojamento: '#ffd43b',
+        equipamento: '#69db7c', producao: '#33E933', promocao: '#4dabf7',
+        transporte: '#9775fa', outros: '#868e96'
+    };
+    
     printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
             <title>Maktub Art Group - Relatório de Despesas</title>
             <style>
-                body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
-                h1 { color: #111; margin-bottom: 8px; }
-                .subtitle { color: #666; margin-bottom: 32px; }
-                .summary { display: flex; gap: 24px; margin-bottom: 32px; }
-                .summary-item { padding: 16px; background: #f5f5f5; border-radius: 8px; }
-                .summary-label { font-size: 12px; color: #666; display: block; margin-bottom: 4px; }
-                .summary-value { font-size: 20px; font-weight: bold; }
-                table { width: 100%; border-collapse: collapse; font-size: 12px; }
-                th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-                th { background: #f5f5f5; font-weight: 600; }
-                .maktub { color: #33E933; }
-                .outros { color: #ffbb33; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { font-family: 'Segoe UI', Arial, sans-serif; background: #111; color: #fff; min-height: 100vh; }
+                .header { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); padding: 40px; border-bottom: 3px solid #33E933; }
+                .header-content { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 24px; }
+                .logo { width: 80px; height: 80px; background: #33E933; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; color: #111; }
+                .header-text h1 { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+                .header-text p { color: #888; font-size: 1rem; }
+                .container { max-width: 1200px; margin: 0 auto; padding: 40px; }
+                .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+                .stat-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; text-align: center; }
+                .stat-value { font-size: 1.75rem; font-weight: 700; display: block; margin-bottom: 4px; }
+                .stat-value.green { color: #33E933; }
+                .stat-value.yellow { color: #ffbb33; }
+                .stat-label { font-size: 0.875rem; color: #888; }
+                .charts-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 40px; }
+                .chart-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; padding: 24px; }
+                .chart-card h3 { font-size: 1rem; margin-bottom: 20px; color: #33E933; }
+                .chart-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+                .chart-bar-label { min-width: 120px; font-size: 0.875rem; color: #ccc; }
+                .chart-bar-track { flex: 1; height: 24px; background: #222; border-radius: 4px; overflow: hidden; display: flex; }
+                .chart-bar-fill { height: 100%; background: #33E933; border-radius: 4px; }
+                .chart-bar-value { min-width: 100px; text-align: right; font-size: 0.875rem; font-weight: 500; }
+                .bar-maktub { background: #33E933; }
+                .bar-outros { background: #ffbb33; }
+                .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+                table { width: 100%; border-collapse: collapse; font-size: 0.875rem; background: #1a1a1a; border-radius: 12px; overflow: hidden; }
+                th { background: #222; padding: 16px 12px; text-align: left; font-weight: 600; color: #33E933; border-bottom: 2px solid #333; }
+                td { padding: 12px; border-bottom: 1px solid #222; }
+                tr:hover { background: #222; }
+                .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+                .badge-maktub { background: rgba(51, 233, 57, 0.2); color: #33E933; }
+                .badge-other { background: rgba(255, 187, 51, 0.2); color: #ffbb33; }
+                .total-row { background: #222; font-weight: 600; }
+                .total-row td { border-top: 2px solid #33E933; color: #33E933; }
+                .footer { text-align: center; padding: 40px; color: #666; font-size: 0.875rem; border-top: 1px solid #333; margin-top: 40px; }
+                @media print {
+                    body { background: #fff; color: #333; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    .header { background: #f8f8f8 !important; border-bottom-color: #33E933; }
+                    .header-text h1, .header-text p { color: #333; }
+                    .stat-card, .chart-card, table { background: #f8f8f8 !important; border-color: #ddd; }
+                    th { background: #eee !important; }
+                    td { border-bottom-color: #ddd; }
+                    tr:hover { background: #f0f0f0; }
+                    .stat-label, .chart-bar-label { color: #666; }
+                }
             </style>
         </head>
         <body>
-            <h1>Maktub Art Group</h1>
-            <p class="subtitle">Relatório de Despesas - ${new Date().toLocaleDateString('pt-PT')} (${filtered.length} registos)</p>
-            
-            <div class="summary">
-                <div class="summary-item">
-                    <span class="summary-label">Total</span>
-                    <span class="summary-value">${formatCurrency(total)}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Maktub</span>
-                    <span class="summary-value maktub">${formatCurrency(maktub)}</span>
-                </div>
-                <div class="summary-item">
-                    <span class="summary-label">Terceiros</span>
-                    <span class="summary-value outros">${formatCurrency(others)}</span>
+            <div class="header">
+                <div class="header-content">
+                    <div class="logo">M</div>
+                    <div class="header-text">
+                        <h1>Maktub Art Group</h1>
+                        <p>Relatório de Despesas • ${new Date().toLocaleDateString('pt-PT')} • ${filtered.length} registos</p>
+                    </div>
                 </div>
             </div>
             
-            <table>
-                <thead>
-                    <tr>
-                        <th>Data</th>
-                        <th>Artista</th>
-                        <th>Projeto</th>
-                        <th>Tipo</th>
-                        <th>Investidor</th>
-                        <th>Valor</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value">${formatCurrency(total)}</span>
+                        <span class="stat-label">Total Gasto</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value green">${formatCurrency(maktub)}</span>
+                        <span class="stat-label">Maktub Investiu</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value yellow">${formatCurrency(others)}</span>
+                        <span class="stat-label">Terceiros</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">${filtered.length}</span>
+                        <span class="stat-label">Registos</span>
+                    </div>
+                </div>
+                
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <h3>Despesas por Artista</h3>
+                        ${artistData.map(([artist, data]) => `
+                            <div class="chart-bar">
+                                <span class="chart-bar-label">${artist}</span>
+                                <div class="chart-bar-track">
+                                    <div class="bar-maktub" style="width: ${data.maktub / data.total * 100}%"></div>
+                                    <div class="bar-outros" style="width: ${data.outros / data.total * 100}%"></div>
+                                </div>
+                                <span class="chart-bar-value">${formatCurrency(data.total)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="chart-card">
+                        <h3>Despesas por Tipo</h3>
+                        ${typeData.map(([type, amount]) => `
+                            <div class="chart-bar">
+                                <span class="chart-bar-label">${getTypeName(type)}</span>
+                                <div class="chart-bar-track">
+                                    <div class="chart-bar-fill" style="width: ${amount / maxType * 100}%; background: ${typeColors[type] || '#33E933'}"></div>
+                                </div>
+                                <span class="chart-bar-value">${formatCurrency(amount)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <h2 class="section-title">Detalhe de Despesas</h2>
+                <table>
+                    <thead>
                         <tr>
-                            <td>${formatDate(e.date)}</td>
-                            <td>${e.artist}</td>
-                            <td>${e.project}</td>
-                            <td>${getTypeName(e.type)}</td>
-                            <td class="${e.investor === 'maktub' ? 'maktub' : 'outros'}">${e.investor === 'maktub' ? 'Maktub' : 'Terceiros'}</td>
-                            <td>${formatCurrency(e.amount)}</td>
+                            <th>Data</th>
+                            <th>Artista</th>
+                            <th>Projeto</th>
+                            <th>Tipo</th>
+                            <th>Entidade</th>
+                            <th>Investidor</th>
+                            <th>Valor</th>
                         </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        ${filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
+                            <tr>
+                                <td>${formatDate(e.date)}</td>
+                                <td>${e.artist}</td>
+                                <td>${e.project}</td>
+                                <td>${getTypeName(e.type)}</td>
+                                <td>${e.entity || '-'}</td>
+                                <td><span class="badge ${e.investor === 'maktub' ? 'badge-maktub' : 'badge-other'}">${e.investor === 'maktub' ? 'Maktub' : 'Terceiros'}</span></td>
+                                <td>${formatCurrency(e.amount)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="5"><strong>TOTAL</strong></td>
+                            <td></td>
+                            <td><strong>${formatCurrency(total)}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                
+                <div class="footer">
+                    <p>Maktub Art Group • Gestão de Despesas • Gerado automaticamente em ${new Date().toLocaleString('pt-PT')}</p>
+                </div>
+            </div>
         </body>
         </html>
     `);
@@ -1140,6 +1255,193 @@ function showToast(message, type = '') {
     }, 3000);
 }
 
+// ==========================================
+// PIVOT SECTION TOGGLE
+// ==========================================
+
+function togglePivotSection() {
+    const content = document.getElementById('pivot-content');
+    const icon = document.getElementById('pivot-toggle-icon');
+    content.classList.toggle('hidden');
+    icon.classList.toggle('collapsed');
+}
+
+// ==========================================
+// CHART EXPORT FUNCTIONS
+// ==========================================
+
+function exportChartCSV(chartType) {
+    let headers, rows, filename;
+    
+    if (chartType === 'investor') {
+        headers = ['Artista', 'Maktub', 'Terceiros', 'Total'];
+        const byArtist = {};
+        expenses.forEach(e => {
+            if (!byArtist[e.artist]) byArtist[e.artist] = { maktub: 0, outros: 0 };
+            if (e.investor === 'maktub') byArtist[e.artist].maktub += e.amount;
+            else byArtist[e.artist].outros += e.amount;
+        });
+        rows = Object.entries(byArtist).map(([artist, data]) => [
+            artist,
+            data.maktub.toFixed(2),
+            data.outros.toFixed(2),
+            (data.maktub + data.outros).toFixed(2)
+        ]);
+        filename = 'maktub_artista_investidor';
+    } else {
+        const types = ['combustivel', 'alimentacao', 'alojamento', 'equipamento', 'producao', 'promocao', 'transporte', 'outros'];
+        headers = ['Artista', ...types.map(t => getTypeName(t)), 'Total'];
+        const byArtist = {};
+        expenses.forEach(e => {
+            if (!byArtist[e.artist]) {
+                byArtist[e.artist] = { total: 0 };
+                types.forEach(t => byArtist[e.artist][t] = 0);
+            }
+            byArtist[e.artist][e.type] += e.amount;
+            byArtist[e.artist].total += e.amount;
+        });
+        rows = Object.entries(byArtist).map(([artist, data]) => [
+            artist,
+            ...types.map(t => data[t].toFixed(2)),
+            data.total.toFixed(2)
+        ]);
+        filename = 'maktub_artista_categoria';
+    }
+    
+    const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${filename}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    
+    showToast('CSV exportado!', 'success');
+}
+
+function exportChartPDF(chartType) {
+    const printWindow = window.open('', '_blank');
+    let title, tableHTML;
+    
+    if (chartType === 'investor') {
+        title = 'Por Artista: Maktub vs Terceiros';
+        const byArtist = {};
+        let totalMaktub = 0, totalOutros = 0;
+        expenses.forEach(e => {
+            if (!byArtist[e.artist]) byArtist[e.artist] = { maktub: 0, outros: 0 };
+            if (e.investor === 'maktub') {
+                byArtist[e.artist].maktub += e.amount;
+                totalMaktub += e.amount;
+            } else {
+                byArtist[e.artist].outros += e.amount;
+                totalOutros += e.amount;
+            }
+        });
+        tableHTML = `
+            <table>
+                <thead><tr><th>Artista</th><th>Maktub</th><th>Terceiros</th><th>Total</th></tr></thead>
+                <tbody>
+                    ${Object.entries(byArtist).sort((a, b) => (b[1].maktub + b[1].outros) - (a[1].maktub + a[1].outros)).map(([artist, data]) => `
+                        <tr>
+                            <td>${artist}</td>
+                            <td class="maktub">${formatCurrency(data.maktub)}</td>
+                            <td class="outros">${formatCurrency(data.outros)}</td>
+                            <td><strong>${formatCurrency(data.maktub + data.outros)}</strong></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td><strong>TOTAL</strong></td>
+                        <td class="maktub"><strong>${formatCurrency(totalMaktub)}</strong></td>
+                        <td class="outros"><strong>${formatCurrency(totalOutros)}</strong></td>
+                        <td><strong>${formatCurrency(totalMaktub + totalOutros)}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        `;
+    } else {
+        title = 'Por Artista: Breakdown por Categoria';
+        const types = ['combustivel', 'alimentacao', 'alojamento', 'equipamento', 'producao', 'promocao', 'transporte', 'outros'];
+        const byArtist = {};
+        const totals = {};
+        types.forEach(t => totals[t] = 0);
+        expenses.forEach(e => {
+            if (!byArtist[e.artist]) {
+                byArtist[e.artist] = { total: 0 };
+                types.forEach(t => byArtist[e.artist][t] = 0);
+            }
+            byArtist[e.artist][e.type] += e.amount;
+            byArtist[e.artist].total += e.amount;
+            totals[e.type] += e.amount;
+        });
+        const grandTotal = Object.values(totals).reduce((a, b) => a + b, 0);
+        tableHTML = `
+            <table>
+                <thead><tr><th>Artista</th>${types.map(t => `<th>${getTypeName(t)}</th>`).join('')}<th>Total</th></tr></thead>
+                <tbody>
+                    ${Object.entries(byArtist).sort((a, b) => b[1].total - a[1].total).map(([artist, data]) => `
+                        <tr>
+                            <td>${artist}</td>
+                            ${types.map(t => `<td>${formatCurrency(data[t])}</td>`).join('')}
+                            <td><strong>${formatCurrency(data.total)}</strong></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td><strong>TOTAL</strong></td>
+                        ${types.map(t => `<td><strong>${formatCurrency(totals[t])}</strong></td>`).join('')}
+                        <td><strong>${formatCurrency(grandTotal)}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        `;
+    }
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Maktub Art Group - ${title}</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 40px; color: #333; background: #111; color: #fff; }
+                .header { background: #1a1a1a; padding: 24px; border-radius: 12px; margin-bottom: 32px; display: flex; align-items: center; gap: 16px; }
+                .logo { width: 60px; height: 60px; background: #33E933; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #111; }
+                h1 { color: #fff; margin: 0; font-size: 1.5rem; }
+                .subtitle { color: #888; margin: 4px 0 0; font-size: 0.875rem; }
+                table { width: 100%; border-collapse: collapse; font-size: 12px; background: #1a1a1a; border-radius: 8px; overflow: hidden; }
+                th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; }
+                th { background: #222; font-weight: 600; color: #33E933; }
+                .maktub { color: #33E933; }
+                .outros { color: #ffbb33; }
+                .total-row { background: #222; }
+                .total-row td { border-top: 2px solid #33E933; }
+                @media print { body { background: #fff; color: #333; } table { background: #f5f5f5; } th { background: #e5e5e5; color: #111; } .header { background: #f5f5f5; } h1, .subtitle { color: #333; } .total-row { background: #e5e5e5; } th, td { border-bottom-color: #ddd; } }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="logo">M</div>
+                <div>
+                    <h1>Maktub Art Group</h1>
+                    <p class="subtitle">${title} - ${new Date().toLocaleDateString('pt-PT')}</p>
+                </div>
+            </div>
+            ${tableHTML}
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+    
+    showToast('A preparar PDF...', 'success');
+}
+
 // Make functions globally accessible
 window.openEditModal = openEditModal;
 window.openDeleteModal = openDeleteModal;
+window.togglePivotSection = togglePivotSection;
+window.exportChartCSV = exportChartCSV;
+window.exportChartPDF = exportChartPDF;
