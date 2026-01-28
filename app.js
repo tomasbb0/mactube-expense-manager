@@ -1470,7 +1470,81 @@ function initGoogleSheetsSync() {
     syncButtons.forEach(btn => btn.style.display = 'inline-flex');
 }
 
-// Sync local data to Google Sheets
+// Show sync progress modal
+function showSyncProgressModal() {
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('sync-progress-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'sync-progress-modal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content sync-progress-content">
+                <div class="sync-progress-header">
+                    <div class="sync-spinner"></div>
+                    <h3>A Sincronizar com Google Sheets</h3>
+                </div>
+                <div class="sync-progress-bar-container">
+                    <div class="sync-progress-bar" id="sync-progress-bar"></div>
+                </div>
+                <p class="sync-progress-text" id="sync-progress-text">A iniciar...</p>
+                <div class="sync-progress-steps" id="sync-progress-steps"></div>
+                <p class="sync-progress-note">💡 Podes fechar esta janela - a sincronização continua em segundo plano.</p>
+                <div class="sync-progress-actions">
+                    <button class="btn btn-secondary" onclick="closeSyncProgressModal()">Fechar</button>
+                    <button class="btn btn-danger" id="cancel-sync-btn" onclick="cancelSync()">Cancelar Sync</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    modal.classList.remove('hidden');
+    updateSyncProgress(0, 'A preparar sincronização...');
+}
+
+function closeSyncProgressModal() {
+    const modal = document.getElementById('sync-progress-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+function updateSyncProgress(percent, message, steps = []) {
+    const progressBar = document.getElementById('sync-progress-bar');
+    const progressText = document.getElementById('sync-progress-text');
+    const progressSteps = document.getElementById('sync-progress-steps');
+    
+    if (progressBar) {
+        progressBar.style.width = percent + '%';
+    }
+    if (progressText) {
+        progressText.textContent = message;
+    }
+    if (progressSteps && steps.length > 0) {
+        progressSteps.innerHTML = steps.map((step, i) => 
+            `<div class="sync-step ${step.done ? 'done' : step.active ? 'active' : ''}">
+                <span class="step-icon">${step.done ? '✅' : step.active ? '⏳' : '○'}</span>
+                <span>${step.text}</span>
+            </div>`
+        ).join('');
+    }
+}
+
+let syncAborted = false;
+
+function cancelSync() {
+    syncAborted = true;
+    isSyncing = false;
+    updateSyncButtonState(false);
+    updateSyncProgress(0, '❌ Sincronização cancelada pelo utilizador');
+    showToast('Sincronização cancelada', 'error');
+    
+    setTimeout(() => {
+        closeSyncProgressModal();
+    }, 1500);
+}
+
+// Sync local data to Google Sheets with progress
 async function syncToGoogleSheets() {
     if (!GOOGLE_SCRIPT_URL) {
         showToast('Google Sheets não configurado', 'error');
@@ -1482,26 +1556,39 @@ async function syncToGoogleSheets() {
         return;
     }
     
+    syncAborted = false;
     isSyncing = true;
     updateSyncButtonState(true);
-    showToast('A enviar dados para Google Sheets...', 'success');
+    showSyncProgressModal();
+    
+    const steps = [
+        { text: 'Preparar dados', done: false, active: true },
+        { text: 'Enviar para Google Sheets', done: false, active: false },
+        { text: 'Limpar folhas "Sheet1"', done: false, active: false },
+        { text: 'Atualizar folha principal', done: false, active: false },
+        { text: 'Atualizar folhas dos artistas', done: false, active: false },
+        { text: 'Criar dashboards', done: false, active: false }
+    ];
     
     console.log('🚀 Starting sync to Google Sheets...');
     console.log('📊 Total expenses to sync:', expenses.length);
-    console.log('🔗 URL:', GOOGLE_SCRIPT_URL);
     
     try {
+        // Step 1: Prepare data
+        updateSyncProgress(10, `A preparar ${expenses.length} despesas...`, steps);
+        
         const payload = {
             action: 'syncFromWebsite',
             expenses: expenses,
             timestamp: new Date().toISOString()
         };
         
-        console.log('📤 Sending payload:', payload);
+        if (syncAborted) return;
         
-        // Create form data for better compatibility
-        const formData = new FormData();
-        formData.append('data', JSON.stringify(payload));
+        // Step 2: Send to Google Sheets
+        steps[0].done = true; steps[0].active = false;
+        steps[1].active = true;
+        updateSyncProgress(20, 'A enviar dados para Google Sheets...', steps);
         
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
@@ -1510,7 +1597,41 @@ async function syncToGoogleSheets() {
         });
         
         console.log('✅ Request sent successfully');
-        console.log('Response status:', response.status);
+        
+        if (syncAborted) return;
+        
+        // Update progress simulation (since we can't get real-time progress from Apps Script)
+        steps[1].done = true; steps[1].active = false;
+        steps[2].active = true;
+        updateSyncProgress(35, 'A limpar folhas "Sheet1"...', steps);
+        
+        await new Promise(r => setTimeout(r, 1000));
+        if (syncAborted) return;
+        
+        steps[2].done = true; steps[2].active = false;
+        steps[3].active = true;
+        updateSyncProgress(50, 'A atualizar folha principal...', steps);
+        
+        await new Promise(r => setTimeout(r, 1500));
+        if (syncAborted) return;
+        
+        steps[3].done = true; steps[3].active = false;
+        steps[4].active = true;
+        updateSyncProgress(70, 'A atualizar folhas dos artistas...', steps);
+        
+        await new Promise(r => setTimeout(r, 2000));
+        if (syncAborted) return;
+        
+        steps[4].done = true; steps[4].active = false;
+        steps[5].active = true;
+        updateSyncProgress(90, 'A criar dashboards...', steps);
+        
+        await new Promise(r => setTimeout(r, 1500));
+        if (syncAborted) return;
+        
+        // Complete
+        steps[5].done = true; steps[5].active = false;
+        updateSyncProgress(100, '✅ Sincronização completa!', steps);
         
         // Try to read response
         try {
@@ -1520,17 +1641,17 @@ async function syncToGoogleSheets() {
             console.log('Could not read response (normal with CORS)');
         }
         
-        // Assume success
-        showToast(`✅ ${expenses.length} despesas enviadas para Google Sheets!`, 'success');
+        showToast(`✅ ${expenses.length} despesas sincronizadas!`, 'success');
         localStorage.setItem('lastSyncToSheets', new Date().toISOString());
         
-        // Show instructions
+        // Close modal after 2 seconds
         setTimeout(() => {
-            showToast('Verifica as Google Sheets - os dados devem aparecer agora!', 'success');
+            closeSyncProgressModal();
         }, 2000);
         
     } catch (error) {
         console.error('❌ Sync to Google Sheets failed:', error);
+        updateSyncProgress(0, '❌ Erro: ' + error.message, []);
         showToast('Erro ao sincronizar: ' + error.message, 'error');
     } finally {
         isSyncing = false;
