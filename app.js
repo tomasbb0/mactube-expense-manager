@@ -1704,22 +1704,100 @@ function openSyncModal() {
     
     let statusHtml = '';
     if (!isConfigured) {
-        statusHtml = '<p class="sync-status-warning">⚠️ Google Sheets não está configurado</p>';
-        statusHtml += '<p class="sync-instructions">Para configurar:</p>';
-        statusHtml += '<ol class="sync-instructions-list">';
-        statusHtml += '<li>Abra o ficheiro <code>google-apps-script.js</code></li>';
-        statusHtml += '<li>Copie o código para um novo Google Apps Script</li>';
-        statusHtml += '<li>Configure os IDs das suas folhas</li>';
-        statusHtml += '<li>Publique como Web App</li>';
-        statusHtml += '<li>Cole o URL no ficheiro <code>app.js</code></li>';
-        statusHtml += '</ol>';
+        statusHtml = `
+            <div class="sync-setup-guide">
+                <p class="sync-status-warning">⚠️ Google Sheets não está configurado</p>
+                
+                <div class="setup-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Criar um Google Apps Script</h4>
+                        <p>Abre o Google Apps Script e cria um novo projeto:</p>
+                        <a href="https://script.google.com/home/start" target="_blank" class="setup-link">
+                            <span class="link-icon">🔗</span> Abrir Google Apps Script
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="setup-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Copiar o código</h4>
+                        <p>Copia todo o código do ficheiro <code>google-apps-script.js</code> deste repositório:</p>
+                        <a href="https://github.com/tomasbb0/mactube-expense-manager/blob/main/google-apps-script.js" target="_blank" class="setup-link">
+                            <span class="link-icon">📄</span> Ver google-apps-script.js no GitHub
+                        </a>
+                        <button class="copy-code-btn" onclick="copyAppsScriptCode()">
+                            <span class="link-icon">📋</span> Copiar Código
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="setup-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Criar a Folha de Cálculo Principal</h4>
+                        <p>Cria uma nova Google Sheet para guardar as despesas:</p>
+                        <a href="https://sheets.google.com/create" target="_blank" class="setup-link">
+                            <span class="link-icon">📊</span> Criar Nova Google Sheet
+                        </a>
+                        <p class="step-note">💡 O ID da folha está no URL: docs.google.com/spreadsheets/d/<strong>[ID_AQUI]</strong>/edit</p>
+                    </div>
+                </div>
+                
+                <div class="setup-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Configurar os IDs</h4>
+                        <p>No código do Apps Script, actualiza o objeto <code>SPREADSHEET_IDS</code> com os IDs das tuas folhas:</p>
+                        <pre class="code-example">const SPREADSHEET_IDS = {
+  main: 'ID_DA_FOLHA_PRINCIPAL',
+  // Adiciona mais artistas...
+};</pre>
+                    </div>
+                </div>
+                
+                <div class="setup-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h4>Publicar como Web App</h4>
+                        <p>No Apps Script:</p>
+                        <ol class="mini-steps">
+                            <li>Clica em <strong>Implementar → Nova implementação</strong></li>
+                            <li>Tipo: <strong>App da Web</strong></li>
+                            <li>Executar como: <strong>Eu</strong></li>
+                            <li>Quem tem acesso: <strong>Qualquer pessoa</strong></li>
+                            <li>Clica <strong>Implementar</strong></li>
+                            <li>Copia o <strong>URL da implementação</strong></li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="setup-step">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h4>Colar o URL no App</h4>
+                        <p>Abre o ficheiro <code>app.js</code> e cola o URL na linha 5:</p>
+                        <pre class="code-example">const GOOGLE_SCRIPT_URL = 'https://script.google.com/...';</pre>
+                        <p class="step-note">⚠️ Depois de alterar, faz commit e push para o GitHub.</p>
+                    </div>
+                </div>
+                
+                <div class="setup-help">
+                    <h4>📚 Precisa de ajuda?</h4>
+                    <a href="https://developers.google.com/apps-script/guides/web" target="_blank" class="setup-link">
+                        <span class="link-icon">📖</span> Documentação Google Apps Script
+                    </a>
+                </div>
+            </div>
+        `;
     } else {
         statusHtml = '<p class="sync-status-ok">✅ Google Sheets configurado</p>';
         if (syncInfo.lastSyncToSheets) {
-            statusHtml += `<p>Último envio: ${syncInfo.lastSyncToSheets.toLocaleString('pt-PT')}</p>`;
+            statusHtml += `<p class="sync-info-text">📤 Último envio: ${syncInfo.lastSyncToSheets.toLocaleString('pt-PT')}</p>`;
         }
         if (syncInfo.lastSyncFromSheets) {
-            statusHtml += `<p>Última receção: ${syncInfo.lastSyncFromSheets.toLocaleString('pt-PT')}</p>`;
+            statusHtml += `<p class="sync-info-text">📥 Última receção: ${syncInfo.lastSyncFromSheets.toLocaleString('pt-PT')}</p>`;
         }
     }
     
@@ -1728,7 +1806,7 @@ function openSyncModal() {
         <div class="modal-overlay sync-modal-overlay" onclick="closeSyncModal()">
             <div class="modal sync-modal" onclick="event.stopPropagation()">
                 <div class="modal-header">
-                    <h3>⚙️ Sincronização Google Sheets</h3>
+                    <h3>📊 Sincronização Google Sheets</h3>
                     <button class="modal-close" onclick="closeSyncModal()">×</button>
                 </div>
                 <div class="modal-body">
@@ -1745,6 +1823,9 @@ function openSyncModal() {
                             <span class="sync-icon">🔄</span> Sincronização Completa
                         </button>
                     </div>
+                    <div class="sync-settings-link">
+                        <button class="text-btn" onclick="showSetupGuide()">⚙️ Ver instruções de configuração</button>
+                    </div>
                     ` : ''}
                 </div>
             </div>
@@ -1753,6 +1834,29 @@ function openSyncModal() {
     
     // Add modal to page
     document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
+// Copy Apps Script code to clipboard
+async function copyAppsScriptCode() {
+    try {
+        const response = await fetch('google-apps-script.js');
+        const code = await response.text();
+        await navigator.clipboard.writeText(code);
+        showToast('Código copiado! Cola no Google Apps Script.', 'success');
+    } catch (error) {
+        // Fallback: open the file in new tab
+        window.open('https://github.com/tomasbb0/mactube-expense-manager/blob/main/google-apps-script.js', '_blank');
+        showToast('Abre o link e copia manualmente.', 'error');
+    }
+}
+
+// Show setup guide even when configured
+function showSetupGuide() {
+    closeSyncModal();
+    // Temporarily disable URL to show setup guide
+    const tempUrl = GOOGLE_SCRIPT_URL;
+    // We'll just open the setup guide in GitHub
+    window.open('https://github.com/tomasbb0/mactube-expense-manager#google-sheets-setup', '_blank');
 }
 
 function closeSyncModal() {
@@ -1773,3 +1877,5 @@ window.syncFromGoogleSheets = syncFromGoogleSheets;
 window.fullSync = fullSync;
 window.openSyncModal = openSyncModal;
 window.closeSyncModal = closeSyncModal;
+window.copyAppsScriptCode = copyAppsScriptCode;
+window.showSetupGuide = showSetupGuide;
