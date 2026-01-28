@@ -1800,6 +1800,8 @@ tr:hover td {
 
 .sync-modal .modal-body {
     padding: 24px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .sync-status-ok {
@@ -1900,6 +1902,7 @@ tr:hover td {
 .sync-setup-guide {
     max-height: 60vh;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .setup-step {
@@ -1908,6 +1911,7 @@ tr:hover td {
     margin-bottom: 24px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--border);
+    overflow-x: hidden;
 }
 
 .setup-step:last-of-type {
@@ -1931,6 +1935,9 @@ tr:hover td {
 
 .step-content {
     flex: 1;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .step-content h4 {
@@ -1945,6 +1952,7 @@ tr:hover td {
     color: var(--text-secondary);
     margin: 0 0 12px 0;
     line-height: 1.5;
+    word-break: break-word;
 }
 
 .step-content code {
@@ -1954,6 +1962,9 @@ tr:hover td {
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 0.85rem;
     color: var(--green-primary);
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
 }
 
 .setup-link {
@@ -1970,6 +1981,8 @@ tr:hover td {
     transition: all 0.2s ease;
     margin-right: 8px;
     margin-bottom: 8px;
+    max-width: 100%;
+    word-break: break-word;
 }
 
 .setup-link:hover {
