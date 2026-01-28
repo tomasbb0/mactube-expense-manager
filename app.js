@@ -3,7 +3,7 @@
 
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZzm22cGjNwWxOx1Cs7IIraEMHu4yc8GMceASAlIaPJV2Rs-yLIDp_hc3CvRq_qjEt/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfpLBAUIxgE245kIUZjmJB-vSXFgTPVWmCxs03aKR4HHNc86Kj0bGH-BOhD-mN_mIk/exec';
 
 // Helper function to send data to Google Sheets (bypasses CORS using form submission)
 function sendToGoogleSheets(payload) {
