@@ -1486,26 +1486,41 @@ async function syncToGoogleSheets() {
     updateSyncButtonState(true);
     showToast('A enviar dados para Google Sheets...', 'success');
     
+    console.log('🚀 Starting sync to Google Sheets...');
+    console.log('📊 Total expenses to sync:', expenses.length);
+    console.log('🔗 URL:', GOOGLE_SCRIPT_URL);
+    
     try {
+        const payload = {
+            action: 'syncFromWebsite',
+            expenses: expenses,
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log('📤 Sending payload:', payload);
+        
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
             mode: 'no-cors', // Required for Google Apps Script
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                action: 'syncFromWebsite',
-                expenses: expenses,
-                timestamp: new Date().toISOString()
-            })
+            body: JSON.stringify(payload)
         });
         
+        console.log('✅ Request sent successfully');
+        
         // With no-cors, we can't read the response, so we assume success
-        showToast('Dados enviados para Google Sheets!', 'success');
+        showToast(`✅ ${expenses.length} despesas enviadas para Google Sheets!`, 'success');
         localStorage.setItem('lastSyncToSheets', new Date().toISOString());
         
+        // Show instructions
+        setTimeout(() => {
+            showToast('Verifica as Google Sheets - os dados devem aparecer agora!', 'success');
+        }, 2000);
+        
     } catch (error) {
-        console.error('Sync to Google Sheets failed:', error);
+        console.error('❌ Sync to Google Sheets failed:', error);
         showToast('Erro ao sincronizar: ' + error.message, 'error');
     } finally {
         isSyncing = false;
