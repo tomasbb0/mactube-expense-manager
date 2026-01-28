@@ -3,7 +3,7 @@
 
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-const GOOGLE_SCRIPT_URL = ''; // Leave empty to disable, or paste your URL here
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyue26QC8gOvv9oNaoIzmxCr_iH-2X3ZnqqTF0LrBO5TVBRWALFqJOD1Sawe4_g1nLG/exec';
 
 // State
 let expenses = [];
