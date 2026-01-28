@@ -1962,13 +1962,11 @@ tr:hover td {
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 0.85rem;
     color: var(--green-primary);
-    word-break: break-all;
-    display: inline-block;
-    max-width: 100%;
+    word-wrap: break-word;
 }
 
 .setup-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
@@ -1981,8 +1979,8 @@ tr:hover td {
     transition: all 0.2s ease;
     margin-right: 8px;
     margin-bottom: 8px;
+    width: fit-content;
     max-width: 100%;
-    word-break: break-word;
 }
 
 .setup-link:hover {
@@ -1996,7 +1994,7 @@ tr:hover td {
 }
 
 .copy-code-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
     padding: 10px 16px;
@@ -2008,6 +2006,8 @@ tr:hover td {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
+    width: fit-content;
+    max-width: 100%;
 }
 
 .copy-code-btn:hover {
