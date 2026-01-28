@@ -5,54 +5,26 @@
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfpLBAUIxgE245kIUZjmJB-vSXFgTPVWmCxs03aKR4HHNc86Kj0bGH-BOhD-mN_mIk/exec';
 
-// Helper function to send data to Google Sheets (bypasses CORS using form submission)
-function sendToGoogleSheets(payload) {
-    return new Promise((resolve, reject) => {
-        try {
-            // Create hidden iframe
-            const iframeName = 'googleSheetsIframe_' + Date.now();
-            const iframe = document.createElement('iframe');
-            iframe.name = iframeName;
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-            
-            // Create form
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = GOOGLE_SCRIPT_URL;
-            form.target = iframeName;
-            form.style.display = 'none';
-            
-            // Add data as hidden input
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'data';
-            input.value = JSON.stringify(payload);
-            form.appendChild(input);
-            
-            document.body.appendChild(form);
-            
-            // Cleanup after submission
-            iframe.onload = () => {
-                setTimeout(() => {
-                    document.body.removeChild(iframe);
-                    document.body.removeChild(form);
-                    resolve({ success: true });
-                }, 1000);
-            };
-            
-            // Handle timeout
-            setTimeout(() => {
-                resolve({ success: true, note: 'timeout but likely succeeded' });
-            }, 10000);
-            
-            // Submit form
-            form.submit();
-            
-        } catch (error) {
-            reject(error);
-        }
+// Helper function to send data to Google Sheets
+async function sendToGoogleSheets(payload) {
+    // Use text/plain to avoid CORS preflight
+    const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'text/plain;charset=utf-8',
+        },
+        body: JSON.stringify(payload),
+        redirect: 'follow'
     });
+    
+    try {
+        const text = await response.text();
+        console.log('Response:', text);
+        return JSON.parse(text);
+    } catch (e) {
+        console.log('Could not parse response, but request was sent');
+        return { success: true };
+    }
 }
 
 // State
