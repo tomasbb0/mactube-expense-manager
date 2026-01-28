@@ -1061,7 +1061,6 @@ function updateSettlement() {
         summaryEl.innerHTML = '<p>Carregue dados para ver o resumo do acerto.</p>';
     } else {
         const diff = Math.abs(maktub - others);
-        const whoOwes = maktub > others ? 'terceiros devem ao Maktub' : 'Maktub deve a terceiros';
         summaryEl.innerHTML = `
             <p>
                 O <strong>Maktub Art Group</strong> investiu <span class="highlight">${formatCurrency(maktub)}</span> 
@@ -1072,7 +1071,7 @@ function updateSettlement() {
                 (${pctOthers.toFixed(1)}% do total).
             </p>
             <p style="margin-top: 16px;">
-                ${diff > 0 ? `Para equilibrar as contas, os <strong>${whoOwes}</strong> um total de <span class="highlight">${formatCurrency(diff)}</span>.` : 'As contas estão equilibradas!'}
+                ${diff > 0 ? `Os <strong>artistas devem ao Maktub</strong> um total de <span class="highlight">${formatCurrency(maktub)}</span>, e devem aos <strong>terceiros</strong> um total de <span class="highlight">${formatCurrency(others)}</span>.` : 'As contas estão equilibradas!'}
             </p>
         `;
     }
