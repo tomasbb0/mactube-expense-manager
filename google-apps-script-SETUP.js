@@ -28,7 +28,7 @@ const SETUP_SPREADSHEET_IDS = {
   }
 };
 
-const MADALENA_CATEGORIES = ['Promoção', 'Tour', 'Concerto', 'Videoclipe', 'Geral', 'Gravação'];
+const SETUP_CATEGORIES = ['Promoção', 'Tour', 'Concerto', 'Videoclipe', 'Geral', 'Gravação'];
 
 // ============================================
 // 🗑️ FUNÇÃO 1: ELIMINAR TODAS AS "SHEET1"
@@ -48,7 +48,11 @@ function SETUP_deleteAllSheet1() {
   });
   
   Logger.log('=== CONCLUÍDO! Todas as Sheet1 eliminadas ===');
-  SpreadsheetApp.getUi().alert('✅ Todas as folhas "Sheet1" foram eliminadas!');
+  try {
+    SpreadsheetApp.getUi().alert('✅ Todas as folhas "Sheet1" foram eliminadas!');
+  } catch (e) {
+    Logger.log('✅ Todas as folhas "Sheet1" foram eliminadas! (UI não disponível)');
+  }
 }
 
 function deleteSheet1FromSpreadsheet_(spreadsheetId, label) {
@@ -108,7 +112,11 @@ function SETUP_createAllDashboards() {
   });
   
   Logger.log('=== CONCLUÍDO! Todos os dashboards criados ===');
-  SpreadsheetApp.getUi().alert('✅ Todos os dashboards foram criados com fórmulas automáticas!');
+  try {
+    SpreadsheetApp.getUi().alert('✅ Todos os dashboards foram criados com fórmulas automáticas!');
+  } catch (e) {
+    Logger.log('✅ Todos os dashboards foram criados com fórmulas automáticas! (UI não disponível)');
+  }
 }
 
 function createDashboardWithFormulas_(spreadsheet, isMainSheet) {
@@ -120,103 +128,170 @@ function createDashboardWithFormulas_(spreadsheet, isMainSheet) {
     dashboard.clear();
   }
   
-  // Get data sheet names
+  // Get data sheet names (categorias)
   const allSheets = spreadsheet.getSheets();
   const dataSheetNames = allSheets
     .map(s => s.getName())
     .filter(name => !name.includes('DASHBOARD') && !name.includes('Sheet') && !name.includes('Folha'));
   
-  // Colors
-  const headerFg = '#1db954';
-  const textColor = '#e0e0e0';
+  // Get spreadsheet name for title
+  const ssName = spreadsheet.getName().toUpperCase();
+  
+  // Colors - estilo Google Sheets limpo
+  const headerBgGreen = '#34a853';
+  const headerBgRed = '#ea4335';
+  const headerTextWhite = '#ffffff';
+  const greenText = '#137333';
+  const redText = '#c5221f';
   
   // Set column widths
-  dashboard.setColumnWidth(1, 50);
-  dashboard.setColumnWidth(2, 200);
-  dashboard.setColumnWidth(3, 150);
-  dashboard.setColumnWidth(4, 80);
-  dashboard.setColumnWidth(5, 200);
-  dashboard.setColumnWidth(6, 150);
+  dashboard.setColumnWidth(1, 180);  // A - Labels
+  dashboard.setColumnWidth(2, 120);  // B - Maktub/Valor
+  dashboard.setColumnWidth(3, 120);  // C - Terceiros
+  dashboard.setColumnWidth(4, 120);  // D - Total
+  dashboard.setColumnWidth(5, 50);   // E - Espaço
+  dashboard.setColumnWidth(6, 150);  // F - Extras
   
-  // Title
-  dashboard.getRange('B2').setValue('📊 DASHBOARD').setFontSize(24).setFontWeight('bold').setFontColor(headerFg);
-  dashboard.getRange('B3').setValue('Atualização automática via fórmulas').setFontSize(10).setFontColor('#888');
+  // ====== TÍTULO ======
+  dashboard.getRange('A1').setValue('📊 ' + ssName + ' - DASHBOARD')
+    .setFontSize(18).setFontWeight('bold');
+  dashboard.getRange('A2').setFormula('="Última atualização: "&TEXT(NOW(),"dd/MM/yyyy, HH:mm:ss")')
+    .setFontSize(9).setFontColor('#666666');
   
-  // TOTAL GERAL
-  dashboard.getRange('B5').setValue('💰 TOTAL GERAL').setFontSize(14).setFontWeight('bold').setFontColor(headerFg);
+  // ====== RESUMO (Linhas 4-9) ======
+  dashboard.getRange('A4').setValue('RESUMO').setFontSize(12).setFontWeight('bold');
   
+  dashboard.getRange('A5').setValue('Total Despesas');
+  dashboard.getRange('A6').setValue('Valor Total');
+  dashboard.getRange('A7').setValue('Maktub Investiu');
+  dashboard.getRange('A8').setValue('Terceiros Pagaram');
+  dashboard.getRange('A9').setValue('Balanço');
+  
+  // Fórmulas para RESUMO
   if (dataSheetNames.length > 0) {
-    const sumParts = dataSheetNames.map(name => `SUMIF('${name}'!H:H, ">0")`);
-    dashboard.getRange('C5').setFormula('=' + sumParts.join('+'));
-  } else {
-    dashboard.getRange('C5').setValue(0);
+    // Total Despesas = COUNTA de todas as folhas
+    const countParts = dataSheetNames.map(name => `COUNTA('${name}'!A2:A)`);
+    dashboard.getRange('B5').setFormula('=' + countParts.join('+'));
+    
+    // Valor Total = SOMA de todos os valores
+    const sumAllParts = dataSheetNames.map(name => `SUM('${name}'!H2:H)`);
+    dashboard.getRange('B6').setFormula('=' + sumAllParts.join('+'));
+    dashboard.getRange('B6').setNumberFormat('#,##0.00 €');
+    
+    // Maktub Investiu = SUMIF onde Investidor contém "Maktub"
+    const maktubParts = dataSheetNames.map(name => `SUMIF('${name}'!G2:G,"*Maktub*",'${name}'!H2:H)`);
+    dashboard.getRange('B7').setFormula('=' + maktubParts.join('+'));
+    dashboard.getRange('B7').setNumberFormat('#,##0.00 €');
+    
+    // Terceiros Pagaram = Total - Maktub
+    dashboard.getRange('B8').setFormula('=B6-B7');
+    dashboard.getRange('B8').setNumberFormat('#,##0.00 €');
+    
+    // Balanço = Maktub - Terceiros (positivo = artista deve)
+    dashboard.getRange('B9').setFormula('=B7-B8');
+    dashboard.getRange('B9').setNumberFormat('#,##0.00 €').setFontColor(greenText).setFontWeight('bold');
   }
-  dashboard.getRange('C5').setNumberFormat('€#,##0.00').setFontSize(18).setFontWeight('bold').setFontColor('#fff');
   
-  // RESUMO POR CATEGORIA
-  dashboard.getRange('B7').setValue('📋 RESUMO POR CATEGORIA').setFontSize(14).setFontWeight('bold').setFontColor(headerFg);
+  // Nota do balanço
+  dashboard.getRange('C9').setFormula('=IF(B9>0,"← Artista deve à Maktub","← Maktub deve ao Artista")')
+    .setFontColor(greenText).setFontSize(9);
   
-  let row = 8;
-  dataSheetNames.forEach(sheetName => {
-    dashboard.getRange('B' + row).setValue(sheetName).setFontColor(textColor);
-    dashboard.getRange('C' + row).setFormula(`=SUMIF('${sheetName}'!H:H, ">0")`);
-    dashboard.getRange('C' + row).setNumberFormat('€#,##0.00').setFontColor(textColor);
+  // ====== POR PROJETO/CATEGORIA (Linhas 11-19) ======
+  dashboard.getRange('A11').setValue('POR PROJETO/CATEGORIA').setFontSize(12).setFontWeight('bold');
+  
+  // Headers da tabela
+  const projHeaders = ['Projeto', 'Maktub', 'Terceiros', 'Total'];
+  dashboard.getRange('A12:D12').setValues([projHeaders])
+    .setBackground(headerBgGreen).setFontColor(headerTextWhite).setFontWeight('bold');
+  
+  // Lista de categorias e fórmulas SUMIF
+  const categories = ['Concerto', 'Geral', 'Gravação', 'Promoção', 'Tour', 'Videoclipe'];
+  let projRow = 13;
+  
+  categories.forEach(cat => {
+    dashboard.getRange('A' + projRow).setValue(cat);
     
     if (dataSheetNames.length > 0) {
-      dashboard.getRange('D' + row).setFormula(`=IFERROR(C${row}/C5*100, 0)`);
-      dashboard.getRange('D' + row).setNumberFormat('0.0"%"').setFontColor('#888');
+      // Se a categoria existe como sheet, usa SUMIF dentro dela
+      // Se não, tenta achar na coluna D (Projeto) de todas as sheets
+      if (dataSheetNames.includes(cat)) {
+        // Categoria existe como sheet - soma todos os valores dessa sheet onde Investidor = Maktub
+        dashboard.getRange('B' + projRow).setFormula(`=SUMIF('${cat}'!G2:G,"*Maktub*",'${cat}'!H2:H)`);
+        // Terceiros = Total dessa sheet - Maktub
+        dashboard.getRange('C' + projRow).setFormula(`=SUM('${cat}'!H2:H)-B${projRow}`);
+        // Total
+        dashboard.getRange('D' + projRow).setFormula(`=SUM('${cat}'!H2:H)`);
+      } else {
+        // Categoria não existe como sheet - usa SUMIF na coluna Projeto de todas as sheets
+        const maktubCatParts = dataSheetNames.map(name => `SUMIFS('${name}'!H2:H,'${name}'!D2:D,"*${cat}*",'${name}'!G2:G,"*Maktub*")`);
+        const totalCatParts = dataSheetNames.map(name => `SUMIF('${name}'!D2:D,"*${cat}*",'${name}'!H2:H)`);
+        dashboard.getRange('B' + projRow).setFormula('=' + maktubCatParts.join('+'));
+        dashboard.getRange('C' + projRow).setFormula('=D' + projRow + '-B' + projRow);
+        dashboard.getRange('D' + projRow).setFormula('=' + totalCatParts.join('+'));
+      }
     }
-    row++;
+    
+    dashboard.getRange('B' + projRow + ':D' + projRow).setNumberFormat('#,##0.00 €');
+    projRow++;
   });
   
-  // RESUMO POR INVESTIDOR
-  row += 2;
-  dashboard.getRange('B' + row).setValue('👥 RESUMO POR INVESTIDOR').setFontSize(14).setFontWeight('bold').setFontColor(headerFg);
-  row++;
+  // TOTAL da tabela de categorias
+  dashboard.getRange('A' + projRow).setValue('TOTAL').setFontWeight('bold');
+  dashboard.getRange('B' + projRow).setFormula('=SUM(B13:B' + (projRow-1) + ')').setNumberFormat('#,##0.00 €').setFontWeight('bold');
+  dashboard.getRange('C' + projRow).setFormula('=SUM(C13:C' + (projRow-1) + ')').setNumberFormat('#,##0.00 €').setFontWeight('bold');
+  dashboard.getRange('D' + projRow).setFormula('=SUM(D13:D' + (projRow-1) + ')').setNumberFormat('#,##0.00 €').setFontWeight('bold');
   
-  dashboard.getRange('B' + row).setValue('Maktub').setFontColor(textColor);
-  if (dataSheetNames.length > 0) {
-    const maktubParts = dataSheetNames.map(name => `SUMIF('${name}'!G:G, "*Maktub*", '${name}'!H:H)`);
-    dashboard.getRange('C' + row).setFormula('=' + maktubParts.join('+'));
+  // ====== POR TIPO (Linhas 21+) ======
+  const tipoStartRow = projRow + 3;
+  dashboard.getRange('A' + tipoStartRow).setValue('POR TIPO').setFontSize(12).setFontWeight('bold');
+  
+  // Headers da tabela Tipo
+  dashboard.getRange('A' + (tipoStartRow + 1) + ':B' + (tipoStartRow + 1)).setValues([['Tipo', 'Valor']])
+    .setBackground(headerBgRed).setFontColor(headerTextWhite).setFontWeight('bold');
+  
+  // Lista de tipos de despesa
+  const tipos = ['Produção', 'Promoção', 'Equipamento', 'Transporte', 'Alojamento', 'Outros', 'Combustível', 'Alimentação'];
+  let tipoRow = tipoStartRow + 2;
+  
+  tipos.forEach(tipo => {
+    dashboard.getRange('A' + tipoRow).setValue(tipo);
+    
+    if (dataSheetNames.length > 0) {
+      // SUMIF na coluna Tipo (E) de todas as sheets
+      const tipoParts = dataSheetNames.map(name => `SUMIF('${name}'!E2:E,"*${tipo}*",'${name}'!H2:H)`);
+      dashboard.getRange('B' + tipoRow).setFormula('=' + tipoParts.join('+'));
+    }
+    
+    dashboard.getRange('B' + tipoRow).setNumberFormat('#,##0.00 €');
+    tipoRow++;
+  });
+  
+  // TOTAL da tabela de tipos
+  dashboard.getRange('A' + tipoRow).setValue('TOTAL').setFontWeight('bold');
+  dashboard.getRange('B' + tipoRow).setFormula('=SUM(B' + (tipoStartRow + 2) + ':B' + (tipoRow-1) + ')').setNumberFormat('#,##0.00 €').setFontWeight('bold');
+  
+  // ====== FORMATAÇÃO FINAL ======
+  // Bordas nas tabelas
+  dashboard.getRange('A12:D' + (projRow)).setBorder(true, true, true, true, true, true, '#dadce0', SpreadsheetApp.BorderStyle.SOLID);
+  dashboard.getRange('A' + (tipoStartRow + 1) + ':B' + tipoRow).setBorder(true, true, true, true, true, true, '#dadce0', SpreadsheetApp.BorderStyle.SOLID);
+  
+  // Zebra striping (cor alternada nas linhas)
+  for (let i = 13; i < projRow; i += 2) {
+    dashboard.getRange('A' + i + ':D' + i).setBackground('#f8f9fa');
   }
-  dashboard.getRange('C' + row).setNumberFormat('€#,##0.00').setFontColor('#ff6b6b');
-  const maktubRow = row;
-  row++;
-  
-  dashboard.getRange('B' + row).setValue('Outros (a receber)').setFontColor(textColor);
-  if (dataSheetNames.length > 0) {
-    const outrosParts = dataSheetNames.map(name => `SUMIF('${name}'!G:G, "<>*Maktub*", '${name}'!H:H)`);
-    dashboard.getRange('C' + row).setFormula('=' + outrosParts.join('+'));
-  }
-  dashboard.getRange('C' + row).setNumberFormat('€#,##0.00').setFontColor('#4ecdc4');
-  row++;
-  
-  // BALANÇO
-  row += 2;
-  dashboard.getRange('B' + row).setValue('⚖️ BALANÇO').setFontSize(14).setFontWeight('bold').setFontColor(headerFg);
-  row++;
-  
-  dashboard.getRange('B' + row).setValue('Artista deve à Maktub:').setFontColor(textColor);
-  dashboard.getRange('C' + row).setFormula(`=C${maktubRow}-C${maktubRow+1}`);
-  dashboard.getRange('C' + row).setNumberFormat('€#,##0.00').setFontSize(16).setFontWeight('bold').setFontColor('#ffd93d');
-  
-  // ESTATÍSTICAS
-  dashboard.getRange('E5').setValue('📈 ESTATÍSTICAS').setFontSize(14).setFontWeight('bold').setFontColor(headerFg);
-  
-  dashboard.getRange('E6').setValue('Total de registos:').setFontColor(textColor);
-  if (dataSheetNames.length > 0) {
-    const countParts = dataSheetNames.map(name => `COUNTA('${name}'!A:A)-1`);
-    dashboard.getRange('F6').setFormula('=' + countParts.join('+'));
+  for (let i = tipoStartRow + 3; i < tipoRow; i += 2) {
+    dashboard.getRange('A' + i + ':B' + i).setBackground('#f8f9fa');
   }
   
-  dashboard.getRange('E7').setValue('Última atualização:').setFontColor(textColor);
-  dashboard.getRange('F7').setFormula('=NOW()').setNumberFormat('dd/MM/yyyy HH:mm');
-  
-  // Background
-  dashboard.getRange('A1:G' + (row + 5)).setBackground('#0f0f23');
+  // Tab color verde
+  dashboard.setTabColor('#34a853');
   
   // Mark as non-sync
-  dashboard.getRange('A1').setNote('DASHBOARD - NÃO SINCRONIZAR - Usa fórmulas automáticas');
+  dashboard.getRange('A1').setNote('DASHBOARD - NÃO SINCRONIZAR - Usa fórmulas automáticas (SUMIF, COUNTA)');
+  
+  // Mover dashboard para primeira posição
+  spreadsheet.setActiveSheet(dashboard);
+  spreadsheet.moveActiveSheet(1);
 }
 
 // ============================================
@@ -239,13 +314,17 @@ function SETUP_createCategoryStructure() {
   });
   
   Logger.log('=== CONCLUÍDO! Estrutura de categorias criada ===');
-  SpreadsheetApp.getUi().alert('✅ Estrutura de categorias criada em todas as spreadsheets!');
+  try {
+    SpreadsheetApp.getUi().alert('✅ Estrutura de categorias criada em todas as spreadsheets!');
+  } catch (e) {
+    Logger.log('✅ Estrutura de categorias criada em todas as spreadsheets! (UI não disponível)');
+  }
 }
 
 function createCategoriesInSpreadsheet_(ss, artistName) {
   const headers = ['ID', 'Data', 'Artista', 'Projeto', 'Tipo', 'Entidade', 'Investidor', 'Valor', 'Notas', 'CriadoEm'];
   
-  MADALENA_CATEGORIES.forEach(category => {
+  SETUP_CATEGORIES.forEach(category => {
     let sheet = ss.getSheetByName(category);
     
     if (!sheet) {

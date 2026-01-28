@@ -160,25 +160,28 @@ function updateMainSpreadsheet(expenses) {
   // Clear existing data (keep header)
   const lastRow = dataSheet.getLastRow();
   if (lastRow > 1) {
-    dataSheet.getRange(2, 1, lastRow - 1, DATA_COLUMNS.length).clear();
+    dataSheet.getRange(2, 1, lastRow - 1, DATA_COLUMNS.length).clearContent();
   }
   
   // Write all expenses
   if (expenses.length > 0) {
     const data = expenses.map(exp => [
       exp.id || '',
-      exp.date || '',
+      formatDateForSheet(exp.date),
       exp.artist || '',
       exp.project || '',
       exp.type || '',
       exp.entity || '',
       exp.investor || '',
-      parseFloat(exp.amount) || 0,
+      Number(exp.amount) || 0, // ENSURE it's a number!
       exp.notes || '',
       exp.createdAt || ''
     ]);
     
     dataSheet.getRange(2, 1, data.length, DATA_COLUMNS.length).setValues(data);
+    
+    // Format the Valor column as number (column H = 8)
+    dataSheet.getRange(2, 8, data.length, 1).setNumberFormat('#,##0.00');
   }
   
   Logger.log('Main spreadsheet updated with ' + expenses.length + ' expenses');
@@ -187,28 +190,49 @@ function updateMainSpreadsheet(expenses) {
 function updateArtistSpreadsheet(artistName, expenses) {
   const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.artists[artistName]);
   
-  // Group by category (type)
+  // Group by category (project field, not type!)
   const byCategory = {};
   expenses.forEach(exp => {
-    const cat = exp.type || 'Geral';
+    // Use project as category - map to one of our categories
+    const projectLower = (exp.project || '').toLowerCase();
+    let cat = 'Geral'; // default
+    
+    MADALENA_CATEGORIES.forEach(c => {
+      if (projectLower.includes(c.toLowerCase())) {
+        cat = c;
+      }
+    });
+    
     if (!byCategory[cat]) byCategory[cat] = [];
     byCategory[cat].push(exp);
   });
   
-  // Update each category sheet (SKIP dashboard!)
+  // Update each category sheet
   MADALENA_CATEGORIES.forEach(category => {
     let sheet = ss.getSheetByName(category);
     
-    // Skip if sheet doesn't exist (setup not run)
+    // CREATE sheet if it doesn't exist (don't skip!)
     if (!sheet) {
-      Logger.log('Sheet "' + category + '" not found in ' + artistName + ' - skipping');
-      return;
+      Logger.log('Creating sheet "' + category + '" in ' + artistName);
+      sheet = ss.insertSheet(category);
+      setupDataSheetHeaders(sheet);
+      
+      // Set tab color
+      const categoryColors = {
+        'Promoção': '#e74c3c',
+        'Tour': '#3498db',
+        'Concerto': '#9b59b6',
+        'Videoclipe': '#e67e22',
+        'Geral': '#1abc9c',
+        'Gravação': '#f39c12'
+      };
+      sheet.setTabColor(categoryColors[category] || '#1db954');
     }
     
     // Clear existing data (keep header)
     const lastRow = sheet.getLastRow();
     if (lastRow > 1) {
-      sheet.getRange(2, 1, lastRow - 1, DATA_COLUMNS.length).clear();
+      sheet.getRange(2, 1, lastRow - 1, DATA_COLUMNS.length).clearContent();
     }
     
     // Write category expenses
@@ -216,22 +240,38 @@ function updateArtistSpreadsheet(artistName, expenses) {
     if (catExpenses.length > 0) {
       const data = catExpenses.map(exp => [
         exp.id || '',
-        exp.date || '',
+        formatDateForSheet(exp.date),
         exp.artist || '',
         exp.project || '',
         exp.type || '',
         exp.entity || '',
         exp.investor || '',
-        parseFloat(exp.amount) || 0,
+        Number(exp.amount) || 0, // ENSURE it's a number!
         exp.notes || '',
         exp.createdAt || ''
       ]);
       
       sheet.getRange(2, 1, data.length, DATA_COLUMNS.length).setValues(data);
+      
+      // Format the Valor column as number (column H = 8)
+      sheet.getRange(2, 8, data.length, 1).setNumberFormat('#,##0.00');
     }
   });
   
-  Logger.log(artistName + ' updated with ' + expenses.length + ' expenses');
+  Logger.log(artistName + ' updated with ' + expenses.length + ' expenses in ' + Object.keys(byCategory).length + ' categories');
+}
+
+// Helper to format date consistently
+function formatDateForSheet(dateStr) {
+  if (!dateStr) return '';
+  // If already in dd/mm/yyyy format, return as is
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return dateStr;
+  // If in yyyy-mm-dd format, convert
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
+    const d = new Date(dateStr);
+    return Utilities.formatDate(d, Session.getScriptTimeZone(), 'dd/MM/yyyy');
+  }
+  return dateStr;
 }
 
 // ============================================
