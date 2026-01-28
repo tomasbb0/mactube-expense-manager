@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=12">
+    <link rel="stylesheet" href="styles.css?v=19">
     <link rel="icon" type="image/png" href="maktub-logo.png">
 </head>
 <body>
@@ -213,18 +213,32 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>Projeto</label>
+                    <label>Projeto / Evento</label>
                     <div class="select-with-add">
                         <select id="project" required>
                             <option value="">Selecionar...</option>
-                            <option value="Videoclipe">Videoclipe</option>
-                            <option value="Concerto">Concerto</option>
-                            <option value="Gravação">Gravação</option>
-                            <option value="Tour">Tour</option>
-                            <option value="Promoção">Promoção</option>
-                            <option value="Geral">Despesas Gerais</option>
+                            <!-- Concertos / Eventos Reais -->
+                            <option value="Beja 25 Abril">🎤 Beja 25 Abril</option>
+                            <option value="Festival Académico Lisboa">🎤 Festival Académico Lisboa</option>
+                            <option value="Salvaterra de Magos">🎤 Salvaterra de Magos</option>
+                            <option value="Prémios Play">🏆 Prémios Play</option>
+                            <option value="Benedita">🎤 Benedita</option>
+                            <option value="Alvarães">🎤 Alvarães</option>
+                            <option value="Marinha Grande">🎤 Marinha Grande</option>
+                            <option value="Leiria">🎤 Leiria</option>
+                            <option value="Coimbra">🎤 Coimbra</option>
+                            <option value="Porto">🎤 Porto</option>
+                            <option value="Faro">🎤 Faro</option>
+                            <!-- Projectos Especiais -->
+                            <option value="Videoclipe">🎬 Videoclipe</option>
+                            <option value="Gravação Estúdio">🎧 Gravação Estúdio</option>
+                            <option value="Sessão Fotográfica">📸 Sessão Fotográfica</option>
+                            <!-- Categorias Gerais -->
+                            <option value="Styling">👕 Styling</option>
+                            <option value="Promoção">📢 Promoção</option>
+                            <option value="Gastos Gerais">📋 Gastos Gerais</option>
                         </select>
-                        <button type="button" class="btn-add-option" onclick="addNewOption('project', 'Novo Projeto')">+</button>
+                        <button type="button" class="btn-add-option" onclick="addNewOption('project', 'Novo Projeto/Evento')">+</button>
                     </div>
                 </div>
                 
@@ -460,13 +474,14 @@
                     <label for="project-type">📂 Tipo de Projeto</label>
                     <select id="project-type" required>
                         <option value="">Selecionar tipo...</option>
-                        <option value="Videoclipe">🎬 Videoclipe</option>
-                        <option value="Single">🎵 Single / Música</option>
-                        <option value="EP">💿 EP</option>
-                        <option value="Álbum">📀 Álbum</option>
+                        <option value="Concerto">🎤 Concerto Individual (ex: Beja, Leiria)</option>
+                        <option value="Festival">🎪 Festival (ex: NOS Alive)</option>
                         <option value="Tour">🚌 Tour / Digressão</option>
-                        <option value="Concerto">🎤 Concerto</option>
+                        <option value="Videoclipe">🎬 Videoclipe</option>
+                        <option value="Álbum">💿 Álbum / EP</option>
                         <option value="Sessão Fotográfica">📸 Sessão Fotográfica</option>
+                        <option value="Promoção">📢 Campanha Promoção</option>
+                        <option value="Styling">👕 Styling</option>
                         <option value="Outro">📋 Outro</option>
                     </select>
                 </div>
@@ -574,12 +589,27 @@
                 <div class="form-group">
                     <label>Projeto</label>
                     <select id="edit-project" required>
-                        <option value="Videoclipe">Videoclipe</option>
-                        <option value="Concerto">Concerto</option>
-                        <option value="Gravação">Gravação</option>
-                        <option value="Tour">Tour</option>
-                        <option value="Promoção">Promoção</option>
-                        <option value="Geral">Despesas Gerais</option>
+                        <option value="">Selecionar...</option>
+                        <!-- Concertos / Eventos Reais -->
+                        <option value="Beja 25 Abril">🎤 Beja 25 Abril</option>
+                        <option value="Festival Académico Lisboa">🎤 Festival Académico Lisboa</option>
+                        <option value="Salvaterra de Magos">🎤 Salvaterra de Magos</option>
+                        <option value="Prémios Play">🏆 Prémios Play</option>
+                        <option value="Benedita">🎤 Benedita</option>
+                        <option value="Alvarães">🎤 Alvarães</option>
+                        <option value="Marinha Grande">🎤 Marinha Grande</option>
+                        <option value="Leiria">🎤 Leiria</option>
+                        <option value="Coimbra">🎤 Coimbra</option>
+                        <option value="Porto">🎤 Porto</option>
+                        <option value="Faro">🎤 Faro</option>
+                        <!-- Projectos Especiais -->
+                        <option value="Videoclipe">🎬 Videoclipe</option>
+                        <option value="Gravação Estúdio">🎧 Gravação Estúdio</option>
+                        <option value="Sessão Fotográfica">📸 Sessão Fotográfica</option>
+                        <!-- Categorias Gerais -->
+                        <option value="Styling">👕 Styling</option>
+                        <option value="Promoção">📢 Promoção</option>
+                        <option value="Gastos Gerais">📋 Gastos Gerais</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -647,6 +677,6 @@
     <!-- Toast -->
     <div id="toast" class="toast hidden"></div>
     
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=19"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxfpLBAUIxgE245kIUZjmJB-vSXFgTPVWmCxs03aKR4HHNc86Kj0bGH-BOhD-mN_mIk/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxniGEMoh_VBp5_mTc_CM15wbz5dkNlDXAIaIR7-D5fHG--9a2XsCEvlEAnUCy34_jO/exec';
 
 // Helper function to send data to Google Sheets
 async function sendToGoogleSheets(payload) {
@@ -370,7 +370,32 @@ function deduplicateExpenses() {
 
 function generateDemoData(count) {
     const artists = ['Buba Espinho', 'MAR', 'D.A.M.A', 'Bandidos do Cante'];
-    const projects = ['Videoclipe', 'Concerto', 'Gravação', 'Tour', 'Promoção', 'Geral'];
+    
+    // Real projects/events - like Madalena's Excel (mix of concerts + general categories)
+    const concerts = [
+        'Beja 25 Abril', 
+        'Festival Académico Lisboa', 
+        'Salvaterra de Magos', 
+        'Prémios Play', 
+        'Benedita', 
+        'Alvarães', 
+        'Marinha Grande',
+        'Leiria',
+        'Coimbra',
+        'Porto',
+        'Faro'
+    ];
+    const specialProjects = ['Videoclipe', 'Gravação Estúdio', 'Sessão Fotográfica'];
+    const generalCategories = ['Styling', 'Promoção', 'Gastos Gerais'];
+    
+    // Weight: 60% concerts, 20% special projects, 20% general
+    const getProject = () => {
+        const rand = Math.random();
+        if (rand < 0.6) return concerts[Math.floor(Math.random() * concerts.length)];
+        if (rand < 0.8) return specialProjects[Math.floor(Math.random() * specialProjects.length)];
+        return generalCategories[Math.floor(Math.random() * generalCategories.length)];
+    };
+    
     const types = ['combustivel', 'alimentacao', 'alojamento', 'equipamento', 'producao', 'promocao', 'transporte', 'outros'];
     const entities = ['Galp', 'BP', 'Hotel Lisboa', 'Hotel Porto', 'Airbnb', 'Studio XYZ', 'Thomann', 'Amazon', 'Meta Ads', 'Google Ads', 'Catering Pro', 'Uber', 'Bolt', 'TAP', 'Ryanair', 'FNAC', 'Worten', 'El Corte Inglés', 'Continente', 'Pingo Doce'];
     const investors = ['maktub', 'outro'];
@@ -403,7 +428,7 @@ function generateDemoData(count) {
         data.push({
             id: (Date.now() + i).toString(),
             artist,
-            project: projects[Math.floor(Math.random() * projects.length)],
+            project: getProject(),
             type,
             amount: Math.round(amount * 100) / 100,
             date: randomDate.toISOString().split('T')[0],
@@ -1799,14 +1824,20 @@ async function syncFromGoogleSheets() {
 // Full bidirectional sync
 async function fullSync() {
     if (!GOOGLE_SCRIPT_URL) {
+        console.error('❌ No Google Script URL configured');
         showToast('Google Sheets não configurado', 'error');
         return;
     }
     
     if (isSyncing) {
+        console.log('⏸️ Sync already in progress');
         showToast('Sincronização em progresso...', 'error');
         return;
     }
+    
+    console.log('🔄 FULL SYNC STARTED');
+    console.log('📊 Local expenses count:', expenses.length);
+    console.log('🔗 Google Script URL:', GOOGLE_SCRIPT_URL);
     
     isSyncing = true;
     updateSyncButtonState(true);
@@ -1814,16 +1845,26 @@ async function fullSync() {
     
     try {
         // First, get data from sheets
+        console.log('📡 Fetching from Google Sheets...');
         const getResponse = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllExpenses`, {
             method: 'GET',
         });
         
+        console.log('📡 Response status:', getResponse.status, getResponse.statusText);
+        
         const getData = await getResponse.json();
+        console.log('📡 Response data:', getData);
+        
         let sheetExpenses = getData.success ? (getData.expenses || []) : [];
+        console.log('📊 Sheet expenses count:', sheetExpenses.length);
         
         // Create maps for comparison
         const localMap = new Map(expenses.map(e => [e.id, e]));
         const sheetMap = new Map(sheetExpenses.map(e => [e.id, e]));
+        
+        console.log('🔀 Merging data...');
+        console.log('  Local unique IDs:', localMap.size);
+        console.log('  Sheet unique IDs:', sheetMap.size);
         
         // Merge: newer timestamp wins
         const mergedExpenses = [];
@@ -1845,15 +1886,20 @@ async function fullSync() {
             }
         });
         
+        console.log('✅ Merged count:', mergedExpenses.length);
+        
         expenses = mergedExpenses;
         
         // Now push merged data back to sheets
+        console.log('📤 Pushing to Google Sheets...');
         const syncPayload = {
             action: 'syncFromWebsite',
             expenses: expenses,
             timestamp: new Date().toISOString()
         };
-        await sendToGoogleSheets(syncPayload);
+        
+        const syncResult = await sendToGoogleSheets(syncPayload);
+        console.log('📤 Sync result:', syncResult);
         
         saveData();
         updateDashboard();
@@ -1864,10 +1910,13 @@ async function fullSync() {
         localStorage.setItem('lastSyncToSheets', now);
         localStorage.setItem('lastSyncFromSheets', now);
         
+        console.log('✅ SYNC COMPLETED SUCCESSFULLY');
         showToast('Sincronização completa!', 'success');
         
     } catch (error) {
-        console.error('Full sync failed:', error);
+        console.error('❌ SYNC FAILED:', error);
+        console.error('Error details:', error.message);
+        console.error('Stack:', error.stack);
         showToast('Erro na sincronização: ' + error.message, 'error');
     } finally {
         isSyncing = false;
