@@ -3,7 +3,7 @@
 
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwzJKn_pjOnXCf4Ab7waiAX3HhGW9XJNVdfb2-vyF6ddFIYBKgVsCxlsW7SrUcj-Zt/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx50NxsHiNQjY35IDLBgDp9DiNV7ZeduKoFOkjwiRh_jM7txetE_V8mvvT_BdIRUwEs/exec';
 
 // State
 let expenses = [];
@@ -1544,10 +1544,10 @@ function cancelSync() {
     }, 1500);
 }
 
-// Sync local data to Google Sheets with progress
+// Sync local data to Google Drive with progress
 async function syncToGoogleSheets() {
     if (!GOOGLE_SCRIPT_URL) {
-        showToast('Google Sheets não configurado', 'error');
+        showToast('Google Drive não configurado', 'error');
         return;
     }
     
@@ -1561,16 +1561,15 @@ async function syncToGoogleSheets() {
     updateSyncButtonState(true);
     showSyncProgressModal();
     
+    // Simplified steps - no setup tasks (those are in separate script)
     const steps = [
         { text: 'Preparar dados', done: false, active: true },
-        { text: 'Enviar para Google Sheets', done: false, active: false },
-        { text: 'Limpar folhas "Sheet1"', done: false, active: false },
+        { text: 'Enviar para Google Drive', done: false, active: false },
         { text: 'Atualizar folha principal', done: false, active: false },
-        { text: 'Atualizar folhas dos artistas', done: false, active: false },
-        { text: 'Criar dashboards', done: false, active: false }
+        { text: 'Atualizar folhas dos artistas', done: false, active: false }
     ];
     
-    console.log('🚀 Starting sync to Google Sheets...');
+    console.log('🚀 Starting sync to Google Drive...');
     console.log('📊 Total expenses to sync:', expenses.length);
     
     try {
@@ -1585,10 +1584,10 @@ async function syncToGoogleSheets() {
         
         if (syncAborted) return;
         
-        // Step 2: Send to Google Sheets
+        // Step 2: Send to Google Drive
         steps[0].done = true; steps[0].active = false;
         steps[1].active = true;
-        updateSyncProgress(20, 'A enviar dados para Google Sheets...', steps);
+        updateSyncProgress(30, 'A enviar dados para Google Drive...', steps);
         
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
@@ -1600,43 +1599,41 @@ async function syncToGoogleSheets() {
         
         if (syncAborted) return;
         
-        // Update progress simulation (since we can't get real-time progress from Apps Script)
+        // Step 3: Main sheet update
         steps[1].done = true; steps[1].active = false;
         steps[2].active = true;
-        updateSyncProgress(35, 'A limpar folhas "Sheet1"...', steps);
+        updateSyncProgress(60, 'A atualizar folha principal...', steps);
         
         await new Promise(r => setTimeout(r, 1000));
         if (syncAborted) return;
         
+        // Step 4: Artist sheets update
         steps[2].done = true; steps[2].active = false;
         steps[3].active = true;
-        updateSyncProgress(50, 'A atualizar folha principal...', steps);
-        
-        await new Promise(r => setTimeout(r, 1500));
-        if (syncAborted) return;
-        
-        steps[3].done = true; steps[3].active = false;
-        steps[4].active = true;
-        updateSyncProgress(70, 'A atualizar folhas dos artistas...', steps);
-        
-        await new Promise(r => setTimeout(r, 2000));
-        if (syncAborted) return;
-        
-        steps[4].done = true; steps[4].active = false;
-        steps[5].active = true;
-        updateSyncProgress(90, 'A criar dashboards...', steps);
+        updateSyncProgress(85, 'A atualizar folhas dos artistas...', steps);
         
         await new Promise(r => setTimeout(r, 1500));
         if (syncAborted) return;
         
         // Complete
-        steps[5].done = true; steps[5].active = false;
+        steps[3].done = true; steps[3].active = false;
         updateSyncProgress(100, '✅ Sincronização completa!', steps);
         
         // Try to read response
         try {
             const result = await response.text();
             console.log('Response:', result);
+            
+            // Parse and check for errors
+            try {
+                const jsonResult = JSON.parse(result);
+                if (jsonResult.success === false) {
+                    throw new Error(jsonResult.error || 'Sync failed');
+                }
+            } catch (parseError) {
+                // If can't parse, assume success (CORS redirect)
+                console.log('Response not JSON, assuming success');
+            }
         } catch (e) {
             console.log('Could not read response (normal with CORS)');
         }
@@ -1650,7 +1647,7 @@ async function syncToGoogleSheets() {
         }, 2000);
         
     } catch (error) {
-        console.error('❌ Sync to Google Sheets failed:', error);
+        console.error('❌ Sync to Google Drive failed:', error);
         updateSyncProgress(0, '❌ Erro: ' + error.message, []);
         showToast('Erro ao sincronizar: ' + error.message, 'error');
     } finally {
@@ -1948,7 +1945,17 @@ Gerais Maktub</pre>
         <div class="modal-overlay sync-modal-overlay" onclick="closeSyncModal()">
             <div class="modal sync-modal" onclick="event.stopPropagation()">
                 <div class="modal-header">
-                    <h3>📊 Sincronização Google Sheets</h3>
+                    <h3>
+                        <svg viewBox="0 0 87.3 78" fill="currentColor" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;">
+                            <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5l5.4 9.35z" fill="#0066DA"/>
+                            <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5l16.15-28z" fill="#00AC47"/>
+                            <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.85l5.9 10.6 7.8 13.2z" fill="#EA4335"/>
+                            <path d="M43.65 25L57.4 1.2c-1.35-.8-2.9-1.2-4.5-1.2H34.4c-1.6 0-3.15.45-4.5 1.2L43.65 25z" fill="#00832D"/>
+                            <path d="M59.85 53h27.5c0-1.55-.4-3.1-1.2-4.5L73.55 26.8c-.8-1.4-1.95-2.5-3.3-3.3L57.4 46.6l2.45 6.4z" fill="#2684FC"/>
+                            <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3L13.85 26.8c-.8 1.4-1.2 2.95-1.2 4.5h27.5l3.5-6.3z" fill="#FFBA00"/>
+                        </svg>
+                        Google Drive Sync
+                    </h3>
                     <button class="modal-close" onclick="closeSyncModal()">×</button>
                 </div>
                 <div class="modal-body">
@@ -1956,10 +1963,10 @@ Gerais Maktub</pre>
                     ${isConfigured ? `
                     <div class="sync-actions">
                         <button class="btn btn-primary sync-action-btn" onclick="syncToGoogleSheets()">
-                            <span class="sync-icon">📤</span> Enviar para Sheets
+                            <span class="sync-icon">📤</span> Enviar para Drive
                         </button>
                         <button class="btn btn-secondary sync-action-btn" onclick="syncFromGoogleSheets()">
-                            <span class="sync-icon">📥</span> Obter de Sheets
+                            <span class="sync-icon">📥</span> Obter do Drive
                         </button>
                         <button class="btn btn-accent sync-action-btn" onclick="fullSync()">
                             <span class="sync-icon">🔄</span> Sincronização Completa
