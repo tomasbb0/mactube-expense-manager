@@ -1589,17 +1589,14 @@ async function syncToGoogleSheets() {
         steps[1].active = true;
         updateSyncProgress(30, 'A enviar dados para Google Drive...', steps);
         
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
+        // Use URL parameter approach for better compatibility
+        const response = await fetch(GOOGLE_SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify(payload)), {
             method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'text/plain'
-            },
-            body: JSON.stringify(payload),
             redirect: 'follow'
         });
         
         console.log('✅ Request sent successfully');
+        console.log('Response status:', response.status);
         
         if (syncAborted) return;
         
@@ -1781,17 +1778,14 @@ async function fullSync() {
         expenses = mergedExpenses;
         
         // Now push merged data back to sheets
-        await fetch(GOOGLE_SCRIPT_URL, {
+        const syncPayload = {
+            action: 'syncFromWebsite',
+            expenses: expenses,
+            timestamp: new Date().toISOString()
+        };
+        await fetch(GOOGLE_SCRIPT_URL + '?data=' + encodeURIComponent(JSON.stringify(syncPayload)), {
             method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                action: 'syncFromWebsite',
-                expenses: expenses,
-                timestamp: new Date().toISOString()
-            })
+            redirect: 'follow'
         });
         
         saveData();
