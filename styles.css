@@ -1080,7 +1080,7 @@ body {
 .dashboard-filter-bar {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 14px;
   padding: 10px 14px;
   background: rgba(255, 255, 255, 0.02);
@@ -1096,7 +1096,9 @@ body {
   border-radius: var(--radius-sm);
   font-size: 0.8rem;
   color: var(--text-primary);
-  min-width: 160px;
+  min-width: 140px;
+  flex: 1;
+  max-width: 220px;
   color-scheme: dark;
 }
 

@@ -491,7 +491,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 8; // Increment to force reload - v8: Dashboard filters + quick links
+const DATA_VERSION = 9; // Increment to force reload - v9: Dashboard all filter dropdowns
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
@@ -1902,25 +1902,58 @@ function getAllDemoData() {
 // ==========================================
 
 function getDashboardFilteredExpenses() {
-  const artistFilter = document.getElementById("dashboard-artist-filter")?.value || "all";
+  const artistFilter =
+    document.getElementById("dashboard-artist-filter")?.value || "all";
+  const projectFilter =
+    document.getElementById("dashboard-project-filter")?.value || "all";
+  const typeFilter =
+    document.getElementById("dashboard-type-filter")?.value || "all";
+  const investorFilter =
+    document.getElementById("dashboard-investor-filter")?.value || "all";
   const dateFrom = document.getElementById("dashboard-date-from")?.value || "";
   const dateTo = document.getElementById("dashboard-date-to")?.value || "";
 
   return expenses.filter((e) => {
     const matchArtist = artistFilter === "all" || e.artist === artistFilter;
+    const matchProject = projectFilter === "all" || e.project === projectFilter;
+    const matchType = typeFilter === "all" || e.type === typeFilter;
+    const matchInvestor = investorFilter === "all" || e.investor === investorFilter;
     const matchFrom = !dateFrom || e.date >= dateFrom;
     const matchTo = !dateTo || e.date <= dateTo;
-    return matchArtist && matchFrom && matchTo;
+    return matchArtist && matchProject && matchType && matchInvestor && matchFrom && matchTo;
   });
 }
 
-function populateDashboardArtistFilter() {
-  const select = document.getElementById("dashboard-artist-filter");
-  if (!select) return;
-  const current = select.value;
-  const artists = Object.keys(artistProjects).sort();
-  select.innerHTML = '<option value="all">Todos os Artistas</option>' +
-    artists.map(a => `<option value="${a}"${a === current ? ' selected' : ''}>${a}</option>`).join('');
+function populateDashboardFilters() {
+  // Artist dropdown
+  const artistSelect = document.getElementById("dashboard-artist-filter");
+  if (artistSelect) {
+    const currentArtist = artistSelect.value;
+    const artists = Object.keys(artistProjects).sort();
+    artistSelect.innerHTML =
+      '<option value="all">Todos os Artistas</option>' +
+      artists
+        .map(
+          (a) =>
+            `<option value="${a}"${a === currentArtist ? " selected" : ""}>${a}</option>`,
+        )
+        .join("");
+  }
+
+  // Project dropdown
+  const projectSelect = document.getElementById("dashboard-project-filter");
+  if (projectSelect) {
+    const currentProject = projectSelect.value;
+    const projects = [...new Set(expenses.map((e) => e.project))].sort();
+    projectSelect.innerHTML =
+      '<option value="all">Todos os Projetos</option>' +
+      projects
+        .map(
+          (p) =>
+            `<option value="${p}"${p === currentProject ? " selected" : ""}>${p}</option>`,
+        )
+        .join("");
+  }
 }
 
 function filterDashboard() {
@@ -1928,7 +1961,7 @@ function filterDashboard() {
 }
 
 function updateDashboard() {
-  populateDashboardArtistFilter();
+  populateDashboardFilters();
   const filtered = getDashboardFilteredExpenses();
   updateStats(filtered);
   updateCharts(filtered);
@@ -2307,7 +2340,13 @@ function getFilteredExpenses() {
     const matchDateTo = !dateTo || e.date <= dateTo;
 
     return (
-      matchSearch && matchArtist && matchProject && matchType && matchInvestor && matchDateFrom && matchDateTo
+      matchSearch &&
+      matchArtist &&
+      matchProject &&
+      matchType &&
+      matchInvestor &&
+      matchDateFrom &&
+      matchDateTo
     );
   });
 }
