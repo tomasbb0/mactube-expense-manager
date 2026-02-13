@@ -510,7 +510,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 11; // Increment to force reload - v11: Force fresh data on ux-transform branch
+const DATA_VERSION = 12; // Increment to force reload - v12: Corrected investor data, Terceiros→Bandidos
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
@@ -580,1340 +580,1189 @@ function generateDemoData(count) {
 
 // REAL DATA from "GERAIS BANDIDOS.xlsx" + "MÚSICAS _ PROJETOS .xlsx" — Bandidos do Cante only
 function getAllDemoData() {
-  const data = [];
-  let id = 1700000000000;
-
-  // ============================================================
-  // === BANDIDOS DO CANTE - REAL DATA ===
-  // === Source: GERAIS BANDIDOS.xlsx + MÚSICAS _ PROJETOS .xlsx ===
-  // ============================================================
-
-  // --- GERAIS BANDIDOS (General monthly costs) ---
-
-  // -- Gerais: ABRIL --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "equipamento",
-    project: "Gerais Bandidos",
-    amount: 591.0,
-    entity: "Vodafone Play - Styling",
-    investor: "maktub",
-    date: "2024-04-01",
-    notes: "",
-    createdAt: "2024-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Gerais Bandidos",
-    amount: 13.8,
-    entity: "Vodafone Play - Cervejas",
-    investor: "maktub",
-    date: "2024-04-01",
-    notes: "",
-    createdAt: "2024-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "outros",
-    project: "Gerais Bandidos",
-    amount: 500.0,
-    entity: "Vodafone Play - Pagamento recebido",
-    investor: "patrocinio",
-    date: "2024-04-01",
-    notes: "PLAY DERAM-NOS 500€. LOGO GASTAMOS 104,8€",
-    createdAt: "2024-04-01T10:00:00Z",
-  });
-
-  // -- Gerais: JUN 25 --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alojamento",
-    project: "Gerais Bandidos",
-    amount: 134.86,
-    entity: "Airbnb 04/06",
-    investor: "maktub",
-    date: "2025-06-04",
-    notes: "",
-    createdAt: "2025-06-04T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "outros",
-    project: "Gerais Bandidos",
-    amount: 147.0,
-    entity: "Ovibeja - Pagamento Aftermovie",
-    investor: "oferta_maktub",
-    date: "2025-06-01",
-    notes:
-      "Aparece na folha só para os bandidos saberem que oferecemos, mas não conta para o que os bandidos nos devem.",
-    createdAt: "2025-06-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 60.0,
-    entity: "Design Single de Ouro",
-    investor: "oferta_maktub",
-    date: "2025-06-01",
-    notes: "OFERTA MAKTUB",
-    createdAt: "2025-06-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 250.0,
-    entity: "Design - Pax Julia 'Ao vivo em Beja'",
-    investor: "maktub",
-    date: "2025-06-01",
-    notes: "",
-    createdAt: "2025-06-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 200.0,
-    entity: "Design Ledwalls",
-    investor: "maktub",
-    date: "2025-06-01",
-    notes: "",
-    createdAt: "2025-06-01T10:00:00Z",
-  });
-
-  // -- Gerais: JUL 25 (Sessão fotográfica) --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 403.0,
-    entity: "Sessão fotográfica - Styling (Isa)",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 89.0,
-    entity: "Sessão fotográfica - Tela",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 71.0,
-    entity: "Sessão fotográfica - Estúdio SET",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "Descontaram o valor da tela, daí ser tão barato",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 100.0,
-    entity: "Sessão fotográfica - Estúdio Sítio",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Gerais Bandidos",
-    amount: 76.53,
-    entity: "Sessão fotográfica - Almoço",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Gerais Bandidos",
-    amount: 34.12,
-    entity: "Sessão fotográfica - Snacks",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 12.88,
-    entity: "Sessão fotográfica - Adereços",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 460.0,
-    entity: "Sessão fotográfica - Cajó (fotografia)",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-  // -- Gerais: JUL 25 (Gracinha) --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 200.0,
-    entity: "Técnico de Som Gracinha",
-    investor: "maktub",
-    date: "2025-07-01",
-    notes: "",
-    createdAt: "2025-07-01T10:00:00Z",
-  });
-
-  // -- Gerais: OUT 25 --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 40.0,
-    entity: "Design - Press Kit Bandidos nos teatros",
-    investor: "oferta_maktub",
-    date: "2025-10-01",
-    notes: "OFERTA MAKTUB",
-    createdAt: "2025-10-01T10:00:00Z",
-  });
-
-  // -- Gerais: NOV 25 --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 80.0,
-    entity: "Design Press Kit",
-    investor: "oferta_maktub",
-    date: "2025-11-01",
-    notes: "OFERTA MAKTUB",
-    createdAt: "2025-11-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 375.0,
-    entity: "Design Merch",
-    investor: "maktub",
-    date: "2025-11-01",
-    notes: "",
-    createdAt: "2025-11-01T10:00:00Z",
-  });
-
-  // -- Gerais: DEZ 25 --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "outros",
-    project: "Gerais Bandidos",
-    amount: 70.0,
-    entity: "Advogada 25",
-    investor: "oferta_maktub",
-    date: "2025-12-01",
-    notes: "TOTAL 70€ - OFERTA MAKTUB 100%",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 150.0,
-    entity: "Design Datas mensais + Cartaz geral Datas Tour",
-    investor: "oferta_maktub_50",
-    date: "2025-12-01",
-    notes: "TOTAL 300€ - OFERTA MAKTUB 50%",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Gerais Bandidos",
-    amount: 100.0,
-    entity: "Design Beja Pax Julia - Derivações 2nd Data e Convidados",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "equipamento",
-    project: "Gerais Bandidos",
-    amount: 65.0,
-    entity: "Molduras Galardões (10 molduras)",
-    investor: "oferta_maktub_50",
-    date: "2025-12-01",
-    notes: "TOTAL 130€ - MAKTUB OFERECE 50%",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "equipamento",
-    project: "Gerais Bandidos",
-    amount: 64.275,
-    entity: "Impressão Galardões",
-    investor: "oferta_maktub_50",
-    date: "2025-12-01",
-    notes: "TOTAL 128,55€ - MAKTUB OFERECE 50%",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "equipamento",
-    project: "Gerais Bandidos",
-    amount: 81.0,
-    entity: "Photocall (impressão só de 1 lado)",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "equipamento",
-    project: "Gerais Bandidos",
-    amount: 25.0,
-    entity: "Roll Up álbum Pax Júlia",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 2860.0,
-    entity: "Produção Merch",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Gerais Bandidos",
-    amount: 216.0,
-    entity: "Ensaio Pax Júlia",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "Não foi cobrado em bilheteira à Haus",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-
-  // --- MÚSICAS / PROJETOS (Per-song/project costs) ---
-
-  // -- Álbum Bairro das Flores - Geral --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 312.5,
-    entity: "Ramos flores - Promo Álbum",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 200.0,
-    entity: "Capa Álbum - Fellypa",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 300.0,
-    entity: "Teresa lemos - Assessoria Primavera e álbum",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 1259.23,
-    entity: "Festa Lançamento Álbum",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "Falta Cajó",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 800.0,
-    entity:
-      "Mix e master simões: Quero acreditar, nada mais, bairro das flores e voltar a ver-te",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 75.0,
-    entity: "Lucas - conteúdo promo Mega e RR",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "Ainda não foi pago",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 21.98,
-    entity: "Disco 'Bairro das Flores' casa Amália",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 2000.0,
-    entity: "Gastaram de conta conjunta",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 750.0,
-    entity: "Writting Camp",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "outros",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 6000.0,
-    entity: "Acin (Luís)",
-    investor: "patrocinio",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 1250.0,
-    entity: "Herdade do Sobroso - Videoclipe AMIGOS COLORIDOS",
-    investor: "patrocinio",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "outros",
-    project: "Álbum Bairro das Flores - Geral",
-    amount: 10000.0,
-    entity: "SPA - Apoio Fundo SPA",
-    investor: "patrocinio",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-
-  // -- Amigos Coloridos --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 300.0,
-    entity: "Promo - Youtube",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 300.0,
-    entity: "Promo - Instagram",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 300.0,
-    entity: "Promo - Tiktok",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 100.0,
-    entity: "Promo - FB",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 60.0,
-    entity: "Single de Ouro",
-    investor: "oferta_maktub",
-    date: "2025-01-01",
-    notes: "OFERTA MAKTUB",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "transporte",
-    project: "Amigos Coloridos",
-    amount: 356.7,
-    entity: "Aluguer e transporte sofás (THE VOICE)",
-    investor: "maktub",
-    date: "2024-11-26",
-    notes: "",
-    createdAt: "2024-11-26T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Amigos Coloridos",
-    amount: 300.0,
-    entity: "Produção música",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Amigos Coloridos",
-    amount: 150.0,
-    entity: "Mix e master",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Amigos Coloridos",
-    amount: 300.0,
-    entity: "Aluguer estúdio",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Amigos Coloridos",
-    amount: 100.0,
-    entity: "Mapi - piano",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Amigos Coloridos",
-    amount: 150.0,
-    entity: "Rodrigo - guitarra",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 200.0,
-    entity: "Promo - Youtube",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 200.0,
-    entity: "Promo - Tik tok",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Amigos Coloridos",
-    amount: 100.0,
-    entity: "Promo - Instagram",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-
-  // -- Já não há pardais no céu --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Já não há pardais no céu",
-    amount: 1353.0,
-    entity: "Blitz Promo",
-    investor: "maktub",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Já não há pardais no céu",
-    amount: 150.0,
-    entity: "Blitz - Fotografia",
-    investor: "maktub",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Já não há pardais no céu",
-    amount: 100.0,
-    entity: "Almoço imprensa (Solar)",
-    investor: "maktub",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Já não há pardais no céu",
-    amount: 190.0,
-    entity: "Festa Lançamento - Catering",
-    investor: "maktub",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Já não há pardais no céu",
-    amount: 553.0,
-    entity: "Festa Lançamento - Espaço",
-    investor: "maktub",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Já não há pardais no céu",
-    amount: 100.0,
-    entity: "Design - capa, comunicação redes e convite LP",
-    investor: "maktub",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Já não há pardais no céu",
-    amount: 3300.0,
-    entity: "Videoclipe",
-    investor: "bandidos",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Já não há pardais no céu",
-    amount: 300.0,
-    entity: "Produção",
-    investor: "bandidos",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Já não há pardais no céu",
-    amount: 100.0,
-    entity: "Mix",
-    investor: "bandidos",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Já não há pardais no céu",
-    amount: 50.0,
-    entity: "Master",
-    investor: "bandidos",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Já não há pardais no céu",
-    amount: 100.0,
-    entity: "Ivo Costa - Bateria",
-    investor: "bandidos",
-    date: "2025-04-01",
-    notes: "",
-    createdAt: "2025-04-01T10:00:00Z",
-  });
-
-  // -- Tanto Tempo --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tanto Tempo",
-    amount: 500.0,
-    entity: "Produção Edu",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Tanto Tempo",
-    amount: 90.0,
-    entity: "Design",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tanto Tempo",
-    amount: 250.0,
-    entity: "Dia Estúdio - Vale de Lobos",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tanto Tempo",
-    amount: 150.0,
-    entity: "Mix e Master",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tanto Tempo",
-    amount: 3447.73,
-    entity: "Videoclipe",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "promocao",
-    project: "Tanto Tempo",
-    amount: 300.0,
-    entity: "Assessoria de Imprensa - Teresa Lemos",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-
-  // -- QUERO ACREDITAR --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "QUERO ACREDITAR",
-    amount: 615.0,
-    entity: "Produção (50%) - Rodrigo",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "QUERO ACREDITAR",
-    amount: 500.0,
-    entity: "Produção Jon",
-    investor: "maktub",
-    date: "2025-12-25",
-    notes: "",
-    createdAt: "2025-12-25T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "QUERO ACREDITAR",
-    amount: 150.0,
-    entity: "Mapi - piano",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "QUERO ACREDITAR",
-    amount: 100.0,
-    entity: "Gui Melo - Bateria",
-    investor: "bandidos",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-
-  // -- Voltar a Ver-te --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Voltar a Ver-te",
-    amount: 500.0,
-    entity: "Produção JON",
-    investor: "maktub",
-    date: "2025-12-25",
-    notes: "",
-    createdAt: "2025-12-25T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Voltar a Ver-te",
-    amount: 500.0,
-    entity: "Produção Rodrigo",
-    investor: "maktub",
-    date: "2025-12-25",
-    notes: "",
-    createdAt: "2025-12-25T10:00:00Z",
-  });
-
-  // -- Primavera - Zambujo --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Primavera - Zambujo",
-    amount: 396.74,
-    entity: "Almoço António Zambujo - Solar dos Presentes",
-    investor: "maktub",
-    date: "2025-06-01",
-    notes: "",
-    createdAt: "2025-06-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 100.0,
-    entity: "Fotos Estúdio mudsea",
-    investor: "maktub",
-    date: "2025-06-01",
-    notes: "",
-    createdAt: "2025-06-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 250.0,
-    entity: "Dia Estúdio - Vale de Lobos",
-    investor: "maktub",
-    date: "2025-10-01",
-    notes: "",
-    createdAt: "2025-10-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 4000.0,
-    entity: "Videoclipe GUI",
-    investor: "maktub",
-    date: "2025-11-01",
-    notes: "s/ IVA",
-    createdAt: "2025-11-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 500.0,
-    entity: "António - arranjos e Gravação",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 75.0,
-    entity: "Técnica Estúdio Valentim de Carvalho - Cordas",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 250.0,
-    entity: "Mix e Master Náná",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 500.0,
-    entity: "Quarteto Cordas",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 150.0,
-    entity: "Contrabaixo Rodrigo",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Primavera - Zambujo",
-    amount: 500.0,
-    entity: "Produção Edu",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-
-  // -- Nada Mais --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Nada Mais",
-    amount: 500.0,
-    entity: "Produção Edu",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-
-  // -- Bairro das Flores --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Bairro das Flores",
-    amount: 500.0,
-    entity: "Produção Edu",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-
-  // -- Rosa --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 500.0,
-    entity: "António - Arranjo e Gravação",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 390.0,
-    entity: "Aluguer estúdio - Paço de Arcos",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 75.0,
-    entity: "Técnica Estúdio Valentim de Carvalho - Cordas",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 250.0,
-    entity: "Mix e Master Náná",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 70.0,
-    entity: "Preparação multificheiros para o Festival da Canção",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 500.0,
-    entity: "Quarteto Cordas",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 150.0,
-    entity: "Contrabaixo Rodrigo",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Rosa",
-    amount: 500.0,
-    entity: "Produção Edu",
-    investor: "maktub",
-    date: "2025-12-01",
-    notes: "",
-    createdAt: "2025-12-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "equipamento",
-    project: "Rosa",
-    amount: 1250.0,
-    entity: "Festival da Canção - Arte Palco (Alexandre)",
-    investor: "maktub",
-    date: "2026-01-01",
-    notes: "",
-    createdAt: "2026-01-01T10:00:00Z",
-  });
-
-  // -- Tu És - 4 e Meia --
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Tu És - 4 e Meia",
-    amount: 202.5,
-    entity: "Ida ao Porto - Almoço Porto",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Tu És - 4 e Meia",
-    amount: 221.5,
-    entity: "Ida ao Porto - Almoço Porto",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alimentacao",
-    project: "Tu És - 4 e Meia",
-    amount: 92.9,
-    entity: "Ida ao Porto - Refeição Porto",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "alojamento",
-    project: "Tu És - 4 e Meia",
-    amount: 420.41,
-    entity: "Ida ao Porto - Alojamento",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tu És - 4 e Meia",
-    amount: 300.0,
-    entity: "Ida ao Porto - Estúdio Porto",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "transporte",
-    project: "Tu És - 4 e Meia",
-    amount: 265.0,
-    entity: "Ida ao Porto - Transporte ida e volta para o Porto",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tu És - 4 e Meia",
-    amount: 250.0,
-    entity: "Ida ao Porto - Fotógrafo",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-  data.push({
-    id: (id++).toString(),
-    artist: "Bandidos do Cante",
-    type: "producao",
-    project: "Tu És - 4 e Meia",
-    amount: 200.0,
-    entity: "Lisboa - Estúdio Lisboa",
-    investor: "maktub",
-    date: "2025-01-01",
-    notes: "",
-    createdAt: "2025-01-01T10:00:00Z",
-  });
-
-  return data;
+  // BANDIDOS DO CANTE - Corrected data from BANDIDOS 2025.numbers
+  // Maktub: 33,865.66EUR | Bandidos: 26,247.00EUR | Total: 60,112.66EUR
+  return [
+    {
+      id: "bandidos-001",
+      date: "2026-01-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "equipamento",
+      entity: "Festival da Canção - Arte Palco (Alexandre)",
+      investor: "maktub",
+      amount: 1250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-002",
+      date: "2025-12-25",
+      artist: "Bandidos do Cante",
+      project: "QUERO ACREDITAR",
+      type: "producao",
+      entity: "Produção Jon",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-003",
+      date: "2025-12-25",
+      artist: "Bandidos do Cante",
+      project: "Voltar a Ver-te",
+      type: "producao",
+      entity: "Produção JON",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-004",
+      date: "2025-12-25",
+      artist: "Bandidos do Cante",
+      project: "Voltar a Ver-te",
+      type: "producao",
+      entity: "Produção Rodrigo",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-005",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "outros",
+      entity: "Advogada 25",
+      investor: "maktub",
+      amount: 70.0,
+      notes: "TOTAL 70€ - OFERTA MAKTUB 100%",
+    },
+    {
+      id: "bandidos-006",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design Datas mensais + Cartaz geral Datas Tour",
+      investor: "maktub",
+      amount: 150.0,
+      notes: "TOTAL 300€ - OFERTA MAKTUB 50%",
+    },
+    {
+      id: "bandidos-007",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design Beja Pax Julia - Derivações 2nd Data e Convidados",
+      investor: "maktub",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-008",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "equipamento",
+      entity: "Molduras Galardões (10 molduras)",
+      investor: "maktub",
+      amount: 65.0,
+      notes: "TOTAL 130€ - MAKTUB OFERECE 50%",
+    },
+    {
+      id: "bandidos-009",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "equipamento",
+      entity: "Impressão Galardões",
+      investor: "maktub",
+      amount: 64.28,
+      notes: "TOTAL 128,55€ - MAKTUB OFERECE 50%",
+    },
+    {
+      id: "bandidos-010",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "equipamento",
+      entity: "Photocall (impressão só de 1 lado)",
+      investor: "maktub",
+      amount: 81.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-011",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "equipamento",
+      entity: "Roll Up álbum Pax Júlia",
+      investor: "maktub",
+      amount: 25.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-012",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Produção Merch",
+      investor: "maktub",
+      amount: 2860.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-013",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Ensaio Pax Júlia",
+      investor: "maktub",
+      amount: 216.0,
+      notes: "Não foi cobrado em bilheteira à Haus",
+    },
+    {
+      id: "bandidos-014",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "António - arranjos e Gravação",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-015",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Técnica Estúdio Valentim de Carvalho - Cordas",
+      investor: "maktub",
+      amount: 75.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-016",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Mix e Master Náná",
+      investor: "maktub",
+      amount: 250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-017",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Quarteto Cordas",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-018",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Contrabaixo Rodrigo",
+      investor: "maktub",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-019",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Produção Edu",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-020",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Nada Mais",
+      type: "producao",
+      entity: "Produção Edu",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-021",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Bairro das Flores",
+      type: "producao",
+      entity: "Produção Edu",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-022",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "António - Arranjo e Gravação",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-023",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Aluguer estúdio - Paço de Arcos",
+      investor: "maktub",
+      amount: 390.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-024",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Técnica Estúdio Valentim de Carvalho - Cordas",
+      investor: "maktub",
+      amount: 75.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-025",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Mix e Master Náná",
+      investor: "maktub",
+      amount: 250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-026",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Preparação multificheiros para o Festival da Canção",
+      investor: "maktub",
+      amount: 70.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-027",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Quarteto Cordas",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-028",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Contrabaixo Rodrigo",
+      investor: "maktub",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-029",
+      date: "2025-12-01",
+      artist: "Bandidos do Cante",
+      project: "Rosa",
+      type: "producao",
+      entity: "Produção Edu",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-030",
+      date: "2025-11-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design Press Kit",
+      investor: "maktub",
+      amount: 80.0,
+      notes: "OFERTA MAKTUB",
+    },
+    {
+      id: "bandidos-031",
+      date: "2025-11-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design Merch",
+      investor: "maktub",
+      amount: 375.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-032",
+      date: "2025-11-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Videoclipe GUI",
+      investor: "maktub",
+      amount: 4000.0,
+      notes: "s/ IVA",
+    },
+    {
+      id: "bandidos-033",
+      date: "2025-10-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design - Press Kit Bandidos nos teatros",
+      investor: "maktub",
+      amount: 40.0,
+      notes: "OFERTA MAKTUB",
+    },
+    {
+      id: "bandidos-034",
+      date: "2025-10-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Dia Estúdio - Vale de Lobos",
+      investor: "maktub",
+      amount: 250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-035",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Sessão fotográfica - Styling (Isa)",
+      investor: "maktub",
+      amount: 403.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-036",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Sessão fotográfica - Tela",
+      investor: "maktub",
+      amount: 89.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-037",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Sessão fotográfica - Estúdio SET",
+      investor: "maktub",
+      amount: 71.0,
+      notes: "Descontaram o valor da tela, daí ser tão barato",
+    },
+    {
+      id: "bandidos-038",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Sessão fotográfica - Estúdio Sítio",
+      investor: "maktub",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-039",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "alimentacao",
+      entity: "Sessão fotográfica - Almoço",
+      investor: "maktub",
+      amount: 76.53,
+      notes: "",
+    },
+    {
+      id: "bandidos-040",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "alimentacao",
+      entity: "Sessão fotográfica - Snacks",
+      investor: "maktub",
+      amount: 34.12,
+      notes: "",
+    },
+    {
+      id: "bandidos-041",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Sessão fotográfica - Adereços",
+      investor: "maktub",
+      amount: 12.88,
+      notes: "",
+    },
+    {
+      id: "bandidos-042",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Sessão fotográfica - Cajó (fotografia)",
+      investor: "maktub",
+      amount: 460.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-043",
+      date: "2025-07-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "producao",
+      entity: "Técnico de Som Gracinha",
+      investor: "maktub",
+      amount: 200.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-044",
+      date: "2025-06-04",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "alojamento",
+      entity: "Airbnb 04/06",
+      investor: "maktub",
+      amount: 134.86,
+      notes: "",
+    },
+    {
+      id: "bandidos-045",
+      date: "2025-06-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "outros",
+      entity: "Ovibeja - Pagamento Aftermovie",
+      investor: "bandidos",
+      amount: 147.0,
+      notes:
+        "Aparece na folha só para os bandidos saberem que oferecemos, mas não conta para o que os bandidos nos devem.",
+    },
+    {
+      id: "bandidos-046",
+      date: "2025-06-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design Single de Ouro",
+      investor: "maktub",
+      amount: 60.0,
+      notes: "OFERTA MAKTUB",
+    },
+    {
+      id: "bandidos-047",
+      date: "2025-06-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design - Pax Julia 'Ao vivo em Beja'",
+      investor: "maktub",
+      amount: 250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-048",
+      date: "2025-06-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "promocao",
+      entity: "Design Ledwalls",
+      investor: "maktub",
+      amount: 200.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-049",
+      date: "2025-06-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "alimentacao",
+      entity: "Almoço António Zambujo - Solar dos Presentes",
+      investor: "maktub",
+      amount: 396.74,
+      notes: "",
+    },
+    {
+      id: "bandidos-050",
+      date: "2025-06-01",
+      artist: "Bandidos do Cante",
+      project: "Primavera - Zambujo",
+      type: "producao",
+      entity: "Fotos Estúdio mudsea",
+      investor: "maktub",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-051",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "promocao",
+      entity: "Blitz Promo",
+      investor: "maktub",
+      amount: 1353.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-052",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "promocao",
+      entity: "Blitz - Fotografia",
+      investor: "maktub",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-053",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "alimentacao",
+      entity: "Almoço imprensa (Solar)",
+      investor: "maktub",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-054",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "alimentacao",
+      entity: "Festa Lançamento - Catering",
+      investor: "maktub",
+      amount: 190.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-055",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "promocao",
+      entity: "Festa Lançamento - Espaço",
+      investor: "maktub",
+      amount: 553.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-056",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "promocao",
+      entity: "Design - capa, comunicação redes e convite LP",
+      investor: "maktub",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-057",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "producao",
+      entity: "Videoclipe",
+      investor: "bandidos",
+      amount: 3300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-058",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "producao",
+      entity: "Produção",
+      investor: "bandidos",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-059",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "producao",
+      entity: "Mix",
+      investor: "bandidos",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-060",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "producao",
+      entity: "Master",
+      investor: "bandidos",
+      amount: 50.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-061",
+      date: "2025-04-01",
+      artist: "Bandidos do Cante",
+      project: "Já não há pardais no céu",
+      type: "producao",
+      entity: "Ivo Costa - Bateria",
+      investor: "bandidos",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-062",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "promocao",
+      entity: "Ramos flores - Promo Álbum",
+      investor: "maktub",
+      amount: 312.5,
+      notes: "",
+    },
+    {
+      id: "bandidos-063",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "promocao",
+      entity: "Capa Álbum - Fellypa",
+      investor: "maktub",
+      amount: 200.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-064",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "promocao",
+      entity: "Teresa lemos - Assessoria Primavera e álbum",
+      investor: "maktub",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-065",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "promocao",
+      entity: "Festa Lançamento Álbum",
+      investor: "maktub",
+      amount: 1259.23,
+      notes: "Falta Cajó",
+    },
+    {
+      id: "bandidos-066",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "producao",
+      entity:
+        "Mix e master simões: Quero acreditar, nada mais, bairro das flores e voltar a ver-te",
+      investor: "maktub",
+      amount: 800.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-067",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "promocao",
+      entity: "Lucas - conteúdo promo Mega e RR",
+      investor: "maktub",
+      amount: 75.0,
+      notes: "Ainda não foi pago",
+    },
+    {
+      id: "bandidos-068",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "promocao",
+      entity: "Disco 'Bairro das Flores' casa Amália",
+      investor: "maktub",
+      amount: 21.98,
+      notes: "",
+    },
+    {
+      id: "bandidos-069",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "producao",
+      entity: "Gastaram de conta conjunta",
+      investor: "bandidos",
+      amount: 2000.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-070",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "producao",
+      entity: "Writting Camp",
+      investor: "bandidos",
+      amount: 750.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-071",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "outros",
+      entity: "Acin (Luís)",
+      investor: "bandidos",
+      amount: 6000.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-072",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "producao",
+      entity: "Herdade do Sobroso - Videoclipe AMIGOS COLORIDOS",
+      investor: "bandidos",
+      amount: 1250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-073",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Álbum Bairro das Flores - Geral",
+      type: "outros",
+      entity: "SPA - Apoio Fundo SPA",
+      investor: "bandidos",
+      amount: 10000.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-074",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - Youtube",
+      investor: "maktub",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-075",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - Instagram",
+      investor: "maktub",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-076",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - Tiktok",
+      investor: "maktub",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-077",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - FB",
+      investor: "maktub",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-078",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Single de Ouro",
+      investor: "maktub",
+      amount: 60.0,
+      notes: "OFERTA MAKTUB",
+    },
+    {
+      id: "bandidos-079",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "producao",
+      entity: "Produção música",
+      investor: "bandidos",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-080",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "producao",
+      entity: "Mix e master",
+      investor: "bandidos",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-081",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "producao",
+      entity: "Aluguer estúdio",
+      investor: "bandidos",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-082",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "producao",
+      entity: "Mapi - piano",
+      investor: "bandidos",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-083",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "producao",
+      entity: "Rodrigo - guitarra",
+      investor: "bandidos",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-084",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - Youtube",
+      investor: "bandidos",
+      amount: 200.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-085",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - Tik tok",
+      investor: "bandidos",
+      amount: 200.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-086",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "promocao",
+      entity: "Promo - Instagram",
+      investor: "bandidos",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-087",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tanto Tempo",
+      type: "producao",
+      entity: "Produção Edu",
+      investor: "maktub",
+      amount: 500.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-088",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tanto Tempo",
+      type: "promocao",
+      entity: "Design",
+      investor: "maktub",
+      amount: 90.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-089",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tanto Tempo",
+      type: "producao",
+      entity: "Dia Estúdio - Vale de Lobos",
+      investor: "maktub",
+      amount: 250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-090",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tanto Tempo",
+      type: "producao",
+      entity: "Mix e Master",
+      investor: "maktub",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-091",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tanto Tempo",
+      type: "producao",
+      entity: "Videoclipe",
+      investor: "maktub",
+      amount: 3447.73,
+      notes: "",
+    },
+    {
+      id: "bandidos-092",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tanto Tempo",
+      type: "promocao",
+      entity: "Assessoria de Imprensa - Teresa Lemos",
+      investor: "maktub",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-093",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "QUERO ACREDITAR",
+      type: "producao",
+      entity: "Produção (50%) - Rodrigo",
+      investor: "maktub",
+      amount: 615.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-094",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "QUERO ACREDITAR",
+      type: "producao",
+      entity: "Mapi - piano",
+      investor: "bandidos",
+      amount: 150.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-095",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "QUERO ACREDITAR",
+      type: "producao",
+      entity: "Gui Melo - Bateria",
+      investor: "bandidos",
+      amount: 100.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-096",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "alimentacao",
+      entity: "Ida ao Porto - Almoço Porto",
+      investor: "maktub",
+      amount: 202.5,
+      notes: "",
+    },
+    {
+      id: "bandidos-097",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "alimentacao",
+      entity: "Ida ao Porto - Almoço Porto",
+      investor: "maktub",
+      amount: 221.5,
+      notes: "",
+    },
+    {
+      id: "bandidos-098",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "alimentacao",
+      entity: "Ida ao Porto - Refeição Porto",
+      investor: "maktub",
+      amount: 92.9,
+      notes: "",
+    },
+    {
+      id: "bandidos-099",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "alojamento",
+      entity: "Ida ao Porto - Alojamento",
+      investor: "maktub",
+      amount: 420.41,
+      notes: "",
+    },
+    {
+      id: "bandidos-100",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "producao",
+      entity: "Ida ao Porto - Estúdio Porto",
+      investor: "maktub",
+      amount: 300.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-101",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "transporte",
+      entity: "Ida ao Porto - Transporte ida e volta para o Porto",
+      investor: "maktub",
+      amount: 265.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-102",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "producao",
+      entity: "Ida ao Porto - Fotógrafo",
+      investor: "maktub",
+      amount: 250.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-103",
+      date: "2025-01-01",
+      artist: "Bandidos do Cante",
+      project: "Tu És - 4 e Meia",
+      type: "producao",
+      entity: "Lisboa - Estúdio Lisboa",
+      investor: "maktub",
+      amount: 200.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-104",
+      date: "2024-11-26",
+      artist: "Bandidos do Cante",
+      project: "Amigos Coloridos",
+      type: "transporte",
+      entity: "Aluguer e transporte sofás (THE VOICE)",
+      investor: "maktub",
+      amount: 356.7,
+      notes: "",
+    },
+    {
+      id: "bandidos-105",
+      date: "2024-04-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "equipamento",
+      entity: "Vodafone Play - Styling",
+      investor: "maktub",
+      amount: 591.0,
+      notes: "",
+    },
+    {
+      id: "bandidos-106",
+      date: "2024-04-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "alimentacao",
+      entity: "Vodafone Play - Cervejas",
+      investor: "maktub",
+      amount: 13.8,
+      notes: "",
+    },
+    {
+      id: "bandidos-107",
+      date: "2024-04-01",
+      artist: "Bandidos do Cante",
+      project: "Gerais Bandidos",
+      type: "outros",
+      entity: "Vodafone Play - Pagamento recebido",
+      investor: "bandidos",
+      amount: 500.0,
+      notes: "PLAY DERAM-NOS 500€. LOGO GASTAMOS 104,8€",
+    },
+  ];
 }
 
 // ==========================================
@@ -2003,12 +1852,12 @@ function updateStats(data) {
     .filter((e) => e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
   const others = data
-    .filter((e) => e.investor === "outro")
+    .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
 
   document.getElementById("stat-total").textContent = formatCurrency(total);
   document.getElementById("stat-maktub").textContent = formatCurrency(maktub);
-  document.getElementById("stat-others").textContent = formatCurrency(others);
+  document.getElementById("stat-bandidos").textContent = formatCurrency(others);
   document.getElementById("stat-count").textContent = data.length;
 }
 
@@ -2098,17 +1947,17 @@ function updateArtistInvestorChart(data) {
 
   // Include all defined artists with 0 as default
   Object.keys(artistProjects).forEach((artist) => {
-    byArtist[artist] = { maktub: 0, outros: 0, total: 0 };
+    byArtist[artist] = { maktub: 0, bandidos_inv: 0, total: 0 };
   });
 
   data.forEach((e) => {
     if (!byArtist[e.artist]) {
-      byArtist[e.artist] = { maktub: 0, outros: 0, total: 0 };
+      byArtist[e.artist] = { maktub: 0, bandidos_inv: 0, total: 0 };
     }
     if (e.investor === "maktub") {
       byArtist[e.artist].maktub += e.amount;
     } else {
-      byArtist[e.artist].outros += e.amount;
+      byArtist[e.artist].bandidos_inv += e.amount;
     }
     byArtist[e.artist].total += e.amount;
   });
@@ -2126,14 +1975,15 @@ function updateArtistInvestorChart(data) {
   let html = sorted
     .map(([artist, data]) => {
       const maktubPct = data.total > 0 ? (data.maktub / data.total) * 100 : 0;
-      const outrosPct = data.total > 0 ? (data.outros / data.total) * 100 : 0;
+      const bandidosPct =
+        data.total > 0 ? (data.bandidos_inv / data.total) * 100 : 0;
 
       return `
             <div class="chart-bar-item">
                 <span class="chart-bar-label">${artist}</span>
                 <div class="chart-bar-track stacked">
                     <div class="chart-bar-segment maktub" style="width: ${maktubPct}%" title="Maktub: ${formatCurrency(data.maktub)}"></div>
-                    <div class="chart-bar-segment outros" style="width: ${outrosPct}%" title="Terceiros: ${formatCurrency(data.outros)}"></div>
+                    <div class="chart-bar-segment bandidos-seg" style="width: ${bandidosPct}%" title="Bandidos: ${formatCurrency(data.bandidos_inv)}"></div>
                 </div>
                 <span class="chart-bar-value">${formatCurrency(data.total)}</span>
             </div>
@@ -2144,7 +1994,7 @@ function updateArtistInvestorChart(data) {
   html += `
         <div class="chart-legend">
             <div class="legend-item"><div class="legend-color" style="background: var(--green-primary)"></div> Maktub</div>
-            <div class="legend-item"><div class="legend-color" style="background: var(--warning)"></div> Terceiros</div>
+            <div class="legend-item"><div class="legend-color" style="background: var(--warning)"></div> Bandidos</div>
         </div>
     `;
 
@@ -2387,13 +2237,13 @@ function renderTable() {
     .filter((e) => e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
   const others = filtered
-    .filter((e) => e.investor === "outro")
+    .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
 
   document.getElementById("summary-total").textContent = formatCurrency(total);
   document.getElementById("summary-maktub").textContent =
     formatCurrency(maktub);
-  document.getElementById("summary-others").textContent =
+  document.getElementById("summary-bandidos").textContent =
     formatCurrency(others);
   document.getElementById("summary-count").textContent = filtered.length;
 
@@ -2426,7 +2276,7 @@ function renderTable() {
             <td>${e.project}</td>
             <td>${getTypeName(e.type)}</td>
             <td>${e.entity || "-"}</td>
-            <td><span class="badge ${e.investor === "maktub" ? "badge-maktub" : "badge-other"}">${e.investor === "maktub" ? "Maktub" : "Terceiros"}</span></td>
+            <td><span class="badge ${e.investor === "maktub" ? "badge-maktub" : "badge-bandidos"}">${e.investor === "maktub" ? "Maktub" : "Bandidos"}</span></td>
             <td>${formatCurrency(e.amount)}</td>
             <td>
                 <div class="table-actions">
@@ -2460,14 +2310,14 @@ function renderPivotTables() {
   // By Artist - include all defined artists
   const byArtist = {};
   Object.keys(artistProjects).forEach((artist) => {
-    byArtist[artist] = { total: 0, maktub: 0, outros: 0 };
+    byArtist[artist] = { total: 0, maktub: 0, bandidos_inv: 0 };
   });
   filtered.forEach((e) => {
     if (!byArtist[e.artist])
-      byArtist[e.artist] = { total: 0, maktub: 0, outros: 0 };
+      byArtist[e.artist] = { total: 0, maktub: 0, bandidos_inv: 0 };
     byArtist[e.artist].total += e.amount;
     if (e.investor === "maktub") byArtist[e.artist].maktub += e.amount;
-    else byArtist[e.artist].outros += e.amount;
+    else byArtist[e.artist].bandidos_inv += e.amount;
   });
 
   const pivotArtist = document.getElementById("pivot-artist");
@@ -2569,7 +2419,7 @@ function exportCSV() {
     e.project,
     getTypeName(e.type),
     e.entity || "",
-    e.investor === "maktub" ? "Maktub" : "Terceiros",
+    e.investor === "maktub" ? "Maktub" : "Bandidos",
     e.amount.toFixed(2),
     e.notes || "",
   ]);
@@ -2602,7 +2452,7 @@ function exportGoogleSheets() {
       e.project,
       getTypeName(e.type),
       e.entity || "",
-      e.investor === "maktub" ? "Maktub" : "Terceiros",
+      e.investor === "maktub" ? "Maktub" : "Bandidos",
       e.amount.toFixed(2).replace(".", ","), // European format
       e.notes || "",
     ].join("\t"),
@@ -2613,14 +2463,16 @@ function exportGoogleSheets() {
   const maktub = filtered
     .filter((e) => e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
-  const outros = filtered
-    .filter((e) => e.investor === "outro")
+  const bandidosTotal = filtered
+    .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
 
   rows.push("");
   rows.push(`\t\t\t\t\tTOTAL\t${total.toFixed(2).replace(".", ",")}`);
   rows.push(`\t\t\t\t\tMaktub\t${maktub.toFixed(2).replace(".", ",")}`);
-  rows.push(`\t\t\t\t\tTerceiros\t${outros.toFixed(2).replace(".", ",")}`);
+  rows.push(
+    `\t\t\t\t\tBandidos\t${bandidosTotal.toFixed(2).replace(".", ",")}`,
+  );
 
   // Add pivot summaries
   rows.push("");
@@ -2674,17 +2526,17 @@ function exportPDF() {
     .filter((e) => e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
   const others = filtered
-    .filter((e) => e.investor === "outro")
+    .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
 
   // Build chart data for artists
   const byArtist = {};
   filtered.forEach((e) => {
     if (!byArtist[e.artist])
-      byArtist[e.artist] = { total: 0, maktub: 0, outros: 0 };
+      byArtist[e.artist] = { total: 0, maktub: 0, bandidos_inv: 0 };
     byArtist[e.artist].total += e.amount;
     if (e.investor === "maktub") byArtist[e.artist].maktub += e.amount;
-    else byArtist[e.artist].outros += e.amount;
+    else byArtist[e.artist].bandidos_inv += e.amount;
   });
   const artistData = Object.entries(byArtist).sort(
     (a, b) => b[1].total - a[1].total,
@@ -2739,7 +2591,7 @@ function exportPDF() {
                 .chart-bar-fill { height: 100%; background: #33E933; border-radius: 4px; }
                 .chart-bar-value { min-width: 100px; text-align: right; font-size: 0.875rem; font-weight: 500; }
                 .bar-maktub { background: #33E933; }
-                .bar-outros { background: #ffbb33; }
+                .bar-bandidos { background: #ffbb33; }
                 .section-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
                 table { width: 100%; border-collapse: collapse; font-size: 0.875rem; background: #1a1a1a; border-radius: 12px; overflow: hidden; }
                 th { background: #222; padding: 16px 12px; text-align: left; font-weight: 600; color: #33E933; border-bottom: 2px solid #333; }
@@ -2747,7 +2599,7 @@ function exportPDF() {
                 tr:hover { background: #222; }
                 .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
                 .badge-maktub { background: rgba(51, 233, 57, 0.2); color: #33E933; }
-                .badge-other { background: rgba(255, 187, 51, 0.2); color: #ffbb33; }
+                .badge-bandidos { background: rgba(255, 187, 51, 0.2); color: #ffbb33; }
                 .total-row { background: #222; font-weight: 600; }
                 .total-row td { border-top: 2px solid #33E933; color: #33E933; }
                 .footer { text-align: center; padding: 40px; color: #666; font-size: 0.875rem; border-top: 1px solid #333; margin-top: 40px; }
@@ -2786,7 +2638,7 @@ function exportPDF() {
                     </div>
                     <div class="stat-card">
                         <span class="stat-value yellow">${formatCurrency(others)}</span>
-                        <span class="stat-label">Terceiros</span>
+                        <span class="stat-label">Bandidos</span>
                     </div>
                     <div class="stat-card">
                         <span class="stat-value">${filtered.length}</span>
@@ -2804,7 +2656,7 @@ function exportPDF() {
                                 <span class="chart-bar-label">${artist}</span>
                                 <div class="chart-bar-track">
                                     <div class="bar-maktub" style="width: ${(data.maktub / data.total) * 100}%"></div>
-                                    <div class="bar-outros" style="width: ${(data.outros / data.total) * 100}%"></div>
+                                    <div class="bar-outros" style="width: ${(data.bandidos_inv / data.total) * 100}%"></div>
                                 </div>
                                 <span class="chart-bar-value">${formatCurrency(data.total)}</span>
                             </div>
@@ -2854,7 +2706,7 @@ function exportPDF() {
                                 <td>${e.project}</td>
                                 <td>${getTypeName(e.type)}</td>
                                 <td>${e.entity || "-"}</td>
-                                <td><span class="badge ${e.investor === "maktub" ? "badge-maktub" : "badge-other"}">${e.investor === "maktub" ? "Maktub" : "Terceiros"}</span></td>
+                                <td><span class="badge ${e.investor === "maktub" ? "badge-maktub" : "badge-bandidos"}">${e.investor === "maktub" ? "Maktub" : "Bandidos"}</span></td>
                                 <td>${formatCurrency(e.amount)}</td>
                             </tr>
                         `,
@@ -2894,10 +2746,7 @@ function updateSettlement() {
     .reduce((sum, e) => sum + e.amount, 0);
   // Maktub gifts = spent by Maktub but NOT repaid
   const maktubGifts = expenses
-    .filter(
-      (e) =>
-        e.investor === "oferta_maktub" || e.investor === "oferta_maktub_50",
-    )
+    .filter((e) => e.investor === "maktub" || e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
   // Bandidos' own money
   const bandidosOwn = expenses
@@ -2905,11 +2754,11 @@ function updateSettlement() {
     .reduce((sum, e) => sum + e.amount, 0);
   // Sponsorship money
   const sponsorship = expenses
-    .filter((e) => e.investor === "patrocinio")
+    .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
   // Other/legacy
   const othersTotal = expenses
-    .filter((e) => e.investor === "outro")
+    .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
 
   const maktubTotalSpent = maktubInvestment + maktubGifts;
@@ -2918,17 +2767,17 @@ function updateSettlement() {
 
   document.getElementById("settle-maktub").textContent =
     formatCurrency(maktubTotalSpent);
-  document.getElementById("settle-others").textContent =
+  document.getElementById("settle-bandidos").textContent =
     formatCurrency(terceirosTotal);
 
   const pctMaktub = grandTotal > 0 ? (maktubTotalSpent / grandTotal) * 100 : 50;
   const pctOthers = grandTotal > 0 ? (terceirosTotal / grandTotal) * 100 : 50;
 
   document.getElementById("bar-maktub").style.width = pctMaktub + "%";
-  document.getElementById("bar-others").style.width = pctOthers + "%";
+  document.getElementById("bar-bandidos").style.width = pctOthers + "%";
   document.getElementById("pct-maktub").textContent =
     pctMaktub.toFixed(1) + "%";
-  document.getElementById("pct-others").textContent =
+  document.getElementById("pct-bandidos").textContent =
     pctOthers.toFixed(1) + "%";
 
   const summaryEl = document.getElementById("settlement-summary");
@@ -2953,14 +2802,14 @@ function updateSettlement() {
 function updateArtistBreakdown() {
   const container = document.getElementById("artist-breakdown-list");
 
-  // Build nested structure: artist -> project -> costs by investor type
+  // Build nested structure: artist -> project -> costs by investor (maktub vs bandidos)
   const byArtist = {};
 
   expenses.forEach((e) => {
     if (!byArtist[e.artist]) {
       byArtist[e.artist] = {
         projects: {},
-        totals: { maktub: 0, bandidos: 0, patrocinio: 0, ofertas: 0, outro: 0 },
+        totals: { maktub: 0, bandidos: 0 },
       };
     }
     const artistData = byArtist[e.artist];
@@ -2969,39 +2818,24 @@ function updateArtistBreakdown() {
       artistData.projects[e.project] = {
         maktub: 0,
         bandidos: 0,
-        patrocinio: 0,
-        ofertas: 0,
-        outro: 0,
         items: [],
       };
     }
     const proj = artistData.projects[e.project];
     proj.items.push(e);
 
-    if (e.investor === "maktub") {
-      proj.maktub += e.amount;
-      artistData.totals.maktub += e.amount;
-    } else if (e.investor === "bandidos") {
+    if (e.investor === "bandidos") {
       proj.bandidos += e.amount;
       artistData.totals.bandidos += e.amount;
-    } else if (e.investor === "patrocinio") {
-      proj.patrocinio += e.amount;
-      artistData.totals.patrocinio += e.amount;
-    } else if (
-      e.investor === "oferta_maktub" ||
-      e.investor === "oferta_maktub_50"
-    ) {
-      proj.ofertas += e.amount;
-      artistData.totals.ofertas += e.amount;
     } else {
-      proj.outro += e.amount;
-      artistData.totals.outro += e.amount;
+      proj.maktub += e.amount;
+      artistData.totals.maktub += e.amount;
     }
   });
 
   const artists = Object.entries(byArtist).sort((a, b) => {
-    const totalA = Object.values(a[1].totals).reduce((s, v) => s + v, 0);
-    const totalB = Object.values(b[1].totals).reduce((s, v) => s + v, 0);
+    const totalA = a[1].totals.maktub + a[1].totals.bandidos;
+    const totalB = b[1].totals.maktub + b[1].totals.bandidos;
     return totalB - totalA;
   });
 
@@ -3011,27 +2845,20 @@ function updateArtistBreakdown() {
   }
 
   let grandMaktub = 0,
-    grandBandidos = 0,
-    grandPatrocinio = 0,
-    grandOfertas = 0,
-    grandOutro = 0;
+    grandBandidos = 0;
 
   container.innerHTML = artists
     .map(([artist, data]) => {
       grandMaktub += data.totals.maktub;
       grandBandidos += data.totals.bandidos;
-      grandPatrocinio += data.totals.patrocinio;
-      grandOfertas += data.totals.ofertas;
-      grandOutro += data.totals.outro;
 
       const projects = Object.entries(data.projects).sort(
-        (a, b) => b[1].maktub - a[1].maktub,
+        (a, b) => b[1].maktub + b[1].bandidos - (a[1].maktub + a[1].bandidos),
       );
 
       const projectRows = projects
         .map(([projName, p]) => {
-          const projTotal =
-            p.maktub + p.bandidos + p.patrocinio + p.ofertas + p.outro;
+          const projTotal = p.maktub + p.bandidos;
           const details = [];
           if (p.maktub > 0)
             details.push(
@@ -3040,18 +2867,6 @@ function updateArtistBreakdown() {
           if (p.bandidos > 0)
             details.push(
               `<span class="breakdown-revenue">Bandidos: ${formatCurrency(p.bandidos)}</span>`,
-            );
-          if (p.patrocinio > 0)
-            details.push(
-              `<span class="breakdown-revenue">Patrocínio: ${formatCurrency(p.patrocinio)}</span>`,
-            );
-          if (p.ofertas > 0)
-            details.push(
-              `<span class="breakdown-revenue">Ofertas: ${formatCurrency(p.ofertas)}</span>`,
-            );
-          if (p.outro > 0)
-            details.push(
-              `<span class="breakdown-revenue">Outro: ${formatCurrency(p.outro)}</span>`,
             );
           return `
                 <div class="breakdown-project-row">
@@ -3063,8 +2878,7 @@ function updateArtistBreakdown() {
         })
         .join("");
 
-      const artistTotal = Object.values(data.totals).reduce((s, v) => s + v, 0);
-      const maktubToRecover = data.totals.maktub;
+      const artistTotal = data.totals.maktub + data.totals.bandidos;
 
       return `
             <div class="breakdown-item">
@@ -3073,9 +2887,7 @@ function updateArtistBreakdown() {
                     <div class="breakdown-values">
                         <span class="breakdown-costs">Investimento Maktub: ${formatCurrency(data.totals.maktub)}</span>
                         ${data.totals.bandidos > 0 ? `<span class="breakdown-maktub">Investimento Bandidos: ${formatCurrency(data.totals.bandidos)}</span>` : ""}
-                        ${data.totals.patrocinio > 0 ? `<span class="breakdown-maktub">Patrocínios: ${formatCurrency(data.totals.patrocinio)}</span>` : ""}
-                        ${data.totals.ofertas > 0 ? `<span class="breakdown-maktub">Ofertas Maktub: ${formatCurrency(data.totals.ofertas)}</span>` : ""}
-                        <span class="breakdown-net breakdown-negative">Maktub a recuperar: ${formatCurrency(maktubToRecover)}</span>
+                        <span class="breakdown-net breakdown-negative">Maktub a recuperar: ${formatCurrency(data.totals.maktub)}</span>
                     </div>
                 </div>
                 <div class="breakdown-projects">
@@ -3087,8 +2899,7 @@ function updateArtistBreakdown() {
     .join("");
 
   // Grand total row
-  const grandTotal =
-    grandMaktub + grandBandidos + grandPatrocinio + grandOfertas + grandOutro;
+  const grandTotal = grandMaktub + grandBandidos;
   container.innerHTML += `
         <div class="breakdown-item breakdown-grand-total">
             <div class="breakdown-header">
@@ -3096,8 +2907,6 @@ function updateArtistBreakdown() {
                 <div class="breakdown-values">
                     <span class="breakdown-costs">Investimento Maktub: ${formatCurrency(grandMaktub)}</span>
                     ${grandBandidos > 0 ? `<span class="breakdown-maktub">Investimento Bandidos: ${formatCurrency(grandBandidos)}</span>` : ""}
-                    ${grandPatrocinio > 0 ? `<span class="breakdown-maktub">Patrocínios: ${formatCurrency(grandPatrocinio)}</span>` : ""}
-                    ${grandOfertas > 0 ? `<span class="breakdown-maktub">Ofertas Maktub: ${formatCurrency(grandOfertas)}</span>` : ""}
                     <span class="breakdown-net breakdown-negative">Maktub a recuperar: ${formatCurrency(grandMaktub)}</span>
                 </div>
             </div>
@@ -3294,18 +3103,19 @@ function exportChartCSV(chartType) {
   let headers, rows, filename;
 
   if (chartType === "investor") {
-    headers = ["Artista", "Maktub", "Terceiros", "Total"];
+    headers = ["Artista", "Maktub", "Bandidos", "Total"];
     const byArtist = {};
     expenses.forEach((e) => {
-      if (!byArtist[e.artist]) byArtist[e.artist] = { maktub: 0, outros: 0 };
+      if (!byArtist[e.artist])
+        byArtist[e.artist] = { maktub: 0, bandidos_inv: 0 };
       if (e.investor === "maktub") byArtist[e.artist].maktub += e.amount;
-      else byArtist[e.artist].outros += e.amount;
+      else byArtist[e.artist].bandidos_inv += e.amount;
     });
     rows = Object.entries(byArtist).map(([artist, data]) => [
       artist,
       data.maktub.toFixed(2),
-      data.outros.toFixed(2),
-      (data.maktub + data.outros).toFixed(2),
+      data.bandidos_inv.toFixed(2),
+      (data.maktub + data.bandidos_inv).toFixed(2),
     ]);
     filename = "maktub_artista_investidor";
   } else {
@@ -3356,38 +3166,39 @@ function exportChartPDF(chartType) {
   let title, tableHTML;
 
   if (chartType === "investor") {
-    title = "Por Artista: Maktub vs Terceiros";
+    title = "Por Artista: Maktub vs Bandidos";
     const byArtist = {};
     let totalMaktub = 0,
       totalOutros = 0;
     expenses.forEach((e) => {
-      if (!byArtist[e.artist]) byArtist[e.artist] = { maktub: 0, outros: 0 };
+      if (!byArtist[e.artist])
+        byArtist[e.artist] = { maktub: 0, bandidos_inv: 0 };
       if (e.investor === "maktub") {
         byArtist[e.artist].maktub += e.amount;
         totalMaktub += e.amount;
       } else {
-        byArtist[e.artist].outros += e.amount;
+        byArtist[e.artist].bandidos_inv += e.amount;
         totalOutros += e.amount;
       }
     });
     tableHTML = `
             <table>
-                <thead><tr><th>Artista</th><th>Maktub</th><th>Terceiros</th><th>Total</th></tr></thead>
+                <thead><tr><th>Artista</th><th>Maktub</th><th>Bandidos</th><th>Total</th></tr></thead>
                 <tbody>
                     ${Object.entries(byArtist)
                       .sort(
                         (a, b) =>
                           b[1].maktub +
-                          b[1].outros -
-                          (a[1].maktub + a[1].outros),
+                          b[1].bandidos_inv -
+                          (a[1].maktub + a[1].bandidos_inv),
                       )
                       .map(
                         ([artist, data]) => `
                         <tr>
                             <td>${artist}</td>
                             <td class="maktub">${formatCurrency(data.maktub)}</td>
-                            <td class="outros">${formatCurrency(data.outros)}</td>
-                            <td><strong>${formatCurrency(data.maktub + data.outros)}</strong></td>
+                            <td class="bandidos">${formatCurrency(data.bandidos_inv)}</td>
+                            <td><strong>${formatCurrency(data.maktub + data.bandidos_inv)}</strong></td>
                         </tr>
                     `,
                       )
@@ -3397,7 +3208,7 @@ function exportChartPDF(chartType) {
                     <tr class="total-row">
                         <td><strong>TOTAL</strong></td>
                         <td class="maktub"><strong>${formatCurrency(totalMaktub)}</strong></td>
-                        <td class="outros"><strong>${formatCurrency(totalOutros)}</strong></td>
+                        <td class="bandidos"><strong>${formatCurrency(totalOutros)}</strong></td>
                         <td><strong>${formatCurrency(totalMaktub + totalOutros)}</strong></td>
                     </tr>
                 </tfoot>

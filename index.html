@@ -19,7 +19,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=44" />
+    <link rel="stylesheet" href="styles.css?v=45" />
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -383,9 +383,6 @@
             <option value="all">Todos os Investidores</option>
             <option value="maktub">Maktub</option>
             <option value="bandidos">Bandidos</option>
-            <option value="patrocinio">Patrocínio</option>
-            <option value="oferta_maktub">Oferta Maktub</option>
-            <option value="oferta_maktub_50">Oferta Maktub 50%</option>
           </select>
           <div class="dashboard-date-range">
             <input
@@ -441,7 +438,7 @@
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon icon-others">
+            <div class="stat-icon icon-bandidos">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -455,8 +452,8 @@
               </svg>
             </div>
             <div class="stat-info">
-              <span class="stat-value" id="stat-others">0.00 EUR</span>
-              <span class="stat-label">Terceiros</span>
+              <span class="stat-value" id="stat-bandidos">0.00 EUR</span>
+              <span class="stat-label">Bandidos</span>
             </div>
           </div>
           <div class="stat-card">
@@ -494,7 +491,7 @@
         <div class="charts-row">
           <div class="chart-card">
             <div class="chart-header">
-              <h3>Por Artista: Maktub vs Terceiros</h3>
+              <h3>Por Artista: Maktub vs Bandidos</h3>
               <div class="chart-actions">
                 <button
                   class="chart-export-btn"
@@ -1009,7 +1006,11 @@
                 <span class="investor-name">Maktub</span>
                 <span class="investor-desc">Nós investimos</span>
               </button>
-              <button type="button" class="investor-btn" data-investor="outro">
+              <button
+                type="button"
+                class="investor-btn"
+                data-investor="bandidos"
+              >
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -1020,8 +1021,8 @@
                   <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                   <path d="M12 18V6" />
                 </svg>
-                <span class="investor-name">Outro</span>
-                <span class="investor-desc">Terceiros pagaram</span>
+                <span class="investor-name">Bandidos</span>
+                <span class="investor-desc">Bandidos pagaram</span>
               </button>
             </div>
             <input type="hidden" id="investor" value="maktub" />
@@ -1286,7 +1287,7 @@
             <select id="filter-investor">
               <option value="all">Todos os Investidores</option>
               <option value="maktub">Maktub</option>
-              <option value="outro">Terceiros</option>
+              <option value="bandidos">Bandidos</option>
             </select>
           </div>
 
@@ -1313,8 +1314,8 @@
               >
             </div>
             <div class="summary-item">
-              <span class="summary-label">Terceiros</span>
-              <span class="summary-value yellow" id="summary-others"
+              <span class="summary-label">Bandidos</span>
+              <span class="summary-value yellow" id="summary-bandidos"
                 >0.00 EUR</span
               >
             </div>
@@ -1938,9 +1939,9 @@
             <span class="settlement-value" id="settle-maktub">0.00 EUR</span>
             <span class="settlement-label">Total Investido</span>
           </div>
-          <div class="settlement-card card-others">
-            <h3>Terceiros</h3>
-            <span class="settlement-value" id="settle-others">0.00 EUR</span>
+          <div class="settlement-card card-bandidos">
+            <h3>Bandidos</h3>
+            <span class="settlement-value" id="settle-bandidos">0.00 EUR</span>
             <span class="settlement-label">Total Investido</span>
           </div>
         </div>
@@ -1949,11 +1950,11 @@
           <h3>Balanço</h3>
           <div class="balance-bar">
             <div class="bar-maktub" id="bar-maktub"></div>
-            <div class="bar-others" id="bar-others"></div>
+            <div class="bar-bandidos" id="bar-bandidos"></div>
           </div>
           <div class="balance-labels">
             <span>Maktub: <strong id="pct-maktub">0%</strong></span>
-            <span>Terceiros: <strong id="pct-others">0%</strong></span>
+            <span>Bandidos: <strong id="pct-bandidos">0%</strong></span>
           </div>
         </div>
 
@@ -1991,7 +1992,7 @@
               <option value="MAR">MAR</option>
               <option value="REAL GUNS">REAL GUNS</option>
               <option value="SUAVE">SUAVE</option>
-              <option value="Outro">Outro</option>
+              <option value="Outro">Bandidos</option>
             </select>
           </div>
           <div class="form-group">
@@ -2055,7 +2056,7 @@
             <label>Investidor</label>
             <select id="edit-investor" required>
               <option value="maktub">Maktub</option>
-              <option value="outro">Terceiros</option>
+              <option value="bandidos">Bandidos</option>
             </select>
           </div>
           <div class="form-group">
@@ -2125,6 +2126,6 @@
       </div>
     </div>
 
-    <script src="app.js?v=40"></script>
+    <script src="app.js?v=41"></script>
   </body>
 </html>

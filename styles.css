@@ -473,7 +473,7 @@ body {
   color: var(--info);
 }
 
-.icon-others {
+.icon-bandidos {
   background: rgba(255, 187, 51, 0.15);
   color: var(--warning);
 }
@@ -1341,7 +1341,7 @@ tr:hover td {
   color: var(--green-primary);
 }
 
-.badge-other {
+.badge-bandidos {
   background: rgba(255, 187, 51, 0.15);
   color: var(--warning);
 }
@@ -1453,7 +1453,7 @@ tr:hover td {
   color: var(--green-primary);
 }
 
-.card-others {
+.card-bandidos {
   background: linear-gradient(
     135deg,
     rgba(255, 187, 51, 0.2) 0%,
@@ -1496,7 +1496,7 @@ tr:hover td {
   transition: width var(--transition-normal);
 }
 
-.bar-others {
+.bar-bandidos {
   background: var(--warning);
   transition: width var(--transition-normal);
 }
