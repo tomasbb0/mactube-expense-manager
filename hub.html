@@ -153,7 +153,8 @@
 
       .intro-logo-container.fly-to-corner {
         position: fixed !important;
-        transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+        transition:
+          left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
           top 0.8s cubic-bezier(0.4, 0, 0.2, 1),
           width 0.8s cubic-bezier(0.4, 0, 0.2, 1),
           height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
@@ -2677,8 +2678,7 @@
             }, 350);
             setTimeout(() => {
               if (svg)
-                svg.style.filter =
-                  "drop-shadow(0 0 12px rgba(51,233,51,0.3))";
+                svg.style.filter = "drop-shadow(0 0 12px rgba(51,233,51,0.3))";
             }, 450);
           }, 1100);
 
@@ -2704,6 +2704,15 @@
               showHub();
             } else {
               showLogin();
+              // Hide the PNG logo + title — SVG logo replaces them visually
+              const loginLogo = document.querySelector(
+                "#login-screen .login-logo",
+              );
+              const loginTitle = document.querySelector(
+                "#login-screen .login-title",
+              );
+              if (loginLogo) loginLogo.style.visibility = "hidden";
+              if (loginTitle) loginTitle.style.visibility = "hidden";
             }
 
             // Get current center position of logo
@@ -2725,13 +2734,9 @@
             // Calculate fly target
             let targetEl;
             if (session) {
-              targetEl = document.querySelector(
-                "#hub-screen .topbar-logo"
-              );
+              targetEl = document.querySelector("#hub-screen .topbar-logo");
             } else {
-              targetEl = document.querySelector(
-                "#login-screen .login-logo"
-              );
+              targetEl = document.querySelector("#login-screen .login-logo");
             }
 
             if (targetEl) {
@@ -2772,13 +2777,22 @@
           )
             return;
 
-          const targetEl = document.querySelector(
-            "#hub-screen .topbar-logo"
-          );
+          // Ensure it's in fly mode
+          if (!container.classList.contains("fly-to-corner")) return;
+
+          const targetEl = document.querySelector("#hub-screen .topbar-logo");
           if (!targetEl) {
             introScreen.classList.add("hidden");
             return;
           }
+
+          // Restore login-logo visibility for next visit
+          const loginLogo = document.querySelector("#login-screen .login-logo");
+          const loginTitle = document.querySelector(
+            "#login-screen .login-title",
+          );
+          if (loginLogo) loginLogo.style.visibility = "";
+          if (loginTitle) loginTitle.style.visibility = "";
 
           const rect = container.getBoundingClientRect();
           const tRect = targetEl.getBoundingClientRect();
@@ -4155,10 +4169,8 @@
     <div
       style="
         position: fixed;
-        bottom: 8px;
-        left: 0;
-        right: 0;
-        text-align: center;
+        bottom: 10px;
+        right: 14px;
         z-index: 9;
         pointer-events: none;
       "
@@ -4167,16 +4179,26 @@
         style="
           display: inline-flex;
           align-items: center;
-          gap: 6px;
+          gap: 5px;
           opacity: 0.35;
           pointer-events: auto;
         "
       >
+        <span
+          style="
+            font-family: 'Avenir Next', 'Avenir', 'Montserrat', 'Helvetica Neue', sans-serif;
+            font-size: 10px;
+            font-weight: 300;
+            color: #fafafa;
+            letter-spacing: 0.5px;
+          "
+          >Powered by</span
+        >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="-2 -2 100 114"
-          width="16"
-          height="18"
+          width="13"
+          height="15"
           style="flex-shrink: 0"
         >
           <path
@@ -4206,12 +4228,13 @@
         </svg>
         <span
           style="
-            font-family: &quot;Inter&quot;, sans-serif;
+            font-family: 'Avenir Next', 'Avenir', 'Montserrat', 'Helvetica Neue', sans-serif;
             font-size: 10px;
+            font-weight: 300;
             color: #fafafa;
             letter-spacing: 0.5px;
           "
-          >Powered by The Burnay Labs</span
+          >The Burnay Labs</span
         >
       </div>
     </div>
