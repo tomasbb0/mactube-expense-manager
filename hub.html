@@ -46,7 +46,7 @@
           BlinkMacSystemFont,
           sans-serif;
         background: #111111;
-        color: #ffffff;
+        color: #f6f6f6;
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
       }
@@ -56,20 +56,23 @@
        ============================================ */
       :root {
         --bg: #111111;
-        --card: #1a1a1a;
+        --bg-secondary: #1a1a1a;
+        --card: #1c1c1c;
         --card-hover: #222222;
-        --border: #333333;
-        --text: #ffffff;
-        --text-muted: #999999;
-        --accent: #33e933;
-        --accent-hover: #2bd12b;
+        --border: transparent;
+        --text: #f6f6f6;
+        --text-secondary: #a0a0a0;
+        --text-muted: #666666;
+        --accent: #33E933;
+        --accent-hover: #2bc42b;
         --accent-dim: rgba(51, 233, 51, 0.15);
+        --accent-glow: rgba(51, 233, 51, 0.15);
         --danger: #ff4444;
         --danger-hover: #dd3333;
         --radius: 12px;
         --radius-sm: 8px;
-        --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-        --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+        --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
         --transition: 0.3s ease;
       }
 
@@ -97,99 +100,31 @@
         display: none;
       }
 
-      /* Intro SVG Logo */
       .intro-logo-container {
-        width: 240px;
-        height: 240px;
+        width: 140px;
+        height: 140px;
         position: relative;
+        opacity: 0;
+        transform: scale(0.8);
+        animation: introLogoIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
 
-      .intro-logo-container svg {
+      .intro-logo-container img {
         width: 100%;
         height: 100%;
-        overflow: visible;
+        object-fit: contain;
+        filter: drop-shadow(0 0 0px rgba(51, 233, 51, 0));
+        animation: introLogoGlow 1.6s ease 0.8s forwards;
       }
 
-      /* Three big circles — start spread apart, animate to overlap */
-      .intro-circle-big {
-        fill: none;
-        stroke: var(--accent);
-        stroke-width: 2;
-        opacity: 0.7;
-      }
-
-      .intro-circle-top {
-        animation: circleTopMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
-      }
-
-      .intro-circle-left {
-        animation: circleLeftMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
-      }
-
-      .intro-circle-right {
-        animation: circleRightMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
-      }
-
-      @keyframes circleTopMove {
-        0% {
-          transform: translate(0, -60px);
-          opacity: 0;
-        }
-        30% {
-          opacity: 0.7;
-        }
-        100% {
-          transform: translate(0, 0);
-          opacity: 0.7;
-        }
-      }
-
-      @keyframes circleLeftMove {
-        0% {
-          transform: translate(-50px, 40px);
-          opacity: 0;
-        }
-        30% {
-          opacity: 0.7;
-        }
-        100% {
-          transform: translate(0, 0);
-          opacity: 0.7;
-        }
-      }
-
-      @keyframes circleRightMove {
-        0% {
-          transform: translate(50px, 40px);
-          opacity: 0;
-        }
-        30% {
-          opacity: 0.7;
-        }
-        100% {
-          transform: translate(0, 0);
-          opacity: 0.7;
-        }
-      }
-
-      /* Small center circle — appears after big ones converge */
-      .intro-circle-center {
-        fill: var(--accent);
-        opacity: 0;
-        animation: centerAppear 0.5s ease forwards;
-        animation-delay: 1.4s;
-      }
-
-      @keyframes centerAppear {
+      @keyframes introLogoIn {
         0% {
           opacity: 0;
-          transform: scale(0);
+          transform: scale(0.8);
         }
         60% {
-          transform: scale(1.2);
+          opacity: 1;
+          transform: scale(1.02);
         }
         100% {
           opacity: 1;
@@ -197,17 +132,28 @@
         }
       }
 
-      /* Brand text — fades in after center circle */
+      @keyframes introLogoGlow {
+        0% {
+          filter: drop-shadow(0 0 0px rgba(51, 233, 51, 0));
+        }
+        50% {
+          filter: drop-shadow(0 0 20px rgba(51, 233, 51, 0.3));
+        }
+        100% {
+          filter: drop-shadow(0 0 10px rgba(51, 233, 51, 0.15));
+        }
+      }
+
       .intro-text {
         font-size: 1.4rem;
         font-weight: 700;
         letter-spacing: 4px;
         text-transform: uppercase;
-        color: var(--accent);
-        margin-top: 32px;
+        color: var(--text);
+        margin-top: 28px;
         opacity: 0;
         animation: textFadeIn 0.8s ease forwards;
-        animation-delay: 2s;
+        animation-delay: 1.8s;
       }
 
       @keyframes textFadeIn {
@@ -222,7 +168,7 @@
       }
 
       /* ============================================
-       LOGIN SCREEN
+       SCREENS
        ============================================ */
       .screen {
         display: none;
@@ -233,6 +179,9 @@
         display: flex;
       }
 
+      /* ============================================
+       LOGIN SCREEN
+       ============================================ */
       #login-screen {
         align-items: center;
         justify-content: center;
@@ -246,17 +195,18 @@
       }
 
       .login-logo {
-        margin-bottom: 12px;
+        margin-bottom: 16px;
       }
 
-      .login-logo svg {
-        width: 80px;
-        height: 80px;
+      .login-logo img {
+        width: 72px;
+        height: auto;
       }
 
       .login-title {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         font-weight: 700;
+        color: var(--text);
         margin-bottom: 4px;
       }
 
@@ -268,7 +218,7 @@
 
       .login-card {
         background: var(--card);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius);
         padding: 32px 28px;
         box-shadow: var(--shadow);
@@ -283,7 +233,7 @@
         display: block;
         font-size: 0.85rem;
         font-weight: 500;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         margin-bottom: 6px;
       }
 
@@ -291,7 +241,7 @@
         width: 100%;
         padding: 12px 16px;
         background: var(--bg);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius-sm);
         color: var(--text);
         font-family: inherit;
@@ -304,6 +254,10 @@
         border-color: var(--accent);
       }
 
+      .form-group input::placeholder {
+        color: var(--text-muted);
+      }
+
       .login-error {
         color: var(--danger);
         font-size: 0.85rem;
@@ -311,6 +265,9 @@
         min-height: 20px;
       }
 
+      /* ============================================
+       BUTTONS
+       ============================================ */
       .btn {
         display: inline-flex;
         align-items: center;
@@ -339,9 +296,9 @@
       }
 
       .btn-secondary {
-        background: var(--card);
+        background: var(--bg-secondary);
         color: var(--text);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
       }
 
       .btn-secondary:hover {
@@ -369,7 +326,7 @@
       }
 
       /* ============================================
-       EMAIL MODAL (first-time login)
+       EMAIL MODAL
        ============================================ */
       .modal-overlay {
         position: fixed;
@@ -380,6 +337,7 @@
         align-items: center;
         justify-content: center;
         padding: 20px;
+        backdrop-filter: blur(4px);
       }
 
       .modal-overlay.active {
@@ -388,7 +346,7 @@
 
       .modal {
         background: var(--card);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius);
         padding: 32px 28px;
         max-width: 420px;
@@ -412,11 +370,12 @@
         font-size: 1.2rem;
         font-weight: 700;
         margin-bottom: 8px;
+        color: var(--text);
       }
 
       .modal p {
         font-size: 0.9rem;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         margin-bottom: 20px;
       }
 
@@ -431,7 +390,7 @@
       }
 
       /* ============================================
-       HUB — TOP BAR
+       TOPBAR
        ============================================ */
       #hub-screen {
         flex-direction: column;
@@ -442,27 +401,43 @@
         align-items: center;
         justify-content: space-between;
         padding: 16px 24px;
-        background: var(--card);
-        border-bottom: 1px solid var(--border);
+        background: var(--bg-secondary);
+        border-bottom: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         flex-shrink: 0;
         gap: 12px;
         flex-wrap: wrap;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
-      .topbar-left {
+      .topbar-brand {
         display: flex;
         align-items: center;
         gap: 12px;
+        cursor: pointer;
+        text-decoration: none;
+        color: inherit;
+        user-select: none;
+        -webkit-user-select: none;
       }
 
-      .topbar-logo svg {
-        width: 32px;
-        height: 32px;
+      .topbar-brand:hover .topbar-title {
+        color: var(--text);
+      }
+
+      .topbar-logo img {
+        width: 36px;
+        height: auto;
+        display: block;
       }
 
       .topbar-title {
-        font-size: 1.1rem;
-        font-weight: 700;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text);
+        transition: color var(--transition);
       }
 
       .topbar-right {
@@ -477,6 +452,7 @@
         align-items: center;
         gap: 8px;
         font-size: 0.9rem;
+        color: var(--text-secondary);
       }
 
       .role-badge {
@@ -507,48 +483,57 @@
       .btn-logout {
         padding: 8px 16px;
         background: transparent;
-        color: var(--text-muted);
-        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        border: 1px solid transparent;
         border-radius: var(--radius-sm);
         font-family: inherit;
         font-size: 0.85rem;
+        font-weight: 500;
         cursor: pointer;
         transition: all var(--transition);
       }
 
       .btn-logout:hover {
         color: var(--danger);
-        border-color: var(--danger);
+        background: rgba(255, 68, 68, 0.08);
       }
 
       /* ============================================
-       HUB — PLATFORM GRID
+       HUB CONTENT & PLATFORM GRID
        ============================================ */
       .hub-content {
         flex: 1;
-        padding: 32px 24px;
+        padding: 40px 24px;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hub-inner {
+        width: 100%;
+        max-width: 1200px;
       }
 
       .hub-section-title {
-        font-size: 1.05rem;
+        font-size: 0.85rem;
         font-weight: 600;
         color: var(--text-muted);
         margin-bottom: 20px;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: 1.5px;
       }
 
       .platform-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 20px;
-        max-width: 1200px;
+        width: 100%;
       }
 
       .platform-card {
         background: var(--card);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius);
         overflow: hidden;
         cursor: pointer;
@@ -557,12 +542,15 @@
         color: inherit;
         display: flex;
         flex-direction: column;
+        box-shadow: var(--shadow);
       }
 
       .platform-card:hover:not(.locked):not(.disabled) {
-        border-color: var(--accent);
         transform: translateY(-4px);
-        box-shadow: var(--shadow-lg);
+        box-shadow:
+          0 4px 16px rgba(0, 0, 0, 0.4),
+          0 0 20px rgba(51, 233, 51, 0.1),
+          0 0 40px rgba(51, 233, 51, 0.05);
       }
 
       .platform-card.locked {
@@ -578,14 +566,13 @@
       .platform-preview {
         width: 100%;
         aspect-ratio: 1;
-        background: #0d0d0d;
+        background: var(--bg);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 12px;
         position: relative;
-        border-bottom: 1px solid var(--border);
       }
 
       .platform-preview .icon {
@@ -618,6 +605,7 @@
       .platform-name {
         font-size: 0.9rem;
         font-weight: 600;
+        color: var(--text);
         margin-bottom: 2px;
       }
 
@@ -626,7 +614,6 @@
         color: var(--text-muted);
       }
 
-      /* "Coming soon" badge */
       .badge-soon {
         display: inline-block;
         padding: 2px 8px;
@@ -639,7 +626,7 @@
       }
 
       /* ============================================
-       USER MANAGEMENT PANEL
+       USER MANAGEMENT
        ============================================ */
       #management-screen {
         flex-direction: column;
@@ -663,6 +650,7 @@
       .mgmt-header h2 {
         font-size: 1.3rem;
         font-weight: 700;
+        color: var(--text);
       }
 
       .mgmt-back {
@@ -670,9 +658,9 @@
         align-items: center;
         gap: 6px;
         padding: 8px 16px;
-        color: var(--text-muted);
+        color: var(--text-secondary);
         background: transparent;
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius-sm);
         font-family: inherit;
         font-size: 0.85rem;
@@ -682,15 +670,15 @@
 
       .mgmt-back:hover {
         color: var(--text);
-        border-color: var(--text-muted);
+        background: rgba(255, 255, 255, 0.04);
       }
 
-      /* User table */
       .user-table-container {
         background: var(--card);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius);
         overflow-x: auto;
+        box-shadow: var(--shadow);
       }
 
       .user-table {
@@ -704,7 +692,7 @@
         padding: 14px 16px;
         text-align: left;
         font-size: 0.9rem;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
 
       .user-table th {
@@ -714,6 +702,10 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         background: rgba(255, 255, 255, 0.02);
+      }
+
+      .user-table td {
+        color: var(--text-secondary);
       }
 
       .user-table tbody tr:last-child td {
@@ -741,7 +733,7 @@
       .toggle-slider {
         position: absolute;
         inset: 0;
-        background: var(--border);
+        background: #333;
         border-radius: 999px;
         cursor: pointer;
         transition: background var(--transition);
@@ -770,11 +762,12 @@
       /* Add user form */
       .add-user-form {
         background: var(--card);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius);
         padding: 24px;
         margin-top: 24px;
         display: none;
+        box-shadow: var(--shadow);
       }
 
       .add-user-form.active {
@@ -785,6 +778,7 @@
         font-size: 1.1rem;
         font-weight: 700;
         margin-bottom: 16px;
+        color: var(--text);
       }
 
       .form-row {
@@ -798,13 +792,14 @@
         width: 100%;
         padding: 12px 16px;
         background: var(--bg);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius-sm);
         color: var(--text);
         font-family: inherit;
         font-size: 0.95rem;
         outline: none;
         cursor: pointer;
+        transition: border-color var(--transition);
       }
 
       .form-row select:focus {
@@ -844,9 +839,10 @@
       .toast {
         padding: 12px 20px;
         background: var(--card);
-        border: 1px solid var(--border);
+        border: 1px solid transparent;
         border-radius: var(--radius-sm);
         font-size: 0.9rem;
+        color: var(--text);
         box-shadow: var(--shadow);
         animation:
           toastIn 0.3s ease,
@@ -891,7 +887,7 @@
         }
 
         .topbar-title {
-          font-size: 0.95rem;
+          font-size: 1rem;
         }
 
         .hub-content,
@@ -922,6 +918,10 @@
           flex-direction: column;
           align-items: flex-start;
         }
+
+        .user-info {
+          display: none;
+        }
       }
     </style>
   </head>
@@ -931,31 +931,7 @@
        ========================================== -->
     <div id="intro-screen">
       <div class="intro-logo-container">
-        <svg viewBox="0 0 240 240">
-          <!-- Top circle -->
-          <circle
-            class="intro-circle-big intro-circle-top"
-            cx="120"
-            cy="85"
-            r="55"
-          />
-          <!-- Bottom-left circle -->
-          <circle
-            class="intro-circle-big intro-circle-left"
-            cx="88"
-            cy="140"
-            r="55"
-          />
-          <!-- Bottom-right circle -->
-          <circle
-            class="intro-circle-big intro-circle-right"
-            cx="152"
-            cy="140"
-            r="55"
-          />
-          <!-- Small center circle (intersection) -->
-          <circle class="intro-circle-center" cx="120" cy="118" r="14" />
-        </svg>
+        <img src="maktub-logo.png" alt="Maktub Art Group" />
       </div>
       <div class="intro-text">Maktub Art Group</div>
     </div>
@@ -966,36 +942,7 @@
     <div id="login-screen" class="screen">
       <div class="login-container">
         <div class="login-logo">
-          <svg viewBox="0 0 240 240" width="80" height="80">
-            <circle
-              cx="120"
-              cy="85"
-              r="55"
-              fill="none"
-              stroke="#33E933"
-              stroke-width="2"
-              opacity="0.7"
-            />
-            <circle
-              cx="88"
-              cy="140"
-              r="55"
-              fill="none"
-              stroke="#33E933"
-              stroke-width="2"
-              opacity="0.7"
-            />
-            <circle
-              cx="152"
-              cy="140"
-              r="55"
-              fill="none"
-              stroke="#33E933"
-              stroke-width="2"
-              opacity="0.7"
-            />
-            <circle cx="120" cy="118" r="14" fill="#33E933" />
-          </svg>
+          <img src="maktub-logo.png" alt="Maktub Art Group" />
         </div>
         <h1 class="login-title">Maktub Art Group</h1>
         <p class="login-subtitle">Plataforma Central</p>
@@ -1052,40 +999,11 @@
        ========================================== -->
     <div id="hub-screen" class="screen">
       <div class="topbar">
-        <div class="topbar-left">
+        <div class="topbar-brand">
           <div class="topbar-logo">
-            <svg viewBox="0 0 240 240" width="32" height="32">
-              <circle
-                cx="120"
-                cy="85"
-                r="55"
-                fill="none"
-                stroke="#33E933"
-                stroke-width="2"
-                opacity="0.7"
-              />
-              <circle
-                cx="88"
-                cy="140"
-                r="55"
-                fill="none"
-                stroke="#33E933"
-                stroke-width="2"
-                opacity="0.7"
-              />
-              <circle
-                cx="152"
-                cy="140"
-                r="55"
-                fill="none"
-                stroke="#33E933"
-                stroke-width="2"
-                opacity="0.7"
-              />
-              <circle cx="120" cy="118" r="14" fill="#33E933" />
-            </svg>
+            <img src="maktub-logo.png" alt="Maktub Art Group" />
           </div>
-          <span class="topbar-title">Maktub Art Group Hub</span>
+          <span class="topbar-title">Maktub Art Group</span>
         </div>
         <div class="topbar-right">
           <div class="user-info">
@@ -1097,9 +1015,11 @@
       </div>
 
       <div class="hub-content">
-        <div class="hub-section-title">Plataformas</div>
-        <div class="platform-grid" id="platform-grid">
-          <!-- Dynamically populated -->
+        <div class="hub-inner">
+          <div class="hub-section-title">Plataformas</div>
+          <div class="platform-grid" id="platform-grid">
+            <!-- Dynamically populated -->
+          </div>
         </div>
       </div>
     </div>
@@ -1109,40 +1029,11 @@
        ========================================== -->
     <div id="management-screen" class="screen">
       <div class="topbar">
-        <div class="topbar-left">
+        <div class="topbar-brand">
           <div class="topbar-logo">
-            <svg viewBox="0 0 240 240" width="32" height="32">
-              <circle
-                cx="120"
-                cy="85"
-                r="55"
-                fill="none"
-                stroke="#33E933"
-                stroke-width="2"
-                opacity="0.7"
-              />
-              <circle
-                cx="88"
-                cy="140"
-                r="55"
-                fill="none"
-                stroke="#33E933"
-                stroke-width="2"
-                opacity="0.7"
-              />
-              <circle
-                cx="152"
-                cy="140"
-                r="55"
-                fill="none"
-                stroke="#33E933"
-                stroke-width="2"
-                opacity="0.7"
-              />
-              <circle cx="120" cy="118" r="14" fill="#33E933" />
-            </svg>
+            <img src="maktub-logo.png" alt="Maktub Art Group" />
           </div>
-          <span class="topbar-title">Gestão de Utilizadores</span>
+          <span class="topbar-title">Maktub Art Group</span>
         </div>
         <div class="topbar-right">
           <button class="mgmt-back" id="mgmt-back-btn">← Voltar ao Hub</button>
@@ -1241,11 +1132,6 @@
       (function () {
         "use strict";
 
-        // ============================================
-        // CONSTANTS & CONFIG
-        // ============================================
-
-        /** Available platforms */
         const PLATFORMS = [
           {
             id: "expense-manager",
@@ -1256,7 +1142,6 @@
           },
         ];
 
-        /** Default hardcoded users (SHA-256 hashed passwords) */
         const DEFAULT_USERS = [
           {
             username: "owner",
@@ -1278,98 +1163,71 @@
           },
         ];
 
-        /** Default platform access: every user gets expense-manager by default initially */
         const DEFAULT_ACCESS = {
           owner: ["expense-manager"],
           tomasbb0: ["expense-manager"],
           madalenta: ["expense-manager"],
         };
 
-        /** Session duration: 24 hours */
         const SESSION_TTL = 24 * 60 * 60 * 1000;
 
-        /** Role display names */
         const ROLE_LABELS = {
           owner: "Owner",
           tech: "Tech",
           user: "Utilizador",
         };
 
-        // ============================================
-        // STATE
-        // ============================================
+        let currentSession = null;
 
-        let currentSession = null; // { username, role, name, loginTime }
-
-        // ============================================
-        // STORAGE HELPERS
-        // ============================================
-
-        /** Get all users from localStorage (merged with defaults) */
         function getUsers() {
           const stored = localStorage.getItem("maktub_hub_users");
           let users = stored ? JSON.parse(stored) : [];
-
-          // Merge defaults — ensure default users always exist
           DEFAULT_USERS.forEach((du) => {
             if (!users.find((u) => u.username === du.username)) {
               users.push({ ...du });
             }
           });
-
           return users;
         }
 
-        /** Save users list to localStorage */
         function saveUsers(users) {
           localStorage.setItem("maktub_hub_users", JSON.stringify(users));
         }
 
-        /** Get platform access map: { username: ['platform-id', ...] } */
         function getAccessMap() {
           const stored = localStorage.getItem("maktub_hub_access");
           let access = stored ? JSON.parse(stored) : {};
-
-          // Merge defaults
           Object.entries(DEFAULT_ACCESS).forEach(([username, platforms]) => {
             if (!access[username]) {
               access[username] = [...platforms];
             }
           });
-
           return access;
         }
 
-        /** Save access map */
         function saveAccessMap(access) {
           localStorage.setItem("maktub_hub_access", JSON.stringify(access));
         }
 
-        /** Get user-specific data (e.g., email) */
         function getUserData(username) {
           const key = `maktub_hub_userdata_${username}`;
           const stored = localStorage.getItem(key);
           return stored ? JSON.parse(stored) : {};
         }
 
-        /** Save user-specific data */
         function saveUserData(username, data) {
           const key = `maktub_hub_userdata_${username}`;
           localStorage.setItem(key, JSON.stringify(data));
         }
 
-        /** Get / set session */
         function getSession() {
           const stored = localStorage.getItem("maktub_hub_session");
           if (!stored) return null;
           const session = JSON.parse(stored);
-
-          // Check TTL
           if (Date.now() - session.loginTime > SESSION_TTL) {
             localStorage.removeItem("maktub_hub_session");
             return null;
           }
-
           return session;
         }
 
@@ -1381,10 +1239,6 @@
           localStorage.removeItem("maktub_hub_session");
         }
 
-        // ============================================
-        // CRYPTO: SHA-256 HASHING
-        // ============================================
-
         async function sha256(message) {
           const encoder = new TextEncoder();
           const data = encoder.encode(message);
@@ -1393,21 +1247,13 @@
           return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
         }
 
-        // ============================================
-        // INTRO ANIMATION
-        // ============================================
-
         function handleIntro() {
           const introScreen = document.getElementById("intro-screen");
-
-          // Only play once per session
           if (sessionStorage.getItem("maktub_intro_played")) {
             introScreen.classList.add("hidden");
             onIntroComplete();
             return;
           }
-
-          // Show intro, then fade out after animation
           sessionStorage.setItem("maktub_intro_played", "true");
           setTimeout(() => {
             introScreen.classList.add("fade-out");
@@ -1419,7 +1265,6 @@
         }
 
         function onIntroComplete() {
-          // Check for existing valid session
           const session = getSession();
           if (session) {
             currentSession = session;
@@ -1428,10 +1273,6 @@
             showLogin();
           }
         }
-
-        // ============================================
-        // SCREEN MANAGEMENT
-        // ============================================
 
         function hideAllScreens() {
           document
@@ -1457,42 +1298,28 @@
           renderUserTable();
         }
 
-        // ============================================
-        // LOGIN
-        // ============================================
-
         async function handleLogin() {
           const usernameInput = document.getElementById("login-username");
           const passwordInput = document.getElementById("login-password");
           const errorEl = document.getElementById("login-error");
-
           const username = usernameInput.value.trim().toLowerCase();
           const password = passwordInput.value;
-
           errorEl.textContent = "";
-
           if (!username || !password) {
             errorEl.textContent = "Preenche todos os campos.";
             return;
           }
-
-          // Find user
           const users = getUsers();
           const user = users.find((u) => u.username === username);
-
           if (!user) {
             errorEl.textContent = "Utilizador não encontrado.";
             return;
           }
-
-          // Hash input password and compare
           const inputHash = await sha256(password);
           if (inputHash !== user.hash) {
             errorEl.textContent = "Palavra-passe incorreta.";
             return;
           }
-
-          // Create session
           currentSession = {
             username: user.username,
             role: user.role,
@@ -1500,12 +1327,8 @@
             loginTime: Date.now(),
           };
           saveSession(currentSession);
-
-          // Clear form
           usernameInput.value = "";
           passwordInput.value = "";
-
-          // Check if first-time login (no email stored)
           const userData = getUserData(user.username);
           if (!userData.email) {
             showEmailModal();
@@ -1517,15 +1340,11 @@
 
         function handleLogout() {
           clearSession();
-          localStorage.removeItem("maktub_user"); // Also clear expense manager session
+          localStorage.removeItem("maktub_user");
           currentSession = null;
           showLogin();
           showToast("Sessão terminada.", "success");
         }
-
-        // ============================================
-        // EMAIL MODAL (first-time login)
-        // ============================================
 
         function showEmailModal() {
           document.getElementById("email-modal").classList.add("active");
@@ -1540,24 +1359,17 @@
         function handleEmailSave() {
           const emailInput = document.getElementById("email-input");
           const email = emailInput.value.trim();
-
           if (!email || !email.includes("@")) {
             emailInput.style.borderColor = "var(--danger)";
             return;
           }
-
           const userData = getUserData(currentSession.username);
           userData.email = email;
           saveUserData(currentSession.username, userData);
-
           hideEmailModal();
           showHub();
           showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
         }
-
-        // ============================================
-        // HUB RENDERING
-        // ============================================
 
         function isAdmin() {
           return (
@@ -1575,21 +1387,14 @@
 
         function renderHub() {
           if (!currentSession) return;
-
-          // Update greeting
           document.getElementById("hub-greeting").textContent =
             `Olá, ${currentSession.name}`;
-
           const badge = document.getElementById("hub-role-badge");
           badge.textContent =
             ROLE_LABELS[currentSession.role] || currentSession.role;
           badge.className = `role-badge ${currentSession.role}`;
-
-          // Build grid
           const grid = document.getElementById("platform-grid");
           grid.innerHTML = "";
-
-          // Render platform cards
           PLATFORMS.forEach((platform) => {
             const hasAccess = userHasAccess(platform.id);
             const card = document.createElement("div");
@@ -1606,19 +1411,14 @@
               <div class="platform-desc">${platform.description}</div>
             </div>
           `;
-
             if (hasAccess) {
               card.addEventListener("click", () =>
                 navigateToPlatform(platform),
               );
             }
-
             grid.appendChild(card);
           });
-
-          // Admin-only cards
           if (isAdmin()) {
-            // User Management card
             const mgmtCard = document.createElement("div");
             mgmtCard.className = "platform-card";
             mgmtCard.title = "Gestão de Utilizadores";
@@ -1634,8 +1434,6 @@
           `;
             mgmtCard.addEventListener("click", showManagement);
             grid.appendChild(mgmtCard);
-
-            // "Add new platform" card (coming soon)
             const addCard = document.createElement("div");
             addCard.className = "platform-card disabled";
             addCard.title = "Em breve";
@@ -1653,13 +1451,8 @@
           }
         }
 
-        // ============================================
-        // PLATFORM NAVIGATION
-        // ============================================
-
         function navigateToPlatform(platform) {
           if (platform.id === "expense-manager") {
-            // Set maktub_user in localStorage so the expense manager auto-logs in
             const userData = getUserData(currentSession.username);
             const maktubUser = {
               email: userData.email || `${currentSession.username}@maktub.pt`,
@@ -1667,30 +1460,19 @@
             };
             localStorage.setItem("maktub_user", JSON.stringify(maktubUser));
           }
-
-          // Navigate to platform URL
           window.location.href = platform.url;
         }
-
-        // ============================================
-        // USER MANAGEMENT
-        // ============================================
 
         function renderUserTable() {
           const tbody = document.getElementById("user-table-body");
           const users = getUsers();
           const accessMap = getAccessMap();
-
           tbody.innerHTML = "";
-
           users.forEach((user) => {
             const userData = getUserData(user.username);
             const userAccess = accessMap[user.username] || [];
             const tr = document.createElement("tr");
-
-            // Platform toggles
             const platformToggles = PLATFORMS.map((p) => {
-              // Admin roles always have full access — show toggle but disabled
               const forceOn = user.role === "owner" || user.role === "tech";
               const checked = forceOn || userAccess.includes(p.id);
               const disabled = forceOn ? "disabled" : "";
@@ -1704,12 +1486,9 @@
               <span style="font-size:0.8rem;margin-left:4px;color:var(--text-muted)">${p.name}</span>
             `;
             }).join("<br>");
-
-            // Determine if user can be deleted (cannot delete yourself or default owner)
             const canDelete =
               user.username !== currentSession.username &&
               user.username !== "owner";
-
             tr.innerHTML = `
             <td><strong>${user.username}</strong></td>
             <td>${user.name}</td>
@@ -1724,7 +1503,6 @@
               }
             </td>
           `;
-
             tbody.appendChild(tr);
           });
         }
@@ -1733,9 +1511,7 @@
           const username = checkbox.dataset.username;
           const platformId = checkbox.dataset.platform;
           const accessMap = getAccessMap();
-
           if (!accessMap[username]) accessMap[username] = [];
-
           if (checkbox.checked) {
             if (!accessMap[username].includes(platformId)) {
               accessMap[username].push(platformId);
@@ -1745,12 +1521,9 @@
               (p) => p !== platformId,
             );
           }
-
           saveAccessMap(accessMap);
           showToast("Acesso atualizado.", "success");
         }
-
-        // ---- Add User ----
 
         function toggleAddUserForm() {
           const form = document.getElementById("add-user-form");
@@ -1776,37 +1549,25 @@
           const password = document.getElementById("new-password").value;
           const name = document.getElementById("new-name").value.trim();
           const role = document.getElementById("new-role").value;
-
           if (!username || !password || !name) {
             showToast("Preenche todos os campos.", "error");
             return;
           }
-
-          // Check duplicates
           const users = getUsers();
           if (users.find((u) => u.username === username)) {
             showToast("Esse utilizador já existe.", "error");
             return;
           }
-
-          // Hash password
           const hash = await sha256(password);
-
-          // Add user
           users.push({ username, hash, role, name });
           saveUsers(users);
-
-          // Give default access to expense-manager
           const accessMap = getAccessMap();
           accessMap[username] = ["expense-manager"];
           saveAccessMap(accessMap);
-
           cancelAddUser();
           renderUserTable();
           showToast(`Utilizador "${username}" criado com sucesso.`, "success");
         }
-
-        // ---- Delete User ----
 
         let pendingDeleteUsername = null;
 
@@ -1821,21 +1582,15 @@
 
         function executeDeleteUser() {
           if (!pendingDeleteUsername) return;
-
           let users = getUsers();
           users = users.filter((u) => u.username !== pendingDeleteUsername);
           saveUsers(users);
-
-          // Remove access
           const accessMap = getAccessMap();
           delete accessMap[pendingDeleteUsername];
           saveAccessMap(accessMap);
-
-          // Remove user data
           localStorage.removeItem(
             `maktub_hub_userdata_${pendingDeleteUsername}`,
           );
-
           pendingDeleteUsername = null;
           document.getElementById("confirm-dialog").classList.remove("active");
           renderUserTable();
@@ -1847,28 +1602,18 @@
           document.getElementById("confirm-dialog").classList.remove("active");
         }
 
-        // ============================================
-        // TOAST NOTIFICATIONS
-        // ============================================
-
         function showToast(message, type = "success") {
           const container = document.getElementById("toast-container");
           const toast = document.createElement("div");
           toast.className = `toast ${type}`;
           toast.textContent = message;
           container.appendChild(toast);
-
           setTimeout(() => {
             if (toast.parentNode) toast.remove();
           }, 3200);
         }
 
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-
         function initEventListeners() {
-          // Login
           document
             .getElementById("login-btn")
             .addEventListener("click", handleLogin);
@@ -1883,13 +1628,9 @@
               if (e.key === "Enter")
                 document.getElementById("login-password").focus();
             });
-
-          // Logout
           document
             .getElementById("logout-btn")
             .addEventListener("click", handleLogout);
-
-          // Email modal
           document
             .getElementById("email-save-btn")
             .addEventListener("click", handleEmailSave);
@@ -1898,13 +1639,9 @@
             .addEventListener("keydown", (e) => {
               if (e.key === "Enter") handleEmailSave();
             });
-
-          // Management: back
           document
             .getElementById("mgmt-back-btn")
             .addEventListener("click", showHub);
-
-          // Management: add user
           document
             .getElementById("add-user-toggle-btn")
             .addEventListener("click", toggleAddUserForm);
@@ -1914,28 +1651,23 @@
           document
             .getElementById("cancel-user-btn")
             .addEventListener("click", cancelAddUser);
-
-          // Confirm dialog
           document
             .getElementById("confirm-ok")
             .addEventListener("click", executeDeleteUser);
           document
             .getElementById("confirm-cancel")
             .addEventListener("click", cancelConfirm);
-        }
 
-        // ============================================
-        // EXPOSE FUNCTIONS FOR INLINE HANDLERS
-        // ============================================
+          // Topbar brand clicks → go to hub
+          document.querySelectorAll('.topbar-brand').forEach(el => {
+            el.addEventListener('click', showHub);
+          });
+        }
 
         window._hub = {
           toggleAccess,
           confirmDeleteUser,
         };
-
-        // ============================================
-        // BOOTSTRAP
-        // ============================================
 
         document.addEventListener("DOMContentLoaded", () => {
           initEventListeners();
