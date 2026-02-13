@@ -2825,16 +2825,18 @@
               container.style.transform = "scale(30)";
 
               // Thin out circle strokes as they zoom past
-              // commitStyles() writes animated values as inline styles,
-              // then cancel() removes animations — stroke-width transition can fire
+              // Manual rAF animation — CSS transitions on SVG stroke-width are unreliable
               if (svg) {
-                svg.querySelectorAll('circle').forEach(c => {
-                  c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); });
-                });
-                void svg.offsetWidth;
-                svg.querySelectorAll('circle').forEach(c => {
-                  c.style.strokeWidth = '0.15';
-                });
+                const circles = [...svg.querySelectorAll('circle')];
+                const startW = circles.map(c => parseFloat(getComputedStyle(c).strokeWidth));
+                circles.forEach(c => c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); }));
+                const t0 = performance.now();
+                (function tick(now) {
+                  const p = Math.min((now - t0) / 700, 1);
+                  const e = p * p; // accelerating
+                  circles.forEach((c, i) => { c.style.strokeWidth = (startW[i] * (1 - e) + 0.15 * e) + 'px'; });
+                  if (p < 1) requestAnimationFrame(tick);
+                })(t0);
               }
 
               // After zoom completes, hide intro
@@ -2909,13 +2911,16 @@
           // Thin out circle strokes as they zoom past
           const svg = container.querySelector('svg');
           if (svg) {
-            svg.querySelectorAll('circle').forEach(c => {
-              c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); });
-            });
-            void svg.offsetWidth;
-            svg.querySelectorAll('circle').forEach(c => {
-              c.style.strokeWidth = '0.15';
-            });
+            const circles = [...svg.querySelectorAll('circle')];
+            const startW = circles.map(c => parseFloat(getComputedStyle(c).strokeWidth));
+            circles.forEach(c => c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); }));
+            const t0 = performance.now();
+            (function tick(now) {
+              const p = Math.min((now - t0) / 700, 1);
+              const e = p * p;
+              circles.forEach((c, i) => { c.style.strokeWidth = (startW[i] * (1 - e) + 0.15 * e) + 'px'; });
+              if (p < 1) requestAnimationFrame(tick);
+            })(t0);
           }
 
           // BG already transparent from bg-fade, reinforce with zoom-through-bg

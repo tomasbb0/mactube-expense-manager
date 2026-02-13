@@ -3904,7 +3904,9 @@ async function handleAIFileUpload(files) {
 
   if (allText.length > 0) {
     const existing = textarea.value.trim();
-    textarea.value = existing ? existing + "\n" + allText.join("\n") : allText.join("\n");
+    textarea.value = existing
+      ? existing + "\n" + allText.join("\n")
+      : allText.join("\n");
     statusEl.textContent = `✓ ${files.length} ficheiro(s) carregado(s). Texto extraído e colocado abaixo.`;
   }
 
@@ -3963,7 +3965,8 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     dropZone.style.borderColor = "";
     dropZone.style.background = "";
-    if (e.dataTransfer.files.length > 0) handleAIFileUpload(e.dataTransfer.files);
+    if (e.dataTransfer.files.length > 0)
+      handleAIFileUpload(e.dataTransfer.files);
   });
 });
 
