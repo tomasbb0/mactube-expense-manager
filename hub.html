@@ -144,6 +144,31 @@
         display: none;
       }
 
+      /* Fly-to-corner: BG fades, logo shrinks & moves */
+      #intro-screen.bg-fade {
+        background: transparent !important;
+        pointer-events: none;
+        transition: background 0.6s ease;
+      }
+
+      .intro-logo-container.fly-to-corner {
+        position: fixed !important;
+        transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+          top 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+          width 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+          height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s ease;
+        margin: 0 !important;
+        z-index: 10001;
+        pointer-events: none;
+      }
+
+      .intro-text.fade-away {
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+        animation: none !important;
+      }
+
       /* Intro SVG container — 3 horizontal circles animate in */
       .intro-logo-container {
         width: 300px;
@@ -2628,19 +2653,151 @@
             onIntroComplete();
             return;
           }
-          // Play animation on every reload / direct visit
-          // Add glow pulse after circles converge
+
+          const container = document.querySelector(".intro-logo-container");
+          const svg = container ? container.querySelector("svg") : null;
+
+          // Phase 1: Green spread at 1100ms (using style.stroke for reliability)
           setTimeout(() => {
-            const container = document.querySelector(".intro-logo-container");
-            if (container) container.classList.add("converged");
-          }, 2400);
+            if (!svg) return;
+            const g = "#33e933";
+            const inner = svg.querySelector(".intro-inner-circle");
+            const left = svg.querySelector(".intro-circle-left");
+            const mid = svg.querySelector(".intro-circle-mid");
+            const right = svg.querySelector(".intro-circle-right");
+            if (inner) inner.style.stroke = g;
+            setTimeout(() => {
+              if (mid) mid.style.stroke = g;
+            }, 150);
+            setTimeout(() => {
+              if (left) left.style.stroke = g;
+            }, 300);
+            setTimeout(() => {
+              if (right) right.style.stroke = g;
+            }, 350);
+            setTimeout(() => {
+              if (svg)
+                svg.style.filter =
+                  "drop-shadow(0 0 12px rgba(51,233,51,0.3))";
+            }, 450);
+          }, 1100);
+
+          // Phase 2: Fly to destination at 2600ms
           setTimeout(() => {
-            introScreen.classList.add("fade-out");
+            const session = getSession();
+
+            // Turn circles white again & remove glow
+            if (svg) {
+              svg
+                .querySelectorAll("circle")
+                .forEach((c) => (c.style.stroke = "#fff"));
+              svg.style.filter = "none";
+            }
+
+            // Fade out intro text
+            const introText = document.querySelector(".intro-text");
+            if (introText) introText.classList.add("fade-away");
+
+            // Show destination screen behind transparent intro
+            if (session) {
+              currentSession = session;
+              showHub();
+            } else {
+              showLogin();
+            }
+
+            // Get current center position of logo
+            const rect = container.getBoundingClientRect();
+
+            // Switch to fixed positioning at current location
+            container.classList.add("fly-to-corner");
+            container.style.left = rect.left + "px";
+            container.style.top = rect.top + "px";
+            container.style.width = rect.width + "px";
+            container.style.height = rect.height + "px";
+
+            // Make intro background transparent
+            introScreen.classList.add("bg-fade");
+
+            // Force reflow before setting target
+            void container.offsetWidth;
+
+            // Calculate fly target
+            let targetEl;
+            if (session) {
+              targetEl = document.querySelector(
+                "#hub-screen .topbar-logo"
+              );
+            } else {
+              targetEl = document.querySelector(
+                "#login-screen .login-logo"
+              );
+            }
+
+            if (targetEl) {
+              const tRect = targetEl.getBoundingClientRect();
+              // Center the logo on the target element
+              const targetW = tRect.width;
+              const targetH = (targetW / rect.width) * rect.height;
+              container.style.left =
+                tRect.left + tRect.width / 2 - targetW / 2 + "px";
+              container.style.top =
+                tRect.top + tRect.height / 2 - targetH / 2 + "px";
+              container.style.width = targetW + "px";
+              container.style.height = targetH + "px";
+            }
+
+            // After fly completes
+            setTimeout(() => {
+              if (session) {
+                // Already at topbar — fade out floating logo, reveal real one
+                container.style.opacity = "0";
+                setTimeout(() => {
+                  introScreen.classList.add("hidden");
+                }, 300);
+              }
+              // If not logged in, logo stays visible above login form
+            }, 900);
+          }, 2600);
+        }
+
+        // Fly the floating intro logo from login-center → topbar corner
+        function flyLogoToTopbar() {
+          const introScreen = document.getElementById("intro-screen");
+          const container = document.querySelector(".intro-logo-container");
+          if (
+            !introScreen ||
+            !container ||
+            introScreen.classList.contains("hidden")
+          )
+            return;
+
+          const targetEl = document.querySelector(
+            "#hub-screen .topbar-logo"
+          );
+          if (!targetEl) {
+            introScreen.classList.add("hidden");
+            return;
+          }
+
+          const rect = container.getBoundingClientRect();
+          const tRect = targetEl.getBoundingClientRect();
+          const targetW = tRect.width;
+          const targetH = (targetW / rect.width) * rect.height;
+
+          container.style.left =
+            tRect.left + tRect.width / 2 - targetW / 2 + "px";
+          container.style.top =
+            tRect.top + tRect.height / 2 - targetH / 2 + "px";
+          container.style.width = targetW + "px";
+          container.style.height = targetH + "px";
+
+          setTimeout(() => {
+            container.style.opacity = "0";
             setTimeout(() => {
               introScreen.classList.add("hidden");
-              onIntroComplete();
-            }, 600);
-          }, 4500);
+            }, 300);
+          }, 900);
         }
 
         function onIntroComplete() {
@@ -2730,6 +2887,7 @@
             showEmailModal();
           } else {
             showHub();
+            flyLogoToTopbar();
             showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
           }
         }
@@ -2764,6 +2922,7 @@
           saveUserData(currentSession.username, userData);
           hideEmailModal();
           showHub();
+          flyLogoToTopbar();
           showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
         }
 
@@ -2825,6 +2984,7 @@
             showEmailModal();
           } else {
             showHub();
+            flyLogoToTopbar();
             showToast(
               `Bem-vindo(a), ${currentSession.name}! Palavra-passe atualizada.`,
               "success",
@@ -2851,6 +3011,7 @@
             showEmailModal();
           } else {
             showHub();
+            flyLogoToTopbar();
             showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
           }
         }

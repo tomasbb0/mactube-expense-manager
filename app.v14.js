@@ -174,13 +174,19 @@ function clearAppCache() {
   const sessionData = localStorage.getItem("maktub_hub_session");
   const userData = localStorage.getItem("maktub_user");
   const hubUsers = localStorage.getItem("maktub_hub_users");
+  const hubAccess = localStorage.getItem("maktub_hub_access");
 
-  // Collect password-changed keys to preserve
-  const pwdKeys = [];
+  // Collect password-changed keys AND user data keys to preserve
+  const preserveKeys = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && key.startsWith("maktub_pwd_changed_")) {
-      pwdKeys.push({ key, value: localStorage.getItem(key) });
+    if (
+      key &&
+      (key.startsWith("maktub_pwd_changed_") ||
+        key.startsWith("maktub_hub_userdata_") ||
+        key.startsWith("maktub_custom_shortcuts"))
+    ) {
+      preserveKeys.push({ key, value: localStorage.getItem(key) });
     }
   }
 
@@ -198,7 +204,8 @@ function clearAppCache() {
   if (sessionData) localStorage.setItem("maktub_hub_session", sessionData);
   if (userData) localStorage.setItem("maktub_user", userData);
   if (hubUsers) localStorage.setItem("maktub_hub_users", hubUsers);
-  pwdKeys.forEach((p) => localStorage.setItem(p.key, p.value));
+  if (hubAccess) localStorage.setItem("maktub_hub_access", hubAccess);
+  preserveKeys.forEach((p) => localStorage.setItem(p.key, p.value));
 
   // Clear sessionStorage (except internal_nav flag)
   sessionStorage.clear();
@@ -335,6 +342,36 @@ const SHORTCUT_OPTIONS = [
     action: "loadData()",
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>',
   },
+  {
+    id: "sync-sheets",
+    label: "Sincronizar Google Sheets",
+    action: "openSyncModal()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>',
+  },
+  {
+    id: "goto-settlement",
+    label: "Ir para Acerto",
+    action: "document.querySelector('.tab[data-tab=\"settlement\"]').click()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+  },
+  {
+    id: "goto-reports",
+    label: "Ir para Relatórios",
+    action: "document.querySelector('.tab[data-tab=\"reports\"]').click()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  },
+  {
+    id: "goto-add",
+    label: "Nova Despesa",
+    action: "document.querySelector('.tab[data-tab=\"add-expense\"]').click()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>',
+  },
+  {
+    id: "clear-cache",
+    label: "Limpar Cache",
+    action: "clearAppCache()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+  },
 ];
 
 function getCustomShortcuts() {
@@ -402,12 +439,6 @@ function toggleShortcutDropdown(bar, anchorBtn) {
   // Close any existing dropdown
   document.querySelectorAll(".shortcut-dropdown").forEach((d) => d.remove());
 
-  const existing = bar.querySelector(".shortcut-dropdown");
-  if (existing) {
-    existing.remove();
-    return;
-  }
-
   const currentShortcuts = getCustomShortcuts();
   const available = SHORTCUT_OPTIONS.filter(
     (o) => !currentShortcuts.includes(o.id),
@@ -435,9 +466,29 @@ function toggleShortcutDropdown(bar, anchorBtn) {
       .join("")}
   `;
 
-  // Position relative to the add button
-  bar.style.position = "relative";
-  bar.appendChild(dropdown);
+  // Position dynamically next to the Atalho button
+  document.body.appendChild(dropdown);
+  const btnRect = anchorBtn.getBoundingClientRect();
+  const dropW = dropdown.offsetWidth;
+  const dropH = dropdown.offsetHeight;
+
+  // Prefer above the button, aligned to its right edge
+  let top = btnRect.top - dropH - 8;
+  let left = btnRect.right - dropW;
+
+  // If it goes off screen top, show below
+  if (top < 8) top = btnRect.bottom + 8;
+  // If it goes off screen left, align to button left
+  if (left < 8) left = btnRect.left;
+  // If it goes off screen right
+  if (left + dropW > window.innerWidth - 8)
+    left = window.innerWidth - dropW - 8;
+
+  dropdown.style.position = "fixed";
+  dropdown.style.top = top + "px";
+  dropdown.style.left = left + "px";
+  dropdown.style.bottom = "auto";
+  dropdown.style.right = "auto";
 
   // Close when clicking elsewhere
   const closeHandler = (e) => {
