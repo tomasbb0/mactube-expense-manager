@@ -152,6 +152,20 @@ function initTabs() {
   const tabs = document.querySelectorAll(".tab");
   const contents = document.querySelectorAll(".tab-content");
 
+  function highlightQuickActions(activeTabId) {
+    document.querySelectorAll(".quick-action-btn").forEach((btn) => {
+      btn.classList.remove("active");
+      const onclick = btn.getAttribute("onclick") || "";
+      if (
+        onclick.includes('data-tab="' + activeTabId + '"') ||
+        onclick.includes("data-tab='" + activeTabId + "'") ||
+        onclick.includes("data-tab=&quot;" + activeTabId + "&quot;")
+      ) {
+        btn.classList.add("active");
+      }
+    });
+  }
+
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const targetId = tab.getAttribute("data-tab");
@@ -169,6 +183,8 @@ function initTabs() {
         targetContent.classList.remove("hidden");
       }
 
+      highlightQuickActions(targetId);
+
       if (targetId === "reports") {
         renderTable();
         renderPivotTables();
@@ -179,6 +195,9 @@ function initTabs() {
       }
     });
   });
+
+  // Highlight dashboard quick actions on initial load
+  highlightQuickActions("dashboard");
 }
 
 // ==========================================

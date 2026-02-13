@@ -1078,6 +1078,16 @@ body {
   opacity: 1;
 }
 
+.quick-action-btn.active {
+  color: var(--green-primary);
+  border-color: var(--green-primary);
+  box-shadow: 0 0 6px rgba(51, 233, 51, 0.3);
+}
+
+.quick-action-btn.active svg {
+  opacity: 1;
+}
+
 /* Dashboard Subtle Filter Bar */
 .dashboard-filter-bar {
   display: flex;
