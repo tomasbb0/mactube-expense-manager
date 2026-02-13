@@ -1048,13 +1048,13 @@ body {
 .quick-action-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 6px;
+  padding: 7px 14px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1062,8 +1062,8 @@ body {
 }
 
 .quick-action-btn svg {
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 14px;
   opacity: 0.7;
 }
 
