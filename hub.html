@@ -2820,9 +2820,15 @@
               introScreen.classList.add("zoom-through-bg");
 
               // Zoom! Logo scales up massively — circles rush past the camera
-              // non-scaling-stroke: strokes stay fixed-pixel as circles scale up → they thin naturally
+              // Also set non-scaling-stroke so strokes don't grow with the transform
               if (svg) {
-                svg.querySelectorAll('circle').forEach(c => c.setAttribute('vector-effect', 'non-scaling-stroke'));
+                svg.querySelectorAll('circle').forEach(c => {
+                  c.setAttribute('vector-effect', 'non-scaling-stroke');
+                  c.animate(
+                    [{strokeWidth: getComputedStyle(c).strokeWidth}, {strokeWidth: '0.5px'}],
+                    {duration: 700, fill: 'forwards', easing: 'ease-in'}
+                  );
+                });
               }
               container.classList.add("zoom-through");
               void container.offsetWidth; // force reflow
@@ -2893,10 +2899,16 @@
           if (loginLogo) loginLogo.style.visibility = "";
 
           // Zoom through! Logo scales up from login center position
-          // non-scaling-stroke: strokes stay fixed-pixel as circles scale up
+          // non-scaling-stroke + WAAPI animation for stroke thinning
           const svg = container.querySelector('svg');
           if (svg) {
-            svg.querySelectorAll('circle').forEach(c => c.setAttribute('vector-effect', 'non-scaling-stroke'));
+            svg.querySelectorAll('circle').forEach(c => {
+              c.setAttribute('vector-effect', 'non-scaling-stroke');
+              c.animate(
+                [{strokeWidth: getComputedStyle(c).strokeWidth}, {strokeWidth: '0.5px'}],
+                {duration: 700, fill: 'forwards', easing: 'ease-in'}
+              );
+            });
           }
           container.classList.add("zoom-through");
           void container.offsetWidth;
