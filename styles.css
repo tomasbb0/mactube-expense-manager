@@ -2212,6 +2212,7 @@ tr:hover td {
   border: none;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   text-align: center;
+  position: relative;
 }
 
 .sync-modal .modal-header {
@@ -2220,7 +2221,6 @@ tr:hover td {
   justify-content: center;
   gap: 16px;
   margin-bottom: 24px;
-  position: relative;
 }
 
 .sync-modal .modal-header h3 {
@@ -2232,15 +2232,15 @@ tr:hover td {
 
 .sync-modal .modal-close {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: 12px;
+  right: 12px;
   background: var(--bg-tertiary);
   border: none;
   color: var(--text-secondary);
   font-size: 1.5rem;
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 50%;
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -2248,6 +2248,7 @@ tr:hover td {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  z-index: 10;
 }
 
 .sync-modal .modal-close:hover {
