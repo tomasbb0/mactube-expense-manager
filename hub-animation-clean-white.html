@@ -144,41 +144,14 @@
         display: none;
       }
 
-      /* Fly-to-corner: BG fades, logo shrinks & moves (used for login fly) */
+      /* Fly-to-corner: BG fades, logo shrinks & moves to topbar position */
       #intro-screen.bg-fade {
         background: transparent !important;
-        pointer-events: none;
         transition: background 0.6s ease;
       }
 
       .intro-logo-container.fly-to-corner {
-        position: fixed !important;
-        transition:
-          left 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-          top 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-          width 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-          height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-          opacity 0.3s ease;
-        margin: 0 !important;
-        z-index: 10001;
-        pointer-events: none;
-      }
-
-      /* Zoom-through: logo scales up massively, content revealed through the portal */
-      #intro-screen.zoom-through-bg {
-        background: transparent !important;
-        pointer-events: none;
-        transition: background 0.35s ease-in !important;
-      }
-
-      .intro-logo-container.zoom-through {
-        transition: transform 0.7s cubic-bezier(0.5, 0, 1, 0.5) !important;
-        transform-origin: center center;
-      }
-
-      .intro-logo-container.zoom-through svg circle {
-        stroke-width: 0.15 !important;
-        transition: stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
       .intro-text.fade-away {
@@ -208,7 +181,7 @@
         stroke: #fff;
         stroke-width: 1;
         stroke-linecap: butt;
-        transition: stroke 0.15s ease, stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition: stroke 0.15s ease;
       }
       .intro-inner-circle {
         fill: none;
@@ -216,7 +189,7 @@
         stroke-width: 7;
         stroke-linecap: butt;
         opacity: 0;
-        transition: stroke 0.15s ease, stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition: stroke 0.15s ease;
       }
 
       /* Green class toggled by JS */
@@ -381,19 +354,17 @@
       }
 
       .login-logo {
-        margin-bottom: 20px;
+        margin-bottom: 16px;
       }
 
-      .login-logo svg {
-        width: 100px;
+      .login-logo img {
+        width: 72px;
         height: auto;
       }
 
       .login-title {
-        font-size: 1.1rem;
+        font-size: 1.5rem;
         font-weight: 700;
-        letter-spacing: 4px;
-        text-transform: uppercase;
         color: var(--text);
         margin-bottom: 4px;
       }
@@ -635,17 +606,15 @@
         color: var(--text);
       }
 
-      .topbar-logo svg {
-        width: 42px;
+      .topbar-logo img {
+        width: 36px;
         height: auto;
         display: block;
       }
 
       .topbar-title {
-        font-size: 0.81rem;
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
+        font-size: 1.25rem;
+        font-weight: 600;
         color: var(--text);
         transition: color var(--transition);
       }
@@ -1395,7 +1364,7 @@
         }
 
         .topbar-title {
-          font-size: 0.85rem;
+          font-size: 1rem;
         }
 
         .hub-content,
@@ -2066,30 +2035,7 @@
     <div id="login-screen" class="screen">
       <div class="login-container">
         <div class="login-logo">
-          <svg viewBox="49 25 202 150" fill="none">
-            <circle
-              cx="123.75"
-              cy="100"
-              r="70"
-              stroke="#fff"
-              stroke-width="7"
-            />
-            <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
-            <circle
-              cx="176.25"
-              cy="100"
-              r="70"
-              stroke="#fff"
-              stroke-width="7"
-            />
-            <circle
-              cx="150"
-              cy="100"
-              r="43.75"
-              stroke="#fff"
-              stroke-width="7"
-            />
-          </svg>
+          <img src="maktub-logo.png" alt="Maktub Art Group" />
         </div>
         <h1 class="login-title">Maktub Art Group</h1>
         <p class="login-subtitle">Plataforma Central</p>
@@ -2202,30 +2148,7 @@
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <svg viewBox="49 25 202 150" fill="none">
-              <circle
-                cx="123.75"
-                cy="100"
-                r="70"
-                stroke="#fff"
-                stroke-width="7"
-              />
-              <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
-              <circle
-                cx="176.25"
-                cy="100"
-                r="70"
-                stroke="#fff"
-                stroke-width="7"
-              />
-              <circle
-                cx="150"
-                cy="100"
-                r="43.75"
-                stroke="#fff"
-                stroke-width="7"
-              />
-            </svg>
+            <img src="maktub-logo.png" alt="Maktub Art Group" />
           </div>
           <span class="topbar-title">Maktub Art Group</span>
         </div>
@@ -2255,30 +2178,7 @@
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <svg viewBox="49 25 202 150" fill="none">
-              <circle
-                cx="123.75"
-                cy="100"
-                r="70"
-                stroke="#fff"
-                stroke-width="7"
-              />
-              <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
-              <circle
-                cx="176.25"
-                cy="100"
-                r="70"
-                stroke="#fff"
-                stroke-width="7"
-              />
-              <circle
-                cx="150"
-                cy="100"
-                r="43.75"
-                stroke="#fff"
-                stroke-width="7"
-              />
-            </svg>
+            <img src="maktub-logo.png" alt="Maktub Art Group" />
           </div>
           <span class="topbar-title">Maktub Art Group</span>
         </div>
@@ -2528,30 +2428,7 @@
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <svg viewBox="49 25 202 150" fill="none">
-              <circle
-                cx="123.75"
-                cy="100"
-                r="70"
-                stroke="#fff"
-                stroke-width="7"
-              />
-              <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
-              <circle
-                cx="176.25"
-                cy="100"
-                r="70"
-                stroke="#fff"
-                stroke-width="7"
-              />
-              <circle
-                cx="150"
-                cy="100"
-                r="43.75"
-                stroke="#fff"
-                stroke-width="7"
-              />
-            </svg>
+            <img src="maktub-logo.png" alt="Maktub Art Group" />
           </div>
           <span class="topbar-title">Maktub Art Group</span>
         </div>
@@ -2769,138 +2646,39 @@
           }
 
           const container = document.querySelector(".intro-logo-container");
-          const svg = container ? container.querySelector("svg") : null;
 
-          // Phase 1: Green spread at 1100ms (using style.stroke for reliability)
+          // Fly logo to top-left corner, then reveal next screen
           setTimeout(() => {
-            if (!svg) return;
-            const g = "#33e933";
-            const inner = svg.querySelector(".intro-inner-circle");
-            const left = svg.querySelector(".intro-circle-left");
-            const mid = svg.querySelector(".intro-circle-mid");
-            const right = svg.querySelector(".intro-circle-right");
-            if (inner) inner.style.stroke = g;
-            setTimeout(() => {
-              if (mid) mid.style.stroke = g;
-            }, 150);
-            setTimeout(() => {
-              if (left) left.style.stroke = g;
-            }, 300);
-            setTimeout(() => {
-              if (right) right.style.stroke = g;
-            }, 350);
-            setTimeout(() => {
-              if (svg)
-                svg.style.filter = "drop-shadow(0 0 12px rgba(51,233,51,0.3))";
-            }, 450);
-          }, 1100);
+            // Show destination screen behind intro
+            onIntroComplete();
 
-          // Phase 2: Fly to destination at 2600ms
-          setTimeout(() => {
-            const session = getSession();
-
-            // Turn circles white again & remove glow
-            if (svg) {
-              svg
-                .querySelectorAll("circle")
-                .forEach((c) => (c.style.stroke = "#fff"));
-              svg.style.filter = "none";
-            }
-
-            // Fade out intro text
+            // Fade out the text
             const introText = document.querySelector(".intro-text");
             if (introText) introText.classList.add("fade-away");
 
-            if (session) {
-              // ═══ LOGGED IN: ZOOM-THROUGH ═══
-              // Hub content appears through the expanding inner circle portal
-              currentSession = session;
-              showHub();
+            // Calculate fly trajectory to topbar-logo position
+            const rect = container.getBoundingClientRect();
+            const targetX = 42; // ~24px padding + 18px half-logo
+            const targetY = 34; // ~16px padding + 18px half-logo
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = targetX - cx;
+            const dy = targetY - cy;
+            const scale = 36 / rect.width;
 
-              // Fade intro BG to transparent (reveals hub behind)
-              introScreen.classList.add("zoom-through-bg");
+            // Fly!
+            container.classList.add("fly-to-corner");
+            container.style.transform =
+              "translate(" + dx + "px, " + dy + "px) scale(" + scale + ")";
 
-              // Zoom! Logo scales up massively — circles rush past the camera
-              container.classList.add("zoom-through");
-              void container.offsetWidth; // force reflow
-              container.style.transform = "scale(30)";
+            // Fade intro background to reveal screen underneath
+            introScreen.classList.add("bg-fade");
 
-              // After zoom completes, hide intro
-              setTimeout(() => {
-                introScreen.classList.add("hidden");
-              }, 800);
-            } else {
-              // ═══ NEEDS LOGIN: FLY TO LOGIN CENTER ═══
-              showLogin();
-
-              // Hide inline login-logo SVG — flying SVG replaces it
-              const loginLogo = document.querySelector(
-                "#login-screen .login-logo",
-              );
-              if (loginLogo) loginLogo.style.visibility = "hidden";
-
-              // Get current position and switch to fixed
-              const rect = container.getBoundingClientRect();
-              container.classList.add("fly-to-corner");
-              container.style.left = rect.left + "px";
-              container.style.top = rect.top + "px";
-              container.style.width = rect.width + "px";
-              container.style.height = rect.height + "px";
-
-              // Fade intro background (but keep intro screen alive for post-login zoom)
-              introScreen.classList.add("bg-fade");
-
-              // Force reflow then fly to login-logo position
-              void container.offsetWidth;
-              const targetEl = document.querySelector(
-                "#login-screen .login-logo",
-              );
-              if (targetEl) {
-                const tRect = targetEl.getBoundingClientRect();
-                const targetW = tRect.width;
-                const targetH = (targetW / rect.width) * rect.height;
-                container.style.left =
-                  tRect.left + tRect.width / 2 - targetW / 2 + "px";
-                container.style.top =
-                  tRect.top + tRect.height / 2 - targetH / 2 + "px";
-                container.style.width = targetW + "px";
-                container.style.height = targetH + "px";
-              }
-
-              // After fly lands: keep intro screen alive for post-login zoom
-              // The flying SVG sits at login-logo position, login-logo hidden
-              // User logs in → flyLogoToTopbar() handles the zoom-through
-            }
+            // Clean up after fly completes
+            setTimeout(() => {
+              introScreen.classList.add("hidden");
+            }, 900);
           }, 2600);
-        }
-
-        // Post-login: zoom-through from login-center → reveal hub
-        function flyLogoToTopbar() {
-          const introScreen = document.getElementById("intro-screen");
-          const container = document.querySelector(".intro-logo-container");
-          if (
-            !introScreen ||
-            !container ||
-            introScreen.classList.contains("hidden")
-          )
-            return;
-
-          // Restore inline login-logo visibility
-          const loginLogo = document.querySelector("#login-screen .login-logo");
-          if (loginLogo) loginLogo.style.visibility = "";
-
-          // Zoom through! Logo scales up from login center position
-          container.classList.add("zoom-through");
-          void container.offsetWidth;
-          container.style.transform = "scale(30)";
-
-          // BG already transparent from bg-fade, reinforce with zoom-through-bg
-          introScreen.classList.add("zoom-through-bg");
-
-          // After zoom, hide intro — hub topbar inline SVG takes over
-          setTimeout(() => {
-            introScreen.classList.add("hidden");
-          }, 800);
         }
 
         function onIntroComplete() {
@@ -2990,7 +2768,6 @@
             showEmailModal();
           } else {
             showHub();
-            flyLogoToTopbar();
             showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
           }
         }
@@ -3025,7 +2802,6 @@
           saveUserData(currentSession.username, userData);
           hideEmailModal();
           showHub();
-          flyLogoToTopbar();
           showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
         }
 
@@ -3087,7 +2863,6 @@
             showEmailModal();
           } else {
             showHub();
-            flyLogoToTopbar();
             showToast(
               `Bem-vindo(a), ${currentSession.name}! Palavra-passe atualizada.`,
               "success",
@@ -3114,7 +2889,6 @@
             showEmailModal();
           } else {
             showHub();
-            flyLogoToTopbar();
             showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
           }
         }
@@ -3174,7 +2948,7 @@
               <div class="platform-preview">
                 <div class="mini-dashboard">
                   <div class="mini-dash-header">
-                    <svg class="mini-dot" viewBox="49 25 202 150" fill="none" width="16" height="12"><circle cx="123.75" cy="100" r="70" stroke="#fff" stroke-width="7"/><circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7"/><circle cx="176.25" cy="100" r="70" stroke="#fff" stroke-width="7"/><circle cx="150" cy="100" r="43.75" stroke="#fff" stroke-width="7"/></svg>
+                    <img class="mini-dot" src="maktub-logo.png" alt="" />
                     <span>Maktub Art Group</span>
                   </div>
                   <div class="mini-dash-body">
@@ -4258,8 +4032,10 @@
     <div
       style="
         position: fixed;
-        bottom: 10px;
-        right: 14px;
+        bottom: 8px;
+        left: 0;
+        right: 0;
+        text-align: center;
         z-index: 9;
         pointer-events: none;
       "
@@ -4268,30 +4044,16 @@
         style="
           display: inline-flex;
           align-items: center;
-          gap: 5px;
+          gap: 6px;
           opacity: 0.35;
           pointer-events: auto;
         "
       >
-        <span
-          style="
-            font-family:
-              &quot;Avenir Next&quot;, &quot;Avenir&quot;,
-              &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
-            font-size: 10px;
-            font-family: Arial, sans-serif;
-            font-size: 10px;
-            font-weight: 400;
-            color: #fafafa;
-            letter-spacing: 0.5px;
-          "
-          >Powered by</span
-        >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="-2 -2 100 114"
-          width="13"
-          height="15"
+          width="16"
+          height="18"
           style="flex-shrink: 0"
         >
           <path
@@ -4321,15 +4083,12 @@
         </svg>
         <span
           style="
-            font-family:
-              &quot;Avenir Next&quot;, &quot;Avenir&quot;,
-              &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
+            font-family: &quot;Inter&quot;, sans-serif;
             font-size: 10px;
-            font-weight: 300;
             color: #fafafa;
             letter-spacing: 0.5px;
           "
-          >The Burnay Labs</span
+          >Powered by The Burnay Labs</span
         >
       </div>
     </div>
