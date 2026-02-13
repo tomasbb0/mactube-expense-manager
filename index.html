@@ -19,7 +19,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=34" />
+    <link rel="stylesheet" href="styles.css?v=35" />
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -168,190 +168,196 @@
         </button>
       </nav>
 
-      <!-- Quick Action Navigation -->
-      <div class="dashboard-quick-actions" style="padding: 12px 20px">
-        <button
-          class="quick-action-btn"
-          onclick="
-            document.querySelector('[data-tab=&quot;dashboard&quot;]').click()
-          "
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="3" y="3" width="7" height="9" />
-            <rect x="14" y="3" width="7" height="5" />
-            <rect x="14" y="12" width="7" height="9" />
-            <rect x="3" y="16" width="7" height="5" />
-          </svg>
-          Dashboard
-        </button>
-        <button
-          class="quick-action-btn"
-          onclick="
-            document.querySelector('[data-tab=&quot;new-expense&quot;]').click()
-          "
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="16" />
-            <line x1="8" y1="12" x2="16" y2="12" />
-          </svg>
-          Nova Despesa
-        </button>
-        <button
-          class="quick-action-btn"
-          onclick="
-            document.querySelector('[data-tab=&quot;new-project&quot;]').click()
-          "
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-            />
-          </svg>
-          Novo Projeto
-        </button>
-        <button
-          class="quick-action-btn"
-          onclick="
-            document.querySelector('[data-tab=&quot;reports&quot;]').click()
-          "
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-            />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-          </svg>
-          Relatórios
-        </button>
-        <button
-          class="quick-action-btn"
-          onclick="
-            document.querySelector('[data-tab=&quot;settlement&quot;]').click()
-          "
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="2" y="5" width="20" height="14" rx="2" />
-            <line x1="2" y1="10" x2="22" y2="10" />
-          </svg>
-          Acerto
-        </button>
-        <button class="quick-action-btn" onclick="startTutorial()">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-            <line x1="12" y1="17" x2="12.01" y2="17" />
-          </svg>
-          Tutorial
-        </button>
-        <a
-          class="quick-action-btn"
-          href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
-          target="_blank"
-          ><svg
-            viewBox="0 0 87.3 78"
-            fill="none"
-            style="width: 14px; height: 14px"
-          >
-            <path
-              d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
-              fill="#0066da"
-            />
-            <path
-              d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
-              fill="#00ac47"
-            />
-            <path
-              d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
-              fill="#ea4335"
-            />
-            <path
-              d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
-              fill="#00832d"
-            />
-            <path
-              d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
-              fill="#2684fc"
-            />
-            <path
-              d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
-              fill="#ffba00"
-            />
-          </svg>
-          Abrir Drive</a
-        >
-        <button class="quick-action-btn" onclick="openSyncModal()">
-          <svg
-            viewBox="0 0 87.3 78"
-            fill="none"
-            style="width: 14px; height: 14px"
-          >
-            <path
-              d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
-              fill="#0066da"
-            />
-            <path
-              d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
-              fill="#00ac47"
-            />
-            <path
-              d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
-              fill="#ea4335"
-            />
-            <path
-              d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
-              fill="#00832d"
-            />
-            <path
-              d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
-              fill="#2684fc"
-            />
-            <path
-              d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
-              fill="#ffba00"
-            />
-          </svg>
-          Sync Drive
-        </button>
-      </div>
-
       <!-- Dashboard Tab -->
       <div id="dashboard" class="tab-content active">
         <div class="content-header">
           <h2>Dashboard</h2>
           <p>Visão geral das despesas</p>
+          <div class="dashboard-quick-actions">
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;dashboard&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="9" />
+                <rect x="14" y="3" width="7" height="5" />
+                <rect x="14" y="12" width="7" height="9" />
+                <rect x="3" y="16" width="7" height="5" />
+              </svg>
+              Dashboard
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-expense&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              Nova Despesa
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-project&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              Novo Projeto
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document.querySelector('[data-tab=&quot;reports&quot;]').click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              Relatórios
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;settlement&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="2" y="5" width="20" height="14" rx="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+              Acerto
+            </button>
+            <button class="quick-action-btn" onclick="startTutorial()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              Tutorial
+            </button>
+            <a
+              class="quick-action-btn"
+              href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
+              target="_blank"
+              ><svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Abrir Drive</a
+            >
+            <button class="quick-action-btn" onclick="openSyncModal()">
+              <svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Sync Drive
+            </button>
+          </div>
 
           <!-- Subtle Dashboard Filter -->
           <div class="dashboard-filter-bar">
@@ -584,6 +590,191 @@
         <div class="content-header">
           <h2>Nova Despesa</h2>
           <p>Registe uma nova despesa</p>
+          <div class="dashboard-quick-actions">
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;dashboard&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="9" />
+                <rect x="14" y="3" width="7" height="5" />
+                <rect x="14" y="12" width="7" height="9" />
+                <rect x="3" y="16" width="7" height="5" />
+              </svg>
+              Dashboard
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-expense&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              Nova Despesa
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-project&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              Novo Projeto
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document.querySelector('[data-tab=&quot;reports&quot;]').click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              Relatórios
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;settlement&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="2" y="5" width="20" height="14" rx="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+              Acerto
+            </button>
+            <button class="quick-action-btn" onclick="startTutorial()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              Tutorial
+            </button>
+            <a
+              class="quick-action-btn"
+              href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
+              target="_blank"
+              ><svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Abrir Drive</a
+            >
+            <button class="quick-action-btn" onclick="openSyncModal()">
+              <svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Sync Drive
+            </button>
+          </div>
         </div>
 
         <form id="expense-form" class="form-box">
@@ -868,6 +1059,193 @@
           <div class="content-header">
             <h2>Relatórios</h2>
             <p>Consulte todas as despesas</p>
+            <div class="dashboard-quick-actions">
+              <button
+                class="quick-action-btn"
+                onclick="
+                  document
+                    .querySelector('[data-tab=&quot;dashboard&quot;]')
+                    .click()
+                "
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="3" width="7" height="9" />
+                  <rect x="14" y="3" width="7" height="5" />
+                  <rect x="14" y="12" width="7" height="9" />
+                  <rect x="3" y="16" width="7" height="5" />
+                </svg>
+                Dashboard
+              </button>
+              <button
+                class="quick-action-btn"
+                onclick="
+                  document
+                    .querySelector('[data-tab=&quot;new-expense&quot;]')
+                    .click()
+                "
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="16" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+                Nova Despesa
+              </button>
+              <button
+                class="quick-action-btn"
+                onclick="
+                  document
+                    .querySelector('[data-tab=&quot;new-project&quot;]')
+                    .click()
+                "
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                  />
+                </svg>
+                Novo Projeto
+              </button>
+              <button
+                class="quick-action-btn"
+                onclick="
+                  document
+                    .querySelector('[data-tab=&quot;reports&quot;]')
+                    .click()
+                "
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                  />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+                Relatórios
+              </button>
+              <button
+                class="quick-action-btn"
+                onclick="
+                  document
+                    .querySelector('[data-tab=&quot;settlement&quot;]')
+                    .click()
+                "
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="2" y="5" width="20" height="14" rx="2" />
+                  <line x1="2" y1="10" x2="22" y2="10" />
+                </svg>
+                Acerto
+              </button>
+              <button class="quick-action-btn" onclick="startTutorial()">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+                Tutorial
+              </button>
+              <a
+                class="quick-action-btn"
+                href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
+                target="_blank"
+                ><svg
+                  viewBox="0 0 87.3 78"
+                  fill="none"
+                  style="width: 14px; height: 14px"
+                >
+                  <path
+                    d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                    fill="#0066da"
+                  />
+                  <path
+                    d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                    fill="#00ac47"
+                  />
+                  <path
+                    d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                    fill="#ea4335"
+                  />
+                  <path
+                    d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                    fill="#00832d"
+                  />
+                  <path
+                    d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                    fill="#2684fc"
+                  />
+                  <path
+                    d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                    fill="#ffba00"
+                  />
+                </svg>
+                Abrir Drive</a
+              >
+              <button class="quick-action-btn" onclick="openSyncModal()">
+                <svg
+                  viewBox="0 0 87.3 78"
+                  fill="none"
+                  style="width: 14px; height: 14px"
+                >
+                  <path
+                    d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                    fill="#0066da"
+                  />
+                  <path
+                    d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                    fill="#00ac47"
+                  />
+                  <path
+                    d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                    fill="#ea4335"
+                  />
+                  <path
+                    d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                    fill="#00832d"
+                  />
+                  <path
+                    d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                    fill="#2684fc"
+                  />
+                  <path
+                    d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                    fill="#ffba00"
+                  />
+                </svg>
+                Sync Drive
+              </button>
+            </div>
           </div>
 
           <div class="search-box">
@@ -1049,6 +1427,191 @@
         <div class="content-header">
           <h2>Novo Projeto</h2>
           <p>Criar nova spreadsheet para um projeto</p>
+          <div class="dashboard-quick-actions">
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;dashboard&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="9" />
+                <rect x="14" y="3" width="7" height="5" />
+                <rect x="14" y="12" width="7" height="9" />
+                <rect x="3" y="16" width="7" height="5" />
+              </svg>
+              Dashboard
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-expense&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              Nova Despesa
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-project&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              Novo Projeto
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document.querySelector('[data-tab=&quot;reports&quot;]').click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              Relatórios
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;settlement&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="2" y="5" width="20" height="14" rx="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+              Acerto
+            </button>
+            <button class="quick-action-btn" onclick="startTutorial()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              Tutorial
+            </button>
+            <a
+              class="quick-action-btn"
+              href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
+              target="_blank"
+              ><svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Abrir Drive</a
+            >
+            <button class="quick-action-btn" onclick="openSyncModal()">
+              <svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Sync Drive
+            </button>
+          </div>
         </div>
 
         <div class="form-container project-form">
@@ -1182,6 +1745,191 @@
         <div class="content-header">
           <h2>Acerto de Contas</h2>
           <p>Balanço entre Maktub e terceiros</p>
+          <div class="dashboard-quick-actions">
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;dashboard&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="9" />
+                <rect x="14" y="3" width="7" height="5" />
+                <rect x="14" y="12" width="7" height="9" />
+                <rect x="3" y="16" width="7" height="5" />
+              </svg>
+              Dashboard
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-expense&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+              Nova Despesa
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;new-project&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                />
+              </svg>
+              Novo Projeto
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document.querySelector('[data-tab=&quot;reports&quot;]').click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+              </svg>
+              Relatórios
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
+                  .querySelector('[data-tab=&quot;settlement&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="2" y="5" width="20" height="14" rx="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+              </svg>
+              Acerto
+            </button>
+            <button class="quick-action-btn" onclick="startTutorial()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              Tutorial
+            </button>
+            <a
+              class="quick-action-btn"
+              href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
+              target="_blank"
+              ><svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Abrir Drive</a
+            >
+            <button class="quick-action-btn" onclick="openSyncModal()">
+              <svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Sync Drive
+            </button>
+          </div>
         </div>
 
         <div class="settlement-cards">
@@ -1377,6 +2125,6 @@
       </div>
     </div>
 
-    <script src="app.js?v=36"></script>
+    <script src="app.js?v=37"></script>
   </body>
 </html>
