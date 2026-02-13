@@ -409,6 +409,26 @@
         min-height: 20px;
       }
 
+      .remember-me-row {
+        margin-bottom: 16px;
+      }
+
+      .remember-me-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+      }
+
+      .remember-me-label input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--primary);
+        cursor: pointer;
+      }
+
       /* ============================================
        BUTTONS
        ============================================ */
@@ -2025,6 +2045,12 @@
             />
           </div>
           <div class="login-error" id="login-error"></div>
+          <div class="remember-me-row">
+            <label class="remember-me-label">
+              <input type="checkbox" id="remember-me" />
+              <span>Lembrar-me neste dispositivo</span>
+            </label>
+          </div>
           <button class="btn btn-primary" id="login-btn">Entrar</button>
         </div>
       </div>
@@ -2082,6 +2108,17 @@
         </div>
         <div class="login-error" id="pwd-change-error"></div>
         <div class="modal-actions">
+          <button
+            class="btn btn-secondary btn-sm"
+            id="pwd-skip-btn"
+            style="
+              background: var(--bg-700);
+              border: 1px solid var(--border-color);
+              color: var(--text-secondary);
+            "
+          >
+            Saltar (já alterei noutro dispositivo)
+          </button>
           <button class="btn btn-primary btn-sm" id="pwd-save-btn">
             Guardar
           </button>
@@ -2490,6 +2527,7 @@
         };
 
         const SESSION_TTL = 24 * 60 * 60 * 1000;
+        const SESSION_TTL_REMEMBER = 30 * 24 * 60 * 60 * 1000; // 30 days
 
         const ROLE_LABELS = {
           owner: "Owner",
@@ -2558,7 +2596,8 @@
           const stored = localStorage.getItem("maktub_hub_session");
           if (!stored) return null;
           const session = JSON.parse(stored);
-          if (Date.now() - session.loginTime > SESSION_TTL) {
+          const ttl = session.rememberMe ? SESSION_TTL_REMEMBER : SESSION_TTL;
+          if (Date.now() - session.loginTime > ttl) {
             localStorage.removeItem("maktub_hub_session");
             return null;
           }
@@ -2642,6 +2681,8 @@
         async function handleLogin() {
           const usernameInput = document.getElementById("login-username");
           const passwordInput = document.getElementById("login-password");
+          const rememberMe =
+            document.getElementById("remember-me")?.checked || false;
           const errorEl = document.getElementById("login-error");
           const username = usernameInput.value.trim().toLowerCase();
           const password = passwordInput.value;
@@ -2666,14 +2707,24 @@
             role: user.role,
             name: user.name,
             loginTime: Date.now(),
+            rememberMe: rememberMe,
           };
           saveSession(currentSession);
           usernameInput.value = "";
           passwordInput.value = "";
           // Check if user needs to set their own password (first login)
-          if (!user.passwordChanged) {
+          // Check both the user object AND a persistent per-user flag
+          const pwdChangedKey = `maktub_pwd_changed_${user.username}`;
+          const pwdChangedPersistent =
+            localStorage.getItem(pwdChangedKey) === "true";
+          if (!user.passwordChanged && !pwdChangedPersistent) {
             showPasswordChangeModal();
             return;
+          }
+          // If persistent flag exists but user object doesn't have it, sync it
+          if (!user.passwordChanged && pwdChangedPersistent) {
+            user.passwordChanged = true;
+            saveUsers(users);
           }
           const userData = getUserData(user.username);
           if (!userData.email) {
@@ -2765,6 +2816,8 @@
           user.hash = await sha256(newPwd);
           user.passwordChanged = true;
           saveUsers(users);
+          // Also save a persistent per-user flag so it survives data resets
+          localStorage.setItem(`maktub_pwd_changed_${user.username}`, "true");
           hidePasswordChangeModal();
 
           // Continue normal post-login flow
@@ -2777,6 +2830,29 @@
               `Bem-vindo(a), ${currentSession.name}! Palavra-passe atualizada.`,
               "success",
             );
+          }
+        }
+
+        function handlePasswordSkip() {
+          // Mark password as changed so user won't be prompted again on this device
+          const users = getUsers();
+          const user = users.find(
+            (u) => u.username === currentSession.username,
+          );
+          if (user) {
+            user.passwordChanged = true;
+            saveUsers(users);
+            localStorage.setItem(`maktub_pwd_changed_${user.username}`, "true");
+          }
+          hidePasswordChangeModal();
+
+          // Continue normal post-login flow
+          const userData = getUserData(currentSession.username);
+          if (!userData.email) {
+            showEmailModal();
+          } else {
+            showHub();
+            showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
           }
         }
 
@@ -3263,6 +3339,9 @@
           document
             .getElementById("pwd-save-btn")
             .addEventListener("click", handlePasswordChange);
+          document
+            .getElementById("pwd-skip-btn")
+            .addEventListener("click", handlePasswordSkip);
           document
             .getElementById("pwd-new")
             .addEventListener("keydown", (e) => {
@@ -3911,5 +3990,70 @@
         animate();
       })();
     </script>
+
+    <!-- Powered by The Burnay Labs -->
+    <div
+      style="
+        position: fixed;
+        bottom: 8px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 9;
+        pointer-events: none;
+      "
+    >
+      <div
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          opacity: 0.35;
+          pointer-events: auto;
+        "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-2 -2 100 114"
+          width="16"
+          height="18"
+          style="flex-shrink: 0"
+        >
+          <path
+            d="M10,6 L48,6 L58,16 L58,38 L48,48 L58,58 L58,84 L48,96 L10,96 Z"
+            stroke="#fafafa"
+            stroke-width="2.5"
+            fill="none"
+            stroke-linejoin="miter"
+            stroke-linecap="butt"
+          />
+          <line
+            x1="10"
+            y1="48"
+            x2="48"
+            y2="48"
+            stroke="#fafafa"
+            stroke-width="2.5"
+          />
+          <polyline
+            points="70,4 70,70 48,96 92,96"
+            stroke="#fafafa"
+            stroke-width="2.5"
+            fill="none"
+            stroke-linejoin="miter"
+            stroke-linecap="butt"
+          />
+        </svg>
+        <span
+          style="
+            font-family: &quot;Inter&quot;, sans-serif;
+            font-size: 10px;
+            color: #fafafa;
+            letter-spacing: 0.5px;
+          "
+          >Powered by The Burnay Labs</span
+        >
+      </div>
+    </div>
   </body>
 </html>

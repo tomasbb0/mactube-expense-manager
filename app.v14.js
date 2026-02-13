@@ -93,6 +93,7 @@ const toast = document.getElementById("toast");
 // Initialize App
 function initApp() {
   initTabs();
+  initCustomShortcuts();
   initForm();
   initFilters();
   initModals();
@@ -152,6 +153,74 @@ function handleLogout() {
   // Mark as internal navigation so hub.html skips the intro animation
   sessionStorage.setItem("maktub_internal_nav", "true");
   window.location.href = "hub.html";
+}
+
+// ==========================================
+// CLEAR APP CACHE
+// ==========================================
+
+function clearAppCache() {
+  const confirmed = confirm(
+    "Limpar cache da aplicação?\n\n" +
+      "Isto irá:\n" +
+      "• Limpar dados em cache da app\n" +
+      "• Limpar service workers\n" +
+      "• Recarregar a página\n\n" +
+      "A tua sessão será mantida.",
+  );
+  if (!confirmed) return;
+
+  // Preserve session-related keys
+  const sessionData = localStorage.getItem("maktub_hub_session");
+  const userData = localStorage.getItem("maktub_user");
+  const hubUsers = localStorage.getItem("maktub_hub_users");
+
+  // Collect password-changed keys to preserve
+  const pwdKeys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith("maktub_pwd_changed_")) {
+      pwdKeys.push({ key, value: localStorage.getItem(key) });
+    }
+  }
+
+  // Clear all maktub_ keys from localStorage
+  const keysToRemove = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith("maktub_")) {
+      keysToRemove.push(key);
+    }
+  }
+  keysToRemove.forEach((k) => localStorage.removeItem(k));
+
+  // Restore session & auth
+  if (sessionData) localStorage.setItem("maktub_hub_session", sessionData);
+  if (userData) localStorage.setItem("maktub_user", userData);
+  if (hubUsers) localStorage.setItem("maktub_hub_users", hubUsers);
+  pwdKeys.forEach((p) => localStorage.setItem(p.key, p.value));
+
+  // Clear sessionStorage (except internal_nav flag)
+  sessionStorage.clear();
+
+  // Unregister service workers
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((r) => r.unregister());
+    });
+  }
+
+  // Clear CacheStorage
+  if ("caches" in window) {
+    caches.keys().then((names) => {
+      names.forEach((name) => caches.delete(name));
+    });
+  }
+
+  // Hard reload after a brief delay
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 300);
 }
 
 function showApp() {
@@ -223,6 +292,177 @@ function initTabs() {
 
   // Highlight dashboard quick actions on initial load
   highlightQuickActions("dashboard");
+}
+
+// ==========================================
+// CUSTOM SHORTCUTS
+// ==========================================
+
+const SHORTCUT_OPTIONS = [
+  {
+    id: "bulk-delete",
+    label: "Eliminação em Massa",
+    action: "openBulkDeleteModal()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  },
+  {
+    id: "bulk-add",
+    label: "Adicionar em Massa",
+    action: "openBulkAddModal()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+  },
+  {
+    id: "export-csv",
+    label: "Exportar CSV",
+    action: "exportCSV()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+  },
+  {
+    id: "export-pdf",
+    label: "Exportar PDF",
+    action: "exportPDF()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  },
+  {
+    id: "dedup",
+    label: "Deduplicar",
+    action: "deduplicateExpenses()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>',
+  },
+  {
+    id: "refresh",
+    label: "Atualizar Dados",
+    action: "loadData()",
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>',
+  },
+];
+
+function getCustomShortcuts() {
+  const stored = localStorage.getItem("maktub_custom_shortcuts");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveCustomShortcuts(ids) {
+  localStorage.setItem("maktub_custom_shortcuts", JSON.stringify(ids));
+}
+
+function initCustomShortcuts() {
+  renderCustomShortcuts();
+}
+
+function renderCustomShortcuts() {
+  const shortcutIds = getCustomShortcuts();
+  const bars = document.querySelectorAll(".dashboard-quick-actions");
+
+  bars.forEach((bar) => {
+    // Remove old custom shortcuts and add-button
+    bar
+      .querySelectorAll(
+        ".custom-shortcut-btn, .add-shortcut-btn, .shortcut-dropdown",
+      )
+      .forEach((el) => el.remove());
+
+    // Add custom shortcut buttons
+    shortcutIds.forEach((id) => {
+      const opt = SHORTCUT_OPTIONS.find((o) => o.id === id);
+      if (!opt) return;
+
+      const btn = document.createElement("button");
+      btn.className = "quick-action-btn custom-shortcut-btn";
+      btn.setAttribute("onclick", opt.action);
+      btn.innerHTML = `
+        ${opt.icon}
+        ${opt.label}
+        <span class="shortcut-remove" onclick="event.stopPropagation(); removeCustomShortcut('${id}')" title="Remover atalho">&times;</span>
+      `;
+      bar.appendChild(btn);
+    });
+
+    // Add the "+ Add Shortcut" button
+    const addBtn = document.createElement("button");
+    addBtn.className = "quick-action-btn add-shortcut-btn";
+    addBtn.setAttribute("type", "button");
+    addBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" stroke-dasharray="4 2"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      Atalho
+    `;
+    addBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleShortcutDropdown(bar, addBtn);
+    });
+    bar.appendChild(addBtn);
+  });
+}
+
+function toggleShortcutDropdown(bar, anchorBtn) {
+  // Close any existing dropdown
+  document.querySelectorAll(".shortcut-dropdown").forEach((d) => d.remove());
+
+  const existing = bar.querySelector(".shortcut-dropdown");
+  if (existing) {
+    existing.remove();
+    return;
+  }
+
+  const currentShortcuts = getCustomShortcuts();
+  const available = SHORTCUT_OPTIONS.filter(
+    (o) => !currentShortcuts.includes(o.id),
+  );
+
+  if (available.length === 0) {
+    showToast("Todos os atalhos já foram adicionados", "");
+    return;
+  }
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "shortcut-dropdown";
+
+  dropdown.innerHTML = `
+    <div class="shortcut-dropdown-title">Adicionar atalho</div>
+    ${available
+      .map(
+        (opt) => `
+      <button class="shortcut-dropdown-item" onclick="addCustomShortcut('${opt.id}')">
+        ${opt.icon}
+        <span>${opt.label}</span>
+      </button>
+    `,
+      )
+      .join("")}
+  `;
+
+  // Position relative to the add button
+  bar.style.position = "relative";
+  bar.appendChild(dropdown);
+
+  // Close when clicking elsewhere
+  const closeHandler = (e) => {
+    if (!dropdown.contains(e.target) && e.target !== anchorBtn) {
+      dropdown.remove();
+      document.removeEventListener("click", closeHandler);
+    }
+  };
+  setTimeout(() => document.addEventListener("click", closeHandler), 0);
+}
+
+function addCustomShortcut(id) {
+  const shortcuts = getCustomShortcuts();
+  if (!shortcuts.includes(id)) {
+    shortcuts.push(id);
+    saveCustomShortcuts(shortcuts);
+  }
+  document.querySelectorAll(".shortcut-dropdown").forEach((d) => d.remove());
+  renderCustomShortcuts();
+}
+
+function removeCustomShortcut(id) {
+  const shortcuts = getCustomShortcuts().filter((s) => s !== id);
+  saveCustomShortcuts(shortcuts);
+  renderCustomShortcuts();
 }
 
 // ==========================================
@@ -3022,6 +3262,33 @@ function initModals() {
   document.getElementById("delete-modal").addEventListener("click", (e) => {
     if (e.target.id === "delete-modal") closeDeleteModal();
   });
+
+  // Bulk Delete Modal
+  document
+    .getElementById("close-bulk-delete")
+    .addEventListener("click", closeBulkDeleteModal);
+  document
+    .getElementById("cancel-bulk-delete")
+    .addEventListener("click", closeBulkDeleteModal);
+  document
+    .getElementById("confirm-bulk-delete")
+    .addEventListener("click", handleBulkDelete);
+  document
+    .getElementById("bulk-delete-modal")
+    .addEventListener("click", (e) => {
+      if (e.target.id === "bulk-delete-modal") closeBulkDeleteModal();
+    });
+
+  // Bulk Add Modal
+  document
+    .getElementById("close-bulk-add")
+    .addEventListener("click", closeBulkAddModal);
+  document.getElementById("bulk-add-modal").addEventListener("click", (e) => {
+    if (e.target.id === "bulk-add-modal") closeBulkAddModal();
+  });
+
+  // CSV file upload
+  initBulkAddFileUpload();
 }
 
 function openEditModal(id) {
@@ -3092,6 +3359,746 @@ function handleDelete() {
   updateDashboard();
   updateFilterDropdowns();
   showToast("Despesa eliminada!", "success");
+}
+
+// ==========================================
+// BULK DELETE
+// ==========================================
+
+let bulkDeleteParsed = [];
+
+function openBulkDeleteModal() {
+  const modal = document.getElementById("bulk-delete-modal");
+  modal.classList.remove("hidden");
+  populateBulkDeleteFilters();
+  updateBulkDeletePreview();
+
+  // Add listeners for live preview
+  [
+    "bulk-delete-artist",
+    "bulk-delete-project",
+    "bulk-delete-type",
+    "bulk-delete-investor",
+    "bulk-delete-date-from",
+    "bulk-delete-date-to",
+  ].forEach((id) => {
+    document
+      .getElementById(id)
+      .addEventListener("change", updateBulkDeletePreview);
+  });
+}
+
+function closeBulkDeleteModal() {
+  document.getElementById("bulk-delete-modal").classList.add("hidden");
+}
+
+function populateBulkDeleteFilters() {
+  const artists = [...new Set(expenses.map((e) => e.artist))].sort();
+  const projects = [...new Set(expenses.map((e) => e.project))].sort();
+
+  const artistSelect = document.getElementById("bulk-delete-artist");
+  artistSelect.innerHTML =
+    '<option value="all">Todos os Artistas</option>' +
+    artists.map((a) => `<option value="${a}">${a}</option>`).join("");
+
+  const projectSelect = document.getElementById("bulk-delete-project");
+  projectSelect.innerHTML =
+    '<option value="all">Todos os Projetos</option>' +
+    projects.map((p) => `<option value="${p}">${p}</option>`).join("");
+}
+
+function getBulkDeleteMatches() {
+  const artist = document.getElementById("bulk-delete-artist").value;
+  const project = document.getElementById("bulk-delete-project").value;
+  const type = document.getElementById("bulk-delete-type").value;
+  const investor = document.getElementById("bulk-delete-investor").value;
+  const dateFrom = document.getElementById("bulk-delete-date-from").value;
+  const dateTo = document.getElementById("bulk-delete-date-to").value;
+
+  return expenses.filter((e) => {
+    if (artist !== "all" && e.artist !== artist) return false;
+    if (project !== "all" && e.project !== project) return false;
+    if (type !== "all" && e.type !== type) return false;
+    if (investor !== "all" && e.investor !== investor) return false;
+    if (dateFrom && e.date < dateFrom) return false;
+    if (dateTo && e.date > dateTo) return false;
+    return true;
+  });
+}
+
+function updateBulkDeletePreview() {
+  const matches = getBulkDeleteMatches();
+  const total = matches.reduce((sum, e) => sum + e.amount, 0);
+
+  document.getElementById("bulk-delete-count").textContent = matches.length;
+  document.getElementById("bulk-delete-total-amount").textContent =
+    formatCurrency(total);
+
+  const confirmBtn = document.getElementById("confirm-bulk-delete");
+  confirmBtn.disabled = matches.length === 0;
+
+  // Color the preview based on count
+  const preview = document.querySelector(".bulk-delete-preview");
+  if (matches.length > 0) {
+    preview.classList.add("has-matches");
+  } else {
+    preview.classList.remove("has-matches");
+  }
+}
+
+function handleBulkDelete() {
+  const matches = getBulkDeleteMatches();
+  if (matches.length === 0) return;
+
+  const matchIds = new Set(matches.map((e) => e.id));
+  expenses = expenses.filter((e) => !matchIds.has(e.id));
+
+  saveData();
+  closeBulkDeleteModal();
+  renderTable();
+  renderPivotTables();
+  updateDashboard();
+  updateFilterDropdowns();
+  showToast(`${matches.length} despesas eliminadas!`, "success");
+}
+
+// ==========================================
+// BULK ADD — CSV TEMPLATE
+// ==========================================
+
+let bulkAddCSVData = [];
+let bulkAddAIData = [];
+
+function openBulkAddModal() {
+  document.getElementById("bulk-add-modal").classList.remove("hidden");
+  // Reset state
+  bulkAddCSVData = [];
+  bulkAddAIData = [];
+  document.getElementById("csv-preview").classList.add("hidden");
+  document.getElementById("ai-preview").classList.add("hidden");
+  document.getElementById("csv-file-name").classList.add("hidden");
+  const fileInput = document.getElementById("csv-file-input");
+  if (fileInput) fileInput.value = "";
+  const aiInput = document.getElementById("ai-text-input");
+  if (aiInput) aiInput.value = "";
+
+  // Tab switching
+  document.querySelectorAll(".bulk-add-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document
+        .querySelectorAll(".bulk-add-tab")
+        .forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.getAttribute("data-bulk-tab");
+      document
+        .getElementById("bulk-add-template")
+        .classList.toggle("hidden", target !== "template");
+      document
+        .getElementById("bulk-add-ai")
+        .classList.toggle("hidden", target !== "ai");
+    });
+  });
+}
+
+function closeBulkAddModal() {
+  document.getElementById("bulk-add-modal").classList.add("hidden");
+}
+
+function downloadCSVTemplate() {
+  const headers = [
+    "Data",
+    "Artista",
+    "Projeto",
+    "Tipo",
+    "Entidade",
+    "Investidor",
+    "Valor",
+    "Notas",
+  ];
+  const example = [
+    "2025-04-25",
+    "Bandidos do Cante",
+    "Beja 25 Abril",
+    "Combustível",
+    "Galp",
+    "Maktub",
+    "50.00",
+    "Viagem ida",
+  ];
+  const csv = [headers.join(","), example.map((c) => `"${c}"`).join(",")].join(
+    "\n",
+  );
+
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "maktub_template_despesas.csv";
+  link.click();
+  URL.revokeObjectURL(url);
+  showToast("Template CSV descarregado!", "success");
+}
+
+function clearCSVFile() {
+  document.getElementById("csv-file-input").value = "";
+  document.getElementById("csv-file-name").classList.add("hidden");
+  document.getElementById("csv-preview").classList.add("hidden");
+  document.getElementById("csv-errors")?.classList.add("hidden");
+  bulkAddCSVData = [];
+}
+
+function initBulkAddFileUpload() {
+  const dropZone = document.getElementById("csv-drop-zone");
+  const fileInput = document.getElementById("csv-file-input");
+
+  if (!dropZone || !fileInput) return;
+
+  dropZone.addEventListener("click", () => fileInput.click());
+
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.classList.add("drag-over");
+  });
+
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.classList.remove("drag-over");
+  });
+
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.classList.remove("drag-over");
+    if (e.dataTransfer.files.length > 0) {
+      handleCSVFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  fileInput.addEventListener("change", (e) => {
+    if (e.target.files.length > 0) {
+      handleCSVFile(e.target.files[0]);
+    }
+  });
+}
+
+function handleCSVFile(file) {
+  document.getElementById("csv-file-name").classList.remove("hidden");
+  document.getElementById("csv-file-name-text").textContent = file.name;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const text = e.target.result;
+    parseCSVAndPreview(text);
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+// Reverse type name mapping
+function getTypeKey(name) {
+  const reverseMap = {
+    combustível: "combustivel",
+    combustivel: "combustivel",
+    alimentação: "alimentacao",
+    alimentacao: "alimentacao",
+    alojamento: "alojamento",
+    equipamento: "equipamento",
+    produção: "producao",
+    producao: "producao",
+    promoção: "promocao",
+    promocao: "promocao",
+    transporte: "transporte",
+    outros: "outros",
+  };
+  return reverseMap[name.toLowerCase().trim()] || null;
+}
+
+function getInvestorKey(name) {
+  const n = name.toLowerCase().trim();
+  if (n === "maktub" || n === "maktub art group") return "maktub";
+  if (n === "bandidos" || n === "bandidos do cante") return "bandidos";
+  return null;
+}
+
+function parseCSVAndPreview(text) {
+  const errors = [];
+  const parsed = [];
+
+  // Detect separator: semicolon or comma
+  const firstLine = text.split("\n")[0];
+  const sep = firstLine.includes(";") ? ";" : ",";
+
+  const lines = text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+
+  if (lines.length < 2) {
+    showCSVError("Ficheiro vazio ou apenas com cabeçalho.");
+    return;
+  }
+
+  // Skip header
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVLine(lines[i], sep);
+    if (cols.length < 7) {
+      errors.push(
+        `Linha ${i + 1}: número insuficiente de colunas (${cols.length}/7+)`,
+      );
+      continue;
+    }
+
+    const [
+      dateRaw,
+      artist,
+      project,
+      typeRaw,
+      entity,
+      investorRaw,
+      amountRaw,
+      notes,
+    ] = cols;
+
+    const date = normalizeDate(dateRaw);
+    const typeKey = getTypeKey(typeRaw);
+    const investor = getInvestorKey(investorRaw);
+    const amount = parseFloat(
+      amountRaw.replace(",", ".").replace(/[^\d.]/g, ""),
+    );
+
+    const rowErrors = [];
+    if (!date) rowErrors.push("data inválida");
+    if (!artist.trim()) rowErrors.push("artista em falta");
+    if (!project.trim()) rowErrors.push("projeto em falta");
+    if (!typeKey) rowErrors.push(`tipo desconhecido: "${typeRaw}"`);
+    if (!investor) rowErrors.push(`investidor desconhecido: "${investorRaw}"`);
+    if (isNaN(amount) || amount <= 0) rowErrors.push("valor inválido");
+
+    parsed.push({
+      date: date || dateRaw,
+      artist: artist.trim(),
+      project: project.trim(),
+      type: typeKey || typeRaw,
+      entity: (entity || "").trim(),
+      investor: investor || investorRaw,
+      amount: isNaN(amount) ? 0 : amount,
+      notes: (notes || "").trim(),
+      valid: rowErrors.length === 0,
+      errors: rowErrors,
+      lineNum: i + 1,
+    });
+  }
+
+  bulkAddCSVData = parsed;
+  renderCSVPreview(parsed, errors);
+}
+
+function parseCSVLine(line, sep) {
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === sep && !inQuotes) {
+      result.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+function normalizeDate(raw) {
+  raw = raw.trim().replace(/"/g, "");
+
+  // Try YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+
+  // Try DD/MM/YYYY
+  const match = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if (match) {
+    return `${match[3]}-${match[2].padStart(2, "0")}-${match[1].padStart(2, "0")}`;
+  }
+
+  return null;
+}
+
+function renderCSVPreview(parsed, globalErrors) {
+  const tbody = document.getElementById("csv-preview-body");
+  const validCount = parsed.filter((r) => r.valid).length;
+  document.getElementById("csv-preview-count").textContent =
+    `${validCount}/${parsed.length}`;
+
+  tbody.innerHTML = parsed
+    .map(
+      (r) => `
+    <tr class="${r.valid ? "" : "csv-row-error"}">
+      <td>${r.date}</td>
+      <td>${r.artist}</td>
+      <td>${r.project}</td>
+      <td>${r.valid ? getTypeName(r.type) : r.type}</td>
+      <td>${r.entity || "-"}</td>
+      <td>${r.investor === "maktub" ? "Maktub" : r.investor === "bandidos" ? "Bandidos" : r.investor}</td>
+      <td>${r.amount > 0 ? formatCurrency(r.amount) : "-"}</td>
+      <td>${r.notes || "-"}</td>
+      <td>${r.valid ? '<span class="csv-status-ok">✓</span>' : '<span class="csv-status-err" title="' + r.errors.join(", ") + '">✗ ' + r.errors[0] + "</span>"}</td>
+    </tr>
+  `,
+    )
+    .join("");
+
+  const errorsDiv = document.getElementById("csv-errors");
+  if (globalErrors.length > 0 || parsed.some((r) => !r.valid)) {
+    const allErrors = [
+      ...globalErrors,
+      ...parsed
+        .filter((r) => !r.valid)
+        .map((r) => `Linha ${r.lineNum}: ${r.errors.join(", ")}`),
+    ];
+    errorsDiv.innerHTML =
+      `<strong>⚠️ ${allErrors.length} problema(s):</strong><br/>` +
+      allErrors.join("<br/>");
+    errorsDiv.classList.remove("hidden");
+  } else {
+    errorsDiv.classList.add("hidden");
+  }
+
+  document.getElementById("csv-preview").classList.remove("hidden");
+
+  const confirmBtn = document.getElementById("confirm-csv-add");
+  confirmBtn.disabled = validCount === 0;
+}
+
+function showCSVError(msg) {
+  const errorsDiv = document.getElementById("csv-errors");
+  errorsDiv.innerHTML = `<strong>❌ Erro:</strong> ${msg}`;
+  errorsDiv.classList.remove("hidden");
+  document.getElementById("csv-preview").classList.remove("hidden");
+  document.getElementById("csv-preview-body").innerHTML = "";
+  document.getElementById("csv-preview-count").textContent = "0";
+}
+
+function confirmBulkAddCSV() {
+  const toAdd = bulkAddCSVData.filter((r) => r.valid);
+  if (toAdd.length === 0) return;
+
+  toAdd.forEach((r) => {
+    expenses.push({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+      artist: r.artist,
+      project: r.project,
+      type: r.type,
+      amount: r.amount,
+      date: r.date,
+      entity: r.entity,
+      investor: r.investor,
+      notes: r.notes,
+      createdAt: new Date().toISOString(),
+    });
+  });
+
+  saveData();
+  closeBulkAddModal();
+  updateDashboard();
+  updateFilterDropdowns();
+  renderTable();
+  renderPivotTables();
+  showToast(`${toAdd.length} despesas adicionadas com sucesso!`, "success");
+}
+
+// ==========================================
+// BULK ADD — AI PARSING (BETA)
+// ==========================================
+
+const knownArtists = [
+  "Bandidos do Cante",
+  "BRUCE",
+  "Buba Espinho",
+  "D.A.M.A",
+  "INÊS",
+  "LUTZ",
+  "MAR",
+  "REAL GUNS",
+  "SUAVE",
+];
+
+const typeKeywords = {
+  combustível: "combustivel",
+  combustivel: "combustivel",
+  gasolina: "combustivel",
+  gasóleo: "combustivel",
+  alimentação: "alimentacao",
+  alimentacao: "alimentacao",
+  comida: "alimentacao",
+  refeição: "alimentacao",
+  restaurante: "alimentacao",
+  jantar: "alimentacao",
+  almoço: "alimentacao",
+  alojamento: "alojamento",
+  hotel: "alojamento",
+  hospedagem: "alojamento",
+  equipamento: "equipamento",
+  material: "equipamento",
+  produção: "producao",
+  producao: "producao",
+  estúdio: "producao",
+  estudio: "producao",
+  gravação: "producao",
+  promoção: "promocao",
+  promocao: "promocao",
+  publicidade: "promocao",
+  marketing: "promocao",
+  transporte: "transporte",
+  uber: "transporte",
+  táxi: "transporte",
+  taxi: "transporte",
+  avião: "transporte",
+  comboio: "transporte",
+  outros: "outros",
+};
+
+function parseAIText() {
+  const text = document.getElementById("ai-text-input").value.trim();
+  if (!text) {
+    showToast("Cole algum texto primeiro", "error");
+    return;
+  }
+
+  const lines = text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+  const parsed = lines.map((line, idx) => parseOneLine(line, idx));
+
+  bulkAddAIData = parsed;
+  renderAIPreview(parsed);
+}
+
+function parseOneLine(line, index) {
+  const result = {
+    date: "",
+    artist: "",
+    project: "",
+    type: "",
+    entity: "",
+    investor: "maktub",
+    amount: 0,
+    warnings: [],
+    valid: false,
+    original: line,
+  };
+
+  let remaining = line;
+
+  // 1. Extract amount  — patterns like 50€, €50, 50.00€, 50,00 EUR, 300 euros
+  const amountPatterns = [
+    /(\d+[.,]\d+)\s*(?:€|EUR|euros?)/i,
+    /(?:€|EUR)\s*(\d+[.,]\d+)/i,
+    /(\d+)\s*(?:€|EUR|euros?)/i,
+    /(?:€|EUR)\s*(\d+)/i,
+  ];
+
+  for (const pat of amountPatterns) {
+    const m = remaining.match(pat);
+    if (m) {
+      result.amount = parseFloat(m[1].replace(",", "."));
+      remaining = remaining.replace(m[0], " ").trim();
+      break;
+    }
+  }
+
+  if (!result.amount) {
+    // Try bare number
+    const bareNum = remaining.match(/\b(\d+[.,]?\d*)\b/);
+    if (bareNum) {
+      const val = parseFloat(bareNum[1].replace(",", "."));
+      if (val > 0 && val < 100000) {
+        result.amount = val;
+        remaining = remaining.replace(bareNum[0], " ").trim();
+      }
+    }
+  }
+
+  // 2. Extract date — YYYY-MM-DD or DD/MM/YYYY
+  const dateMatch = remaining.match(/(\d{4}-\d{2}-\d{2})/);
+  if (dateMatch) {
+    result.date = dateMatch[1];
+    remaining = remaining.replace(dateMatch[0], " ").trim();
+  } else {
+    const dateMatch2 = remaining.match(/(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})/);
+    if (dateMatch2) {
+      result.date = `${dateMatch2[3]}-${dateMatch2[2].padStart(2, "0")}-${dateMatch2[1].padStart(2, "0")}`;
+      remaining = remaining.replace(dateMatch2[0], " ").trim();
+    }
+  }
+
+  if (!result.date) {
+    result.date = new Date().toISOString().split("T")[0];
+    result.warnings.push("data não detetada, usada data de hoje");
+  }
+
+  // 3. Match artist (case-insensitive)
+  const remainLower = remaining.toLowerCase();
+  for (const artist of knownArtists) {
+    if (remainLower.includes(artist.toLowerCase())) {
+      result.artist = artist;
+      remaining = remaining
+        .replace(
+          new RegExp(artist.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+          " ",
+        )
+        .trim();
+      break;
+    }
+  }
+
+  // Also check custom artists
+  customArtists.forEach((a) => {
+    if (!result.artist && remainLower.includes(a.toLowerCase())) {
+      result.artist = a;
+      remaining = remaining
+        .replace(new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), " ")
+        .trim();
+    }
+  });
+
+  if (!result.artist) result.warnings.push("artista não detetado");
+
+  // 4. Match type keywords
+  const words = remaining.toLowerCase().split(/\s+/);
+  for (const word of words) {
+    if (typeKeywords[word]) {
+      result.type = typeKeywords[word];
+      remaining = remaining.replace(new RegExp(word, "i"), " ").trim();
+      break;
+    }
+  }
+  // Also check multi-word
+  for (const [keyword, typeKey] of Object.entries(typeKeywords)) {
+    if (!result.type && remaining.toLowerCase().includes(keyword)) {
+      result.type = typeKey;
+      remaining = remaining
+        .replace(
+          new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"),
+          " ",
+        )
+        .trim();
+      break;
+    }
+  }
+
+  if (!result.type) {
+    result.type = "outros";
+    result.warnings.push("tipo não detetado, definido como 'Outros'");
+  }
+
+  // 5. Match investor
+  if (/bandidos/i.test(remaining)) {
+    result.investor = "bandidos";
+    remaining = remaining.replace(/bandidos/i, " ").trim();
+  } else if (/maktub/i.test(remaining)) {
+    result.investor = "maktub";
+    remaining = remaining.replace(/maktub/i, " ").trim();
+  }
+
+  // 6. Remaining text = entity
+  const cleanRemaining = remaining.replace(/\s+/g, " ").trim();
+  if (cleanRemaining.length > 0 && cleanRemaining.length < 100) {
+    result.entity = cleanRemaining;
+  }
+
+  // Validate
+  result.valid = result.amount > 0 && result.date && result.artist;
+
+  return result;
+}
+
+function renderAIPreview(parsed) {
+  const tbody = document.getElementById("ai-preview-body");
+  const validCount = parsed.filter((r) => r.valid).length;
+  document.getElementById("ai-preview-count").textContent =
+    `${validCount}/${parsed.length}`;
+
+  tbody.innerHTML = parsed
+    .map(
+      (r) => `
+    <tr class="${r.valid ? "" : "csv-row-error"}">
+      <td>${r.date}</td>
+      <td>${r.artist || '<em style="color:var(--text-muted);">?</em>'}</td>
+      <td>${r.project || '<em style="color:var(--text-muted);">-</em>'}</td>
+      <td>${getTypeName(r.type)}</td>
+      <td>${r.entity || "-"}</td>
+      <td>${r.investor === "maktub" ? "Maktub" : "Bandidos"}</td>
+      <td>${r.amount > 0 ? formatCurrency(r.amount) : '<em style="color:var(--danger);">?</em>'}</td>
+      <td>${
+        r.valid
+          ? r.warnings.length > 0
+            ? '<span class="csv-status-warn" title="' +
+              r.warnings.join(", ") +
+              '">⚠️</span>'
+            : '<span class="csv-status-ok">✓</span>'
+          : '<span class="csv-status-err" title="' +
+            r.warnings.join(", ") +
+            '">✗</span>'
+      }</td>
+    </tr>
+  `,
+    )
+    .join("");
+
+  // Show warnings
+  const warningsDiv = document.getElementById("ai-warnings");
+  const allWarnings = parsed.flatMap((r, i) =>
+    r.warnings.map((w) => `Linha ${i + 1}: ${w}`),
+  );
+  if (allWarnings.length > 0) {
+    warningsDiv.innerHTML =
+      `<strong>⚠️ ${allWarnings.length} aviso(s):</strong><br/>` +
+      allWarnings.join("<br/>");
+    warningsDiv.classList.remove("hidden");
+  } else {
+    warningsDiv.classList.add("hidden");
+  }
+
+  document.getElementById("ai-preview").classList.remove("hidden");
+
+  const confirmBtn = document.getElementById("confirm-ai-add");
+  confirmBtn.disabled = validCount === 0;
+}
+
+function confirmBulkAddAI() {
+  const toAdd = bulkAddAIData.filter((r) => r.valid);
+  if (toAdd.length === 0) return;
+
+  toAdd.forEach((r) => {
+    expenses.push({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+      artist: r.artist,
+      project: r.project || "Gastos Gerais",
+      type: r.type,
+      amount: r.amount,
+      date: r.date,
+      entity: r.entity,
+      investor: r.investor,
+      notes: `[AI Beta] ${r.original}`,
+      createdAt: new Date().toISOString(),
+    });
+  });
+
+  saveData();
+  closeBulkAddModal();
+  updateDashboard();
+  updateFilterDropdowns();
+  renderTable();
+  renderPivotTables();
+  showToast(`${toAdd.length} despesas adicionadas via AI!`, "success");
 }
 
 // ==========================================
@@ -4130,14 +5137,14 @@ async function loadExistingProjects() {
           (proj) => `
                 <div class="project-card">
                     <div class="project-card-header">
-                        <span class="project-card-icon">📁</span>
+                        <span class="project-card-icon">■</span>
                         <div>
                             <h4>${proj.project}</h4>
                             <p class="project-card-artist">${proj.artist}</p>
                         </div>
                     </div>
                     <a href="https://docs.google.com/spreadsheets/d/${proj.spreadsheetId}" target="_blank" class="project-card-link">
-                        📊 Abrir Spreadsheet →
+                        Abrir Spreadsheet →
                     </a>
                 </div>
             `,
@@ -4210,6 +5217,25 @@ window.copyAppsScriptCode = copyAppsScriptCode;
 window.showSetupGuide = showSetupGuide;
 window.createNewProject = createNewProject;
 window.loadExistingProjects = loadExistingProjects;
+
+// Bulk actions
+window.openBulkDeleteModal = openBulkDeleteModal;
+window.closeBulkDeleteModal = closeBulkDeleteModal;
+window.openBulkAddModal = openBulkAddModal;
+window.closeBulkAddModal = closeBulkAddModal;
+window.downloadCSVTemplate = downloadCSVTemplate;
+window.clearCSVFile = clearCSVFile;
+window.confirmBulkAddCSV = confirmBulkAddCSV;
+window.parseAIText = parseAIText;
+window.confirmBulkAddAI = confirmBulkAddAI;
+
+// Custom shortcuts
+window.addCustomShortcut = addCustomShortcut;
+window.removeCustomShortcut = removeCustomShortcut;
+window.toggleShortcutDropdown = toggleShortcutDropdown;
+
+// Clear cache
+window.clearAppCache = clearAppCache;
 
 // ==========================================
 // TUTORIAL SYSTEM

@@ -12,7 +12,8 @@
         }
         try {
           var session = JSON.parse(s);
-          if (Date.now() - session.loginTime > 86400000) {
+          var ttl = session.rememberMe ? 2592000000 : 86400000; // 30 days or 24h
+          if (Date.now() - session.loginTime > ttl) {
             localStorage.removeItem("maktub_hub_session");
             window.location.replace("hub.html");
           }
@@ -102,6 +103,24 @@
               <path d="M3 3v5h5" />
               <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
               <path d="M16 16h5v5" />
+            </svg>
+          </button>
+          <button
+            id="clear-cache-btn"
+            class="header-btn"
+            title="Limpar Cache"
+            onclick="clearAppCache()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+              <line x1="4" y1="4" x2="20" y2="20" stroke-width="2.5" />
             </svg>
           </button>
           <button id="logout-btn" class="header-btn" title="Sair">
@@ -1097,6 +1116,28 @@
             Gravar Despesa
           </button>
         </form>
+
+        <!-- Bulk Add Section -->
+        <div class="bulk-add-shortcut">
+          <div class="bulk-add-shortcut-divider">
+            <span>ou adicione várias de uma vez</span>
+          </div>
+          <div class="bulk-add-shortcut-btns">
+            <button class="btn-secondary" onclick="openBulkAddModal()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              Adicionar em Massa
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Reports Tab -->
@@ -1421,6 +1462,44 @@
           </table>
         </div>
 
+        <div class="bulk-actions-row">
+          <button
+            class="btn-secondary bulk-action"
+            onclick="openBulkDeleteModal()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              />
+              <line x1="10" y1="11" x2="10" y2="17" />
+              <line x1="14" y1="11" x2="14" y2="17" />
+            </svg>
+            Eliminação em Massa
+          </button>
+          <button
+            class="btn-secondary bulk-action"
+            onclick="openBulkAddModal()"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="17 8 12 3 7 8" />
+              <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            Adicionar em Massa
+          </button>
+        </div>
+
         <div class="export-btns">
           <button class="btn-secondary" id="export-csv">
             <svg
@@ -1662,7 +1741,7 @@
 
         <div class="form-container project-form">
           <div class="form-group">
-            <label for="project-artist">🎵 Artista</label>
+            <label for="project-artist">Artista</label>
             <div class="artist-select-wrapper" id="artist-select-wrapper">
               <select id="project-artist" required>
                 <option value="">Selecionar artista...</option>
@@ -1677,7 +1756,7 @@
                 <option value="INÊS">INÊS</option>
                 <option value="REAL GUNS">REAL GUNS</option>
                 <option value="SUAVE">SUAVE</option>
-                <option value="__new__">➕ Novo Artista...</option>
+                <option value="__new__">+ Novo Artista...</option>
               </select>
               <div class="new-artist-inline hidden" id="new-artist-inline">
                 <input
@@ -1698,7 +1777,7 @@
           </div>
 
           <div class="form-group">
-            <label for="project-name">📁 Nome do Projeto</label>
+            <label for="project-name">Nome do Projeto</label>
             <input
               type="text"
               id="project-name"
@@ -1708,36 +1787,36 @@
           </div>
 
           <div class="form-group">
-            <label for="project-type">📂 Tipo de Projeto</label>
+            <label for="project-type">Tipo de Projeto</label>
             <select id="project-type" required>
               <option value="">Selecionar tipo...</option>
               <option value="Concerto">
-                🎤 Concerto Individual (ex: Beja, Leiria)
+                Concerto Individual (ex: Beja, Leiria)
               </option>
-              <option value="Festival">🎪 Festival (ex: NOS Alive)</option>
-              <option value="Tour">🚌 Tour / Digressão</option>
-              <option value="Videoclipe">🎬 Videoclipe</option>
-              <option value="Álbum">💿 Álbum / EP</option>
-              <option value="Sessão Fotográfica">📸 Sessão Fotográfica</option>
-              <option value="Promoção">📢 Campanha Promoção</option>
-              <option value="Styling">👕 Styling</option>
-              <option value="Outro">📋 Outro</option>
+              <option value="Festival">Festival (ex: NOS Alive)</option>
+              <option value="Tour">Tour / Digressão</option>
+              <option value="Videoclipe">Videoclipe</option>
+              <option value="Álbum">Álbum / EP</option>
+              <option value="Sessão Fotográfica">Sessão Fotográfica</option>
+              <option value="Promoção">Campanha Promoção</option>
+              <option value="Styling">Styling</option>
+              <option value="Outro">Outro</option>
             </select>
           </div>
 
           <div class="project-preview" id="project-preview">
-            <h4>📊 O projeto irá incluir:</h4>
+            <h4>O projeto irá incluir:</h4>
             <ul>
               <li>
-                📊 <strong>DASHBOARD</strong> - com fórmulas automáticas
-                (totais, investidores, balanço)
+                <strong>DASHBOARD</strong> - com fórmulas automáticas (totais,
+                investidores, balanço)
               </li>
-              <li>🎯 <strong>Promoção</strong> - marketing, publicidade</li>
-              <li>🚌 <strong>Tour</strong> - viagens, hotel, transporte</li>
-              <li>🎤 <strong>Concerto</strong> - custos de espetáculos</li>
-              <li>🎬 <strong>Videoclipe</strong> - produção audiovisual</li>
-              <li>📋 <strong>Geral</strong> - outras despesas</li>
-              <li>🎙️ <strong>Gravação</strong> - estúdio, produção</li>
+              <li><strong>Promoção</strong> - marketing, publicidade</li>
+              <li><strong>Tour</strong> - viagens, hotel, transporte</li>
+              <li><strong>Concerto</strong> - custos de espetáculos</li>
+              <li><strong>Videoclipe</strong> - produção audiovisual</li>
+              <li><strong>Geral</strong> - outras despesas</li>
+              <li><strong>Gravação</strong> - estúdio, produção</li>
             </ul>
           </div>
 
@@ -1772,14 +1851,14 @@
                 target="_blank"
                 class="btn btn-secondary"
               >
-                📊 Abrir Spreadsheet
+                Abrir Spreadsheet
               </a>
             </div>
           </div>
         </div>
 
         <div class="existing-projects">
-          <h3>📁 Projetos Existentes</h3>
+          <h3>Projetos Existentes</h3>
           <div id="projects-list" class="projects-grid">
             <p class="loading-text">A carregar projetos...</p>
           </div>
@@ -2137,6 +2216,351 @@
       </div>
     </div>
 
+    <!-- Bulk Delete Modal -->
+    <div id="bulk-delete-modal" class="modal hidden">
+      <div class="modal-content" style="min-width: 480px">
+        <div class="modal-header">
+          <h3>🗑️ Eliminação em Massa</h3>
+          <button class="modal-close" id="close-bulk-delete">&times;</button>
+        </div>
+        <div style="padding: 24px">
+          <p style="color: var(--text-secondary); margin-bottom: 16px">
+            Selecione critérios para eliminar despesas em massa:
+          </p>
+          <div class="form-group">
+            <label>Artista</label>
+            <select id="bulk-delete-artist">
+              <option value="all">Todos os Artistas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Projeto</label>
+            <select id="bulk-delete-project">
+              <option value="all">Todos os Projetos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="bulk-delete-type">
+              <option value="all">Todos os Tipos</option>
+              <option value="combustivel">Combustível</option>
+              <option value="alimentacao">Alimentação</option>
+              <option value="alojamento">Alojamento</option>
+              <option value="equipamento">Equipamento</option>
+              <option value="producao">Produção</option>
+              <option value="promocao">Promoção</option>
+              <option value="transporte">Transporte</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Investidor</label>
+            <select id="bulk-delete-investor">
+              <option value="all">Todos</option>
+              <option value="maktub">Maktub</option>
+              <option value="bandidos">Bandidos</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>De:</label>
+              <input type="date" id="bulk-delete-date-from" />
+            </div>
+            <div class="form-group">
+              <label>Até:</label>
+              <input type="date" id="bulk-delete-date-to" />
+            </div>
+          </div>
+          <div class="bulk-delete-preview">
+            <div class="bulk-delete-preview-icon">⚠️</div>
+            <p>
+              <strong id="bulk-delete-count">0</strong> despesas serão
+              eliminadas
+            </p>
+            <p class="bulk-delete-total">
+              Total: <strong id="bulk-delete-total-amount">0,00 EUR</strong>
+            </p>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-cancel" id="cancel-bulk-delete">Cancelar</button>
+            <button class="btn-danger" id="confirm-bulk-delete" disabled>
+              Eliminar Selecionadas
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Add Modal -->
+    <div id="bulk-add-modal" class="modal hidden">
+      <div class="modal-content" style="max-width: 900px; width: 90vw">
+        <div class="modal-header">
+          <h3>📥 Adicionar em Massa</h3>
+          <button class="modal-close" id="close-bulk-add">&times;</button>
+        </div>
+        <div style="padding: 24px">
+          <div class="bulk-add-tabs">
+            <button class="bulk-add-tab active" data-bulk-tab="template">
+              📄 Template CSV
+            </button>
+            <button class="bulk-add-tab" data-bulk-tab="ai">
+              🤖 AI Adding <span class="beta-badge">BETA</span>
+            </button>
+          </div>
+
+          <!-- Template Tab -->
+          <div id="bulk-add-template" class="bulk-add-panel">
+            <p style="color: var(--text-secondary); margin-bottom: 16px">
+              Faça upload de um ficheiro CSV com o formato correto. Use o
+              template para garantir compatibilidade.
+            </p>
+            <div style="display: flex; gap: 12px; margin-bottom: 16px">
+              <button class="btn-secondary" onclick="downloadCSVTemplate()">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  style="width: 16px; height: 16px"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download Template
+              </button>
+            </div>
+            <div class="file-upload-area" id="csv-drop-zone">
+              <input
+                type="file"
+                id="csv-file-input"
+                accept=".csv"
+                style="display: none"
+              />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="
+                  width: 40px;
+                  height: 40px;
+                  color: var(--text-muted);
+                  margin-bottom: 8px;
+                "
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <p style="color: var(--text-secondary)">
+                Arraste um ficheiro CSV aqui ou
+                <strong style="color: var(--green-primary); cursor: pointer"
+                  >clique para selecionar</strong
+                >
+              </p>
+              <p
+                style="
+                  color: var(--text-muted);
+                  font-size: 0.75rem;
+                  margin-top: 4px;
+                "
+              >
+                Formato: .csv (separado por vírgulas ou ponto-e-vírgula)
+              </p>
+            </div>
+            <div
+              id="csv-file-name"
+              class="hidden"
+              style="
+                padding: 8px 12px;
+                background: var(--bg-tertiary);
+                border-radius: var(--radius-sm);
+                margin-top: 8px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+              "
+            >
+              <span>📄</span>
+              <span id="csv-file-name-text"></span>
+              <button
+                onclick="clearCSVFile()"
+                style="
+                  margin-left: auto;
+                  background: none;
+                  border: none;
+                  color: var(--text-muted);
+                  cursor: pointer;
+                "
+              >
+                &times;
+              </button>
+            </div>
+            <div id="csv-preview" class="hidden" style="margin-top: 16px">
+              <h4 style="margin-bottom: 8px">
+                Pré-visualização —
+                <span id="csv-preview-count">0</span> entradas
+              </h4>
+              <div class="csv-preview-table-wrapper">
+                <table class="csv-preview-table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Artista</th>
+                      <th>Projeto</th>
+                      <th>Tipo</th>
+                      <th>Entidade</th>
+                      <th>Investidor</th>
+                      <th>Valor</th>
+                      <th>Notas</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="csv-preview-body"></tbody>
+                </table>
+              </div>
+              <div
+                id="csv-errors"
+                class="hidden"
+                style="
+                  margin-top: 8px;
+                  padding: 12px;
+                  background: rgba(255, 59, 48, 0.1);
+                  border-radius: var(--radius-sm);
+                  color: var(--danger);
+                  font-size: 0.8rem;
+                "
+              ></div>
+              <div class="modal-actions" style="margin-top: 16px">
+                <button class="btn-cancel" onclick="closeBulkAddModal()">
+                  Cancelar
+                </button>
+                <button
+                  class="btn-primary"
+                  id="confirm-csv-add"
+                  onclick="confirmBulkAddCSV()"
+                  style="width: auto; padding: 12px 24px"
+                >
+                  Adicionar Todas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Tab -->
+          <div id="bulk-add-ai" class="bulk-add-panel hidden">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 12px;
+              "
+            >
+              <span class="beta-badge-lg">🤖 BETA</span>
+              <p style="color: var(--text-secondary); margin: 0">
+                Cole texto com descrições de despesas. O sistema tenta
+                interpretar automaticamente.
+              </p>
+            </div>
+            <div
+              style="
+                margin-bottom: 12px;
+                padding: 12px;
+                background: var(--bg-tertiary);
+                border-radius: var(--radius-sm);
+                font-size: 0.8rem;
+                color: var(--text-muted);
+              "
+            >
+              <strong style="color: var(--text-secondary)"
+                >Exemplos de formatos aceites:</strong
+              ><br />
+              <code>50€ combustível Bandidos do Cante 2025-04-25 Galp</code
+              ><br />
+              <code>Alojamento 120€ Hotel XYZ Porto 25/04/2025</code><br />
+              <code>BRUCE produção 300 euros 2025-05-01</code><br />
+              <code
+                >Alimentação Buba Espinho 45.50€ 15/06/2025 Restaurante</code
+              >
+            </div>
+            <textarea
+              id="ai-text-input"
+              class="ai-textarea"
+              placeholder="Cole aqui o texto com as despesas...
+Uma despesa por linha."
+            ></textarea>
+            <button
+              class="btn-secondary"
+              onclick="parseAIText()"
+              style="margin-top: 12px"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                style="width: 16px; height: 16px"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              Interpretar Texto
+            </button>
+            <div id="ai-preview" class="hidden" style="margin-top: 16px">
+              <h4 style="margin-bottom: 8px">
+                Resultado — <span id="ai-preview-count">0</span> entradas
+                interpretadas
+              </h4>
+              <div class="csv-preview-table-wrapper">
+                <table class="csv-preview-table">
+                  <thead>
+                    <tr>
+                      <th>Data</th>
+                      <th>Artista</th>
+                      <th>Projeto</th>
+                      <th>Tipo</th>
+                      <th>Entidade</th>
+                      <th>Investidor</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ai-preview-body"></tbody>
+                </table>
+              </div>
+              <div
+                id="ai-warnings"
+                class="hidden"
+                style="
+                  margin-top: 8px;
+                  padding: 12px;
+                  background: rgba(255, 159, 10, 0.1);
+                  border-radius: var(--radius-sm);
+                  color: var(--warning, #ff9f0a);
+                  font-size: 0.8rem;
+                "
+              ></div>
+              <div class="modal-actions" style="margin-top: 16px">
+                <button class="btn-cancel" onclick="closeBulkAddModal()">
+                  Cancelar
+                </button>
+                <button
+                  class="btn-primary"
+                  id="confirm-ai-add"
+                  onclick="confirmBulkAddAI()"
+                  style="width: auto; padding: 12px 24px"
+                >
+                  Adicionar Todas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast -->
     <div id="toast" class="toast hidden"></div>
 
@@ -2250,5 +2674,70 @@
         animate();
       })();
     </script>
+
+    <!-- Powered by The Burnay Labs -->
+    <div
+      style="
+        position: fixed;
+        bottom: 8px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index: 9;
+        pointer-events: none;
+      "
+    >
+      <div
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          opacity: 0.35;
+          pointer-events: auto;
+        "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="-2 -2 100 114"
+          width="16"
+          height="18"
+          style="flex-shrink: 0"
+        >
+          <path
+            d="M10,6 L48,6 L58,16 L58,38 L48,48 L58,58 L58,84 L48,96 L10,96 Z"
+            stroke="#fafafa"
+            stroke-width="2.5"
+            fill="none"
+            stroke-linejoin="miter"
+            stroke-linecap="butt"
+          />
+          <line
+            x1="10"
+            y1="48"
+            x2="48"
+            y2="48"
+            stroke="#fafafa"
+            stroke-width="2.5"
+          />
+          <polyline
+            points="70,4 70,70 48,96 92,96"
+            stroke="#fafafa"
+            stroke-width="2.5"
+            fill="none"
+            stroke-linejoin="miter"
+            stroke-linecap="butt"
+          />
+        </svg>
+        <span
+          style="
+            font-family: &quot;Inter&quot;, sans-serif;
+            font-size: 10px;
+            color: #fafafa;
+            letter-spacing: 0.5px;
+          "
+          >Powered by The Burnay Labs</span
+        >
+      </div>
+    </div>
   </body>
 </html>
