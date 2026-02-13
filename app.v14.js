@@ -91,7 +91,7 @@ const refreshBtn = document.getElementById("refresh-btn");
 const toast = document.getElementById("toast");
 
 // Initialize App
-document.addEventListener("DOMContentLoaded", () => {
+function initApp() {
   initTabs();
   initForm();
   initFilters();
@@ -100,7 +100,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initGoogleSheetsSync();
   setDefaultDate();
   loadData();
-});
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
 
 // ==========================================
 // AUTH
@@ -4117,7 +4122,7 @@ async function loadExistingProjects() {
 }
 
 // Load projects when switching to the tab
-document.addEventListener("DOMContentLoaded", () => {
+function initProjectTab() {
   // Listen for tab changes
   document.querySelectorAll('.tab[data-tab="new-project"]').forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -4148,7 +4153,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
-});
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initProjectTab);
+} else {
+  initProjectTab();
+}
 
 // Make functions globally accessible
 window.openEditModal = openEditModal;
