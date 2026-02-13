@@ -4031,9 +4031,6 @@ Gerais Maktub</pre>
                         <button class="btn btn-secondary sync-action-btn" onclick="syncFromGoogleSheets()">
                             <span class="sync-icon">📥</span> Obter do Drive
                         </button>
-                        <button class="btn btn-accent sync-action-btn" onclick="fullSync()">
-                            <span class="sync-icon">🔄</span> Sincronização Completa
-                        </button>
                     </div>
                     <div class="sync-settings-link">
                         <button class="text-btn" onclick="showSetupGuide()">⚙️ Ver instruções de configuração</button>
