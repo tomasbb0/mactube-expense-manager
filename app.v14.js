@@ -3865,6 +3865,109 @@ function confirmBulkAddCSV() {
 }
 
 // ==========================================
+// BULK ADD — FILE UPLOAD HANDLING
+// ==========================================
+
+async function handleAIFileUpload(files) {
+  const textarea = document.getElementById("ai-text-input");
+  const statusEl = document.getElementById("ai-file-status");
+  if (!files || files.length === 0) return;
+
+  statusEl.style.display = "block";
+  statusEl.textContent = "A processar ficheiro(s)...";
+  let allText = [];
+
+  for (const file of files) {
+    try {
+      const ext = file.name.split(".").pop().toLowerCase();
+      let text = "";
+
+      if (ext === "xlsx" || ext === "xls") {
+        text = await readExcelFile(file);
+      } else if (ext === "docx") {
+        text = await readWordFile(file);
+      } else if (ext === "pdf") {
+        text = await readPDFFile(file);
+      } else if (ext === "txt" || ext === "csv") {
+        text = await file.text();
+      } else {
+        statusEl.textContent = `Formato .${ext} não suportado`;
+        continue;
+      }
+
+      if (text.trim()) allText.push(text.trim());
+    } catch (err) {
+      console.error("File read error:", err);
+      statusEl.textContent = `Erro ao ler ${file.name}: ${err.message}`;
+    }
+  }
+
+  if (allText.length > 0) {
+    const existing = textarea.value.trim();
+    textarea.value = existing ? existing + "\n" + allText.join("\n") : allText.join("\n");
+    statusEl.textContent = `✓ ${files.length} ficheiro(s) carregado(s). Texto extraído e colocado abaixo.`;
+  }
+
+  // Clear the file input so the same file can be re-uploaded
+  document.getElementById("ai-file-input").value = "";
+}
+
+async function readExcelFile(file) {
+  const data = await file.arrayBuffer();
+  const wb = XLSX.read(data, { type: "array" });
+  const lines = [];
+  for (const name of wb.SheetNames) {
+    const ws = wb.Sheets[name];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+    for (const row of rows) {
+      const line = row.map(String).join(" ").trim();
+      if (line) lines.push(line);
+    }
+  }
+  return lines.join("\n");
+}
+
+async function readWordFile(file) {
+  const data = await file.arrayBuffer();
+  const result = await mammoth.extractRawText({ arrayBuffer: data });
+  return result.value || "";
+}
+
+async function readPDFFile(file) {
+  const data = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data }).promise;
+  const lines = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map((item) => item.str).join(" ");
+    if (pageText.trim()) lines.push(pageText.trim());
+  }
+  return lines.join("\n");
+}
+
+// Drag-and-drop handlers
+document.addEventListener("DOMContentLoaded", () => {
+  const dropZone = document.getElementById("ai-file-drop");
+  if (!dropZone) return;
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = "var(--primary)";
+    dropZone.style.background = "rgba(167,139,250,0.05)";
+  });
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.style.borderColor = "";
+    dropZone.style.background = "";
+  });
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = "";
+    dropZone.style.background = "";
+    if (e.dataTransfer.files.length > 0) handleAIFileUpload(e.dataTransfer.files);
+  });
+});
+
+// ==========================================
 // BULK ADD — AI PARSING (BETA)
 // ==========================================
 
@@ -5279,6 +5382,7 @@ window.clearCSVFile = clearCSVFile;
 window.confirmBulkAddCSV = confirmBulkAddCSV;
 window.parseAIText = parseAIText;
 window.confirmBulkAddAI = confirmBulkAddAI;
+window.handleAIFileUpload = handleAIFileUpload;
 
 // Custom shortcuts
 window.addCustomShortcut = addCustomShortcut;

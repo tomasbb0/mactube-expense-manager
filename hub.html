@@ -2825,16 +2825,15 @@
               container.style.transform = "scale(30)";
 
               // Thin out circle strokes as they zoom past
-              // Must cancel CSS animations first — forwards fill locks stroke-width
+              // commitStyles() writes animated values as inline styles,
+              // then cancel() removes animations — stroke-width transition can fire
               if (svg) {
                 svg.querySelectorAll('circle').forEach(c => {
-                  const current = getComputedStyle(c).strokeWidth;
-                  c.style.animation = 'none';      // kill forwards fill
-                  c.style.strokeWidth = current;    // lock current value
+                  c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); });
                 });
-                void svg.offsetWidth;               // force reflow
+                void svg.offsetWidth;
                 svg.querySelectorAll('circle').forEach(c => {
-                  c.style.strokeWidth = '0.15';     // animate to thin
+                  c.style.strokeWidth = '0.15';
                 });
               }
 
@@ -2908,13 +2907,10 @@
           container.style.transform = "scale(30)";
 
           // Thin out circle strokes as they zoom past
-          // Must cancel CSS animations first — forwards fill locks stroke-width
           const svg = container.querySelector('svg');
           if (svg) {
             svg.querySelectorAll('circle').forEach(c => {
-              const current = getComputedStyle(c).strokeWidth;
-              c.style.animation = 'none';
-              c.style.strokeWidth = current;
+              c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); });
             });
             void svg.offsetWidth;
             svg.querySelectorAll('circle').forEach(c => {
