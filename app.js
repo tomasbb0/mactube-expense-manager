@@ -491,7 +491,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 9; // Increment to force reload - v9: Dashboard all filter dropdowns
+const DATA_VERSION = 10; // Increment to force reload - v10: Fix Settlement/Acerto investor breakdown
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
@@ -1917,10 +1917,18 @@ function getDashboardFilteredExpenses() {
     const matchArtist = artistFilter === "all" || e.artist === artistFilter;
     const matchProject = projectFilter === "all" || e.project === projectFilter;
     const matchType = typeFilter === "all" || e.type === typeFilter;
-    const matchInvestor = investorFilter === "all" || e.investor === investorFilter;
+    const matchInvestor =
+      investorFilter === "all" || e.investor === investorFilter;
     const matchFrom = !dateFrom || e.date >= dateFrom;
     const matchTo = !dateTo || e.date <= dateTo;
-    return matchArtist && matchProject && matchType && matchInvestor && matchFrom && matchTo;
+    return (
+      matchArtist &&
+      matchProject &&
+      matchType &&
+      matchInvestor &&
+      matchFrom &&
+      matchTo
+    );
   });
 }
 
@@ -2861,21 +2869,41 @@ function exportPDF() {
 // ==========================================
 
 function updateSettlement() {
-  const maktubTotal = expenses
+  // Maktub investment = what the band needs to repay
+  const maktubInvestment = expenses
     .filter((e) => e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
+  // Maktub gifts = spent by Maktub but NOT repaid
+  const maktubGifts = expenses
+    .filter(
+      (e) =>
+        e.investor === "oferta_maktub" || e.investor === "oferta_maktub_50",
+    )
+    .reduce((sum, e) => sum + e.amount, 0);
+  // Bandidos' own money
+  const bandidosOwn = expenses
+    .filter((e) => e.investor === "bandidos")
+    .reduce((sum, e) => sum + e.amount, 0);
+  // Sponsorship money
+  const sponsorship = expenses
+    .filter((e) => e.investor === "patrocinio")
+    .reduce((sum, e) => sum + e.amount, 0);
+  // Other/legacy
   const othersTotal = expenses
     .filter((e) => e.investor === "outro")
     .reduce((sum, e) => sum + e.amount, 0);
-  const total = maktubTotal + othersTotal;
+
+  const maktubTotalSpent = maktubInvestment + maktubGifts;
+  const terceirosTotal = bandidosOwn + sponsorship + othersTotal;
+  const grandTotal = maktubTotalSpent + terceirosTotal;
 
   document.getElementById("settle-maktub").textContent =
-    formatCurrency(maktubTotal);
+    formatCurrency(maktubTotalSpent);
   document.getElementById("settle-others").textContent =
-    formatCurrency(othersTotal);
+    formatCurrency(terceirosTotal);
 
-  const pctMaktub = total > 0 ? (maktubTotal / total) * 100 : 50;
-  const pctOthers = total > 0 ? (othersTotal / total) * 100 : 50;
+  const pctMaktub = grandTotal > 0 ? (maktubTotalSpent / grandTotal) * 100 : 50;
+  const pctOthers = grandTotal > 0 ? (terceirosTotal / grandTotal) * 100 : 50;
 
   document.getElementById("bar-maktub").style.width = pctMaktub + "%";
   document.getElementById("bar-others").style.width = pctOthers + "%";
@@ -2885,17 +2913,17 @@ function updateSettlement() {
     pctOthers.toFixed(1) + "%";
 
   const summaryEl = document.getElementById("settlement-summary");
-  if (total === 0) {
+  if (grandTotal === 0) {
     summaryEl.innerHTML = "<p>Carregue dados para ver o resumo do acerto.</p>";
   } else {
     summaryEl.innerHTML = `
             <p>
-                O <strong>Maktub Art Group</strong> investiu <span class="highlight">${formatCurrency(maktubTotal)}</span> 
-                (${pctMaktub.toFixed(1)}% do total) em custos de produção, logística e operações.
+                O <strong>Maktub Art Group</strong> investiu <span class="highlight">${formatCurrency(maktubInvestment)}</span> 
+                a recuperar, mais <span class="highlight">${formatCurrency(maktubGifts)}</span> em ofertas (total gasto: ${formatCurrency(maktubTotalSpent)}).
             </p>
             <p>
-                Os <strong>terceiros</strong> (cachets de artistas) representam <span class="highlight">${formatCurrency(othersTotal)}</span> 
-                (${pctOthers.toFixed(1)}% do total) em receitas/proveitos.
+                Os <strong>Bandidos</strong> investiram <span class="highlight">${formatCurrency(bandidosOwn)}</span> do próprio bolso.
+                ${sponsorship > 0 ? `Patrocínios externos: <span class="highlight">${formatCurrency(sponsorship)}</span>.` : ""}
             </p>
         `;
   }
@@ -2906,46 +2934,52 @@ function updateSettlement() {
 function updateArtistBreakdown() {
   const container = document.getElementById("artist-breakdown-list");
 
-  // Build nested structure: artist -> project -> { revenue, costs by investor }
+  // Build nested structure: artist -> project -> costs by investor type
   const byArtist = {};
 
   expenses.forEach((e) => {
     if (!byArtist[e.artist]) {
       byArtist[e.artist] = {
         projects: {},
-        totalRevenue: 0,
-        totalCostsMaktub: 0,
-        totalCostsOutros: 0,
+        totals: { maktub: 0, bandidos: 0, patrocinio: 0, ofertas: 0, outro: 0 },
       };
     }
     const artistData = byArtist[e.artist];
 
     if (!artistData.projects[e.project]) {
       artistData.projects[e.project] = {
-        revenue: 0,
-        costsMaktub: 0,
-        costsOutros: 0,
+        maktub: 0,
+        bandidos: 0,
+        patrocinio: 0,
+        ofertas: 0,
+        outro: 0,
         items: [],
       };
     }
     const proj = artistData.projects[e.project];
     proj.items.push(e);
 
-    if (e.investor === "outro") {
-      // Revenue / Proveito (cachets paid by third parties)
-      proj.revenue += e.amount;
-      artistData.totalRevenue += e.amount;
+    if (e.investor === "maktub") {
+      proj.maktub += e.amount;
+      artistData.totals.maktub += e.amount;
+    } else if (e.investor === "bandidos") {
+      proj.bandidos += e.amount;
+      artistData.totals.bandidos += e.amount;
+    } else if (e.investor === "patrocinio") {
+      proj.patrocinio += e.amount;
+      artistData.totals.patrocinio += e.amount;
+    } else if (e.investor === "oferta_maktub" || e.investor === "oferta_maktub_50") {
+      proj.ofertas += e.amount;
+      artistData.totals.ofertas += e.amount;
     } else {
-      // Cost paid by Maktub
-      proj.costsMaktub += e.amount;
-      artistData.totalCostsMaktub += e.amount;
+      proj.outro += e.amount;
+      artistData.totals.outro += e.amount;
     }
   });
 
   const artists = Object.entries(byArtist).sort((a, b) => {
-    // Sort by total volume descending
-    const totalA = a[1].totalRevenue + a[1].totalCostsMaktub;
-    const totalB = b[1].totalRevenue + b[1].totalCostsMaktub;
+    const totalA = Object.values(a[1].totals).reduce((s, v) => s + v, 0);
+    const totalB = Object.values(b[1].totals).reduce((s, v) => s + v, 0);
     return totalB - totalA;
   });
 
@@ -2954,52 +2988,50 @@ function updateArtistBreakdown() {
     return;
   }
 
-  let grandTotalRevenue = 0;
-  let grandTotalCosts = 0;
+  let grandMaktub = 0, grandBandidos = 0, grandPatrocinio = 0, grandOfertas = 0, grandOutro = 0;
 
   container.innerHTML = artists
     .map(([artist, data]) => {
-      const netBalance = data.totalRevenue - data.totalCostsMaktub;
-      grandTotalRevenue += data.totalRevenue;
-      grandTotalCosts += data.totalCostsMaktub;
+      grandMaktub += data.totals.maktub;
+      grandBandidos += data.totals.bandidos;
+      grandPatrocinio += data.totals.patrocinio;
+      grandOfertas += data.totals.ofertas;
+      grandOutro += data.totals.outro;
 
-      const projects = Object.entries(data.projects).sort((a, b) => {
-        const netA = a[1].revenue - a[1].costsMaktub;
-        const netB = b[1].revenue - b[1].costsMaktub;
-        return netB - netA;
-      });
+      const projects = Object.entries(data.projects).sort((a, b) => b[1].maktub - a[1].maktub);
 
       const projectRows = projects
-        .map(([projName, projData]) => {
-          const projNet = projData.revenue - projData.costsMaktub;
-          const profitClass =
-            projNet >= 0 ? "breakdown-positive" : "breakdown-negative";
+        .map(([projName, p]) => {
+          const projTotal = p.maktub + p.bandidos + p.patrocinio + p.ofertas + p.outro;
+          const details = [];
+          if (p.maktub > 0) details.push(`<span class="breakdown-costs">Maktub: ${formatCurrency(p.maktub)}</span>`);
+          if (p.bandidos > 0) details.push(`<span class="breakdown-revenue">Bandidos: ${formatCurrency(p.bandidos)}</span>`);
+          if (p.patrocinio > 0) details.push(`<span class="breakdown-revenue">Patrocínio: ${formatCurrency(p.patrocinio)}</span>`);
+          if (p.ofertas > 0) details.push(`<span class="breakdown-revenue">Ofertas: ${formatCurrency(p.ofertas)}</span>`);
+          if (p.outro > 0) details.push(`<span class="breakdown-revenue">Outro: ${formatCurrency(p.outro)}</span>`);
           return `
                 <div class="breakdown-project-row">
                     <span class="breakdown-project-name">📁 ${projName}</span>
-                    <span class="breakdown-revenue">Receita: ${formatCurrency(projData.revenue)}</span>
-                    <span class="breakdown-costs">Custos Maktub: ${formatCurrency(projData.costsMaktub)}</span>
-                    <span class="breakdown-net ${profitClass}">${projNet >= 0 ? "+" : ""}${formatCurrency(projNet)}</span>
+                    ${details.join("")}
+                    <span class="breakdown-net" style="font-weight:600">Total: ${formatCurrency(projTotal)}</span>
                 </div>
             `;
         })
         .join("");
 
-      const balanceClass =
-        netBalance >= 0 ? "breakdown-positive" : "breakdown-negative";
-      const balanceLabel =
-        netBalance >= 0
-          ? `Lucro: +${formatCurrency(netBalance)}`
-          : `Maktub a recuperar: ${formatCurrency(Math.abs(netBalance))}`;
+      const artistTotal = Object.values(data.totals).reduce((s, v) => s + v, 0);
+      const maktubToRecover = data.totals.maktub;
 
       return `
             <div class="breakdown-item">
                 <div class="breakdown-header">
                     <span class="breakdown-artist">${artist}</span>
                     <div class="breakdown-values">
-                        <span class="breakdown-maktub">Receitas: ${formatCurrency(data.totalRevenue)}</span>
-                        <span class="breakdown-others">Custos Maktub: ${formatCurrency(data.totalCostsMaktub)}</span>
-                        <span class="breakdown-net ${balanceClass}">${balanceLabel}</span>
+                        <span class="breakdown-costs">Investimento Maktub: ${formatCurrency(data.totals.maktub)}</span>
+                        ${data.totals.bandidos > 0 ? `<span class="breakdown-maktub">Investimento Bandidos: ${formatCurrency(data.totals.bandidos)}</span>` : ""}
+                        ${data.totals.patrocinio > 0 ? `<span class="breakdown-maktub">Patrocínios: ${formatCurrency(data.totals.patrocinio)}</span>` : ""}
+                        ${data.totals.ofertas > 0 ? `<span class="breakdown-maktub">Ofertas Maktub: ${formatCurrency(data.totals.ofertas)}</span>` : ""}
+                        <span class="breakdown-net breakdown-negative">Maktub a recuperar: ${formatCurrency(maktubToRecover)}</span>
                     </div>
                 </div>
                 <div class="breakdown-projects">
@@ -3011,17 +3043,17 @@ function updateArtistBreakdown() {
     .join("");
 
   // Grand total row
-  const grandNet = grandTotalRevenue - grandTotalCosts;
-  const grandClass =
-    grandNet >= 0 ? "breakdown-positive" : "breakdown-negative";
+  const grandTotal = grandMaktub + grandBandidos + grandPatrocinio + grandOfertas + grandOutro;
   container.innerHTML += `
         <div class="breakdown-item breakdown-grand-total">
             <div class="breakdown-header">
                 <span class="breakdown-artist">TOTAL GERAL</span>
                 <div class="breakdown-values">
-                    <span class="breakdown-maktub">Receitas: ${formatCurrency(grandTotalRevenue)}</span>
-                    <span class="breakdown-others">Custos Maktub: ${formatCurrency(grandTotalCosts)}</span>
-                    <span class="breakdown-net ${grandClass}">${grandNet >= 0 ? "Lucro: +" : "A recuperar: "}${formatCurrency(Math.abs(grandNet))}</span>
+                    <span class="breakdown-costs">Investimento Maktub: ${formatCurrency(grandMaktub)}</span>
+                    ${grandBandidos > 0 ? `<span class="breakdown-maktub">Investimento Bandidos: ${formatCurrency(grandBandidos)}</span>` : ""}
+                    ${grandPatrocinio > 0 ? `<span class="breakdown-maktub">Patrocínios: ${formatCurrency(grandPatrocinio)}</span>` : ""}
+                    ${grandOfertas > 0 ? `<span class="breakdown-maktub">Ofertas Maktub: ${formatCurrency(grandOfertas)}</span>` : ""}
+                    <span class="breakdown-net breakdown-negative">Maktub a recuperar: ${formatCurrency(grandMaktub)}</span>
                 </div>
             </div>
         </div>
