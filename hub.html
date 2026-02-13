@@ -144,7 +144,7 @@
         display: none;
       }
 
-      /* Fly-to-corner: BG fades, logo shrinks & moves */
+      /* Fly-to-corner: BG fades, logo shrinks & moves (used for login fly) */
       #intro-screen.bg-fade {
         background: transparent !important;
         pointer-events: none;
@@ -162,6 +162,18 @@
         margin: 0 !important;
         z-index: 10001;
         pointer-events: none;
+      }
+
+      /* Zoom-through: logo scales up massively, content revealed through the portal */
+      #intro-screen.zoom-through-bg {
+        background: transparent !important;
+        pointer-events: none;
+        transition: background 0.35s ease-in !important;
+      }
+
+      .intro-logo-container.zoom-through {
+        transition: transform 0.7s cubic-bezier(0.5, 0, 1, 0.5) !important;
+        transform-origin: center center;
       }
 
       .intro-text.fade-away {
@@ -2794,74 +2806,70 @@
             const introText = document.querySelector(".intro-text");
             if (introText) introText.classList.add("fade-away");
 
-            // Show destination screen behind transparent intro
             if (session) {
+              // ═══ LOGGED IN: ZOOM-THROUGH ═══
+              // Hub content appears through the expanding inner circle portal
               currentSession = session;
               showHub();
+
+              // Fade intro BG to transparent (reveals hub behind)
+              introScreen.classList.add("zoom-through-bg");
+
+              // Zoom! Logo scales up massively — circles rush past the camera
+              container.classList.add("zoom-through");
+              void container.offsetWidth; // force reflow
+              container.style.transform = "scale(30)";
+
+              // After zoom completes, hide intro
+              setTimeout(() => {
+                introScreen.classList.add("hidden");
+              }, 800);
             } else {
+              // ═══ NEEDS LOGIN: FLY TO LOGIN CENTER ═══
               showLogin();
-              // Hide the inline login-logo SVG — flying SVG replaces it visually
+
+              // Hide inline login-logo SVG — flying SVG replaces it
               const loginLogo = document.querySelector(
                 "#login-screen .login-logo",
               );
               if (loginLogo) loginLogo.style.visibility = "hidden";
-            }
 
-            // Get current center position of logo
-            const rect = container.getBoundingClientRect();
+              // Get current position and switch to fixed
+              const rect = container.getBoundingClientRect();
+              container.classList.add("fly-to-corner");
+              container.style.left = rect.left + "px";
+              container.style.top = rect.top + "px";
+              container.style.width = rect.width + "px";
+              container.style.height = rect.height + "px";
 
-            // Switch to fixed positioning at current location
-            container.classList.add("fly-to-corner");
-            container.style.left = rect.left + "px";
-            container.style.top = rect.top + "px";
-            container.style.width = rect.width + "px";
-            container.style.height = rect.height + "px";
+              // Fade intro background (but keep intro screen alive for post-login zoom)
+              introScreen.classList.add("bg-fade");
 
-            // Make intro background transparent
-            introScreen.classList.add("bg-fade");
-
-            // Force reflow before setting target
-            void container.offsetWidth;
-
-            // Calculate fly target
-            let targetEl;
-            if (session) {
-              targetEl = document.querySelector("#hub-screen .topbar-logo");
-            } else {
-              targetEl = document.querySelector("#login-screen .login-logo");
-            }
-
-            if (targetEl) {
-              const tRect = targetEl.getBoundingClientRect();
-              // Center the logo on the target element
-              const targetW = tRect.width;
-              const targetH = (targetW / rect.width) * rect.height;
-              container.style.left =
-                tRect.left + tRect.width / 2 - targetW / 2 + "px";
-              container.style.top =
-                tRect.top + tRect.height / 2 - targetH / 2 + "px";
-              container.style.width = targetW + "px";
-              container.style.height = targetH + "px";
-            }
-
-            // After fly completes — inline SVGs take over seamlessly
-            setTimeout(() => {
-              if (session) {
-                // Topbar inline SVG matches flying one → just hide intro
-                introScreen.classList.add("hidden");
-              } else {
-                // Restore inline login-logo, then hide intro
-                const loginLogo = document.querySelector(
-                  "#login-screen .login-logo",
-                );
-                if (loginLogo) loginLogo.style.visibility = "";
-                introScreen.classList.add("hidden");
+              // Force reflow then fly to login-logo position
+              void container.offsetWidth;
+              const targetEl = document.querySelector(
+                "#login-screen .login-logo",
+              );
+              if (targetEl) {
+                const tRect = targetEl.getBoundingClientRect();
+                const targetW = tRect.width;
+                const targetH = (targetW / rect.width) * rect.height;
+                container.style.left =
+                  tRect.left + tRect.width / 2 - targetW / 2 + "px";
+                container.style.top =
+                  tRect.top + tRect.height / 2 - targetH / 2 + "px";
+                container.style.width = targetW + "px";
+                container.style.height = targetH + "px";
               }
-            }, 900);
+
+              // After fly lands: keep intro screen alive for post-login zoom
+              // The flying SVG sits at login-logo position, login-logo hidden
+              // User logs in → flyLogoToTopbar() handles the zoom-through
+            }
           }, 2600);
         }
 
-        // Fly the floating intro logo from login-center → topbar corner
+        // Post-login: zoom-through from login-center → reveal hub
         function flyLogoToTopbar() {
           const introScreen = document.getElementById("intro-screen");
           const container = document.querySelector(".intro-logo-container");
@@ -2872,35 +2880,22 @@
           )
             return;
 
-          // Ensure it's in fly mode
-          if (!container.classList.contains("fly-to-corner")) return;
-
-          const targetEl = document.querySelector("#hub-screen .topbar-logo");
-          if (!targetEl) {
-            introScreen.classList.add("hidden");
-            return;
-          }
-
-          // Restore login-logo visibility for next visit
+          // Restore inline login-logo visibility
           const loginLogo = document.querySelector("#login-screen .login-logo");
           if (loginLogo) loginLogo.style.visibility = "";
 
-          const rect = container.getBoundingClientRect();
-          const tRect = targetEl.getBoundingClientRect();
-          const targetW = tRect.width;
-          const targetH = (targetW / rect.width) * rect.height;
+          // Zoom through! Logo scales up from login center position
+          container.classList.add("zoom-through");
+          void container.offsetWidth;
+          container.style.transform = "scale(30)";
 
-          container.style.left =
-            tRect.left + tRect.width / 2 - targetW / 2 + "px";
-          container.style.top =
-            tRect.top + tRect.height / 2 - targetH / 2 + "px";
-          container.style.width = targetW + "px";
-          container.style.height = targetH + "px";
+          // BG already transparent from bg-fade, reinforce with zoom-through-bg
+          introScreen.classList.add("zoom-through-bg");
 
+          // After zoom, hide intro — hub topbar inline SVG takes over
           setTimeout(() => {
-            // Inline topbar SVG takes over seamlessly
             introScreen.classList.add("hidden");
-          }, 900);
+          }, 800);
         }
 
         function onIntroComplete() {
@@ -4279,7 +4274,9 @@
               &quot;Avenir Next&quot;, &quot;Avenir&quot;,
               &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
             font-size: 10px;
-            font-weight: 200;
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            font-weight: 400;
             color: #fafafa;
             letter-spacing: 0.5px;
           "
@@ -4323,7 +4320,7 @@
               &quot;Avenir Next&quot;, &quot;Avenir&quot;,
               &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
             font-size: 10px;
-            font-weight: 200;
+            font-weight: 300;
             color: #fafafa;
             letter-spacing: 0.5px;
           "
