@@ -1,6 +1,23 @@
 // Maktub Art Group - Expense Manager App
 // ==========================================
 
+// Self-healing: if this version of app.js is newer than what's stored, clear stale data immediately
+(function selfHeal() {
+  var REQUIRED_VERSION = 14;
+  var v = localStorage.getItem("maktub_data_version");
+  if (v && parseInt(v) < REQUIRED_VERSION) {
+    localStorage.removeItem("maktub_expenses");
+    localStorage.removeItem("maktub_data_version");
+    console.log(
+      "🔄 Self-heal: cleared stale data (v" +
+        v +
+        " → v" +
+        REQUIRED_VERSION +
+        ")",
+    );
+  }
+})();
+
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
 const GOOGLE_SCRIPT_URL =
