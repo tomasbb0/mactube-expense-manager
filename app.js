@@ -510,7 +510,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 10; // Increment to force reload - v10: Fix Settlement/Acerto investor breakdown
+const DATA_VERSION = 11; // Increment to force reload - v11: Force fresh data on ux-transform branch
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
@@ -4336,49 +4336,49 @@ const tutorialSteps = [
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(1)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(1)",
     title: "📊 Dashboard",
     description:
       "O teu <strong>painel de controlo</strong>. Aqui vês totais por artista, tipo de despesa, e podes filtrar por projeto. Visão geral de tudo!",
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(2)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(2)",
     title: "➕ Nova Despesa",
     description:
       "Regista despesas (combustível, alojamento, produção, etc.) associadas a um <strong>artista</strong> e <strong>projeto</strong> específico.",
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(3)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(3)",
     title: "📁 Novo Projeto",
     description:
       'Cria projetos para organizar despesas. Ex: "Primavera - Zambujo", "Amigos Coloridos", etc.',
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(4)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(4)",
     title: "📈 Relatórios",
     description:
       "Gera <strong>relatórios detalhados</strong> com gráficos! Compara artistas, analisa tipos de gastos, filtra por período.",
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(5)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(5)",
     title: "💰 Acerto de Contas",
     description:
       "Calcula o <strong>balanço entre Maktub e cada artista</strong>. Mostra investimentos vs. pagamentos de terceiros, por projeto.",
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(7)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(7)",
     title: "📂 Abrir Drive",
     description:
       "Acesso direto à <strong>pasta partilhada no Drive</strong> com as spreadsheets de todos os artistas.",
     position: "bottom",
   },
   {
-    target: "#dashboard .dashboard-quick-actions :nth-child(8)",
+    target: "#dashboard .dashboard-quick-actions > :nth-child(8)",
     title: "☁️ Sync Drive",
     description:
       "<strong>Sincroniza tudo para o Google Drive</strong>. Cada artista tem a sua própria spreadsheet com despesas organizadas por projeto!",
