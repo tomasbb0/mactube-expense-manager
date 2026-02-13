@@ -2827,14 +2827,23 @@
               // Thin out circle strokes as they zoom past
               // Manual rAF animation — CSS transitions on SVG stroke-width are unreliable
               if (svg) {
-                const circles = [...svg.querySelectorAll('circle')];
-                const startW = circles.map(c => parseFloat(getComputedStyle(c).strokeWidth));
-                circles.forEach(c => c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); }));
+                const circles = [...svg.querySelectorAll("circle")];
+                const startW = circles.map((c) =>
+                  parseFloat(getComputedStyle(c).strokeWidth),
+                );
+                circles.forEach((c) =>
+                  c.getAnimations().forEach((a) => {
+                    a.commitStyles();
+                    a.cancel();
+                  }),
+                );
                 const t0 = performance.now();
                 (function tick(now) {
                   const p = Math.min((now - t0) / 700, 1);
                   const e = p * p; // accelerating
-                  circles.forEach((c, i) => { c.style.strokeWidth = (startW[i] * (1 - e) + 0.15 * e) + 'px'; });
+                  circles.forEach((c, i) => {
+                    c.style.strokeWidth = startW[i] * (1 - e) + 0.15 * e + "px";
+                  });
                   if (p < 1) requestAnimationFrame(tick);
                 })(t0);
               }
@@ -2909,16 +2918,25 @@
           container.style.transform = "scale(30)";
 
           // Thin out circle strokes as they zoom past
-          const svg = container.querySelector('svg');
+          const svg = container.querySelector("svg");
           if (svg) {
-            const circles = [...svg.querySelectorAll('circle')];
-            const startW = circles.map(c => parseFloat(getComputedStyle(c).strokeWidth));
-            circles.forEach(c => c.getAnimations().forEach(a => { a.commitStyles(); a.cancel(); }));
+            const circles = [...svg.querySelectorAll("circle")];
+            const startW = circles.map((c) =>
+              parseFloat(getComputedStyle(c).strokeWidth),
+            );
+            circles.forEach((c) =>
+              c.getAnimations().forEach((a) => {
+                a.commitStyles();
+                a.cancel();
+              }),
+            );
             const t0 = performance.now();
             (function tick(now) {
               const p = Math.min((now - t0) / 700, 1);
               const e = p * p;
-              circles.forEach((c, i) => { c.style.strokeWidth = (startW[i] * (1 - e) + 0.15 * e) + 'px'; });
+              circles.forEach((c, i) => {
+                c.style.strokeWidth = startW[i] * (1 - e) + 0.15 * e + "px";
+              });
               if (p < 1) requestAnimationFrame(tick);
             })(t0);
           }
