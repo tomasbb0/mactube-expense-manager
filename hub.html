@@ -35,14 +35,13 @@
         position: fixed;
         width: 12px;
         height: 12px;
-        background: rgba(255, 255, 255, 0.85);
+        background: transparent;
+        border: 1.5px solid rgba(255, 255, 255, 0.85);
         border-radius: 50%;
         pointer-events: none;
         z-index: 99999;
         transform: translate(-50%, -50%);
-        box-shadow:
-          0 0 3px 1px rgba(255, 255, 255, 0.12),
-          0 0 6px 2px rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 3px 1px rgba(255, 255, 255, 0.08);
         transition:
           width 0.15s,
           height 0.15s,
@@ -52,21 +51,19 @@
       .cursor-ball.clicking {
         width: 8px;
         height: 8px;
-        box-shadow:
-          0 0 4px 2px rgba(255, 255, 255, 0.18),
-          0 0 8px 3px rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.12);
       }
 
       .cursor-trail {
         position: fixed;
         width: 6px;
         height: 6px;
-        background: rgba(255, 255, 255, 0.18);
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 50%;
         pointer-events: none;
         z-index: 99998;
         transform: translate(-50%, -50%);
-        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.04);
       }
 
       /* ============================================
@@ -215,11 +212,11 @@
           opacity: 0;
         }
         10% {
-          opacity: 0.9;
+          opacity: 1;
         }
         100% {
           transform: translate(0, 0);
-          opacity: 0.9;
+          opacity: 1;
         }
       }
       @keyframes circleMidFade {
@@ -228,11 +225,11 @@
           opacity: 0;
         }
         10% {
-          opacity: 0.9;
+          opacity: 1;
         }
         100% {
           transform: scale(1);
-          opacity: 0.9;
+          opacity: 1;
         }
       }
       @keyframes circleRightSlide {
@@ -241,11 +238,11 @@
           opacity: 0;
         }
         10% {
-          opacity: 0.9;
+          opacity: 1;
         }
         100% {
           transform: translate(0, 0);
-          opacity: 0.9;
+          opacity: 1;
         }
       }
 
@@ -259,7 +256,7 @@
         }
       }
 
-      /* Small inscribed circle — appears after all circles converge, draws in smoothly */
+      /* Small inscribed circle — fades in complete after outer circles converge */
       .intro-inner-circle {
         fill: none;
         stroke: #ffffff;
@@ -267,33 +264,16 @@
         stroke-width: 7;
         stroke-linecap: round;
         opacity: 0;
-        stroke-dasharray: 277;
-        stroke-dashoffset: 277;
-        animation:
-          innerCircleReveal 0.8s ease-out forwards,
-          innerCircleDraw 0.8s ease-out forwards;
-        animation-delay: 2.4s, 2.4s;
+        animation: innerCircleFadeIn 0.8s ease-out forwards;
+        animation-delay: 2.4s;
       }
 
-      @keyframes innerCircleReveal {
+      @keyframes innerCircleFadeIn {
         0% {
           opacity: 0;
-          transform: scale(0.7);
-        }
-        30% {
-          opacity: 0.9;
         }
         100% {
-          opacity: 0.9;
-          transform: scale(1);
-        }
-      }
-      @keyframes innerCircleDraw {
-        0% {
-          stroke-dashoffset: 277;
-        }
-        100% {
-          stroke-dashoffset: 0;
+          opacity: 1;
         }
       }
 
@@ -2931,15 +2911,22 @@
                   <div class="platform-name">${platform.name}</div>
                   <div class="platform-desc">${platform.description}</div>
                 </div>
-                ${isAdmin() ? `<button class="access-toggle-btn" data-platform="${platform.id}" onclick="window._hub.toggleAccessPanel(event, '${platform.id}')" title="Permissões">⚙</button>` : ""}
+                ${isAdmin() ? `<button class="access-toggle-btn" data-platform="${platform.id}" onclick="window._hub.toggleAccessPanel(event, '${platform.id}')" title="Permissões">▾</button>` : ""}
               </div>
               ${accessPanelHTML}
             </div>
           `;
             if (hasAccess) {
-              card.addEventListener("click", () =>
-                navigateToPlatform(platform),
-              );
+              card.addEventListener("click", (e) => {
+                // Don't navigate if clicking inside the access panel or toggle button
+                if (
+                  e.target.closest(".access-panel") ||
+                  e.target.closest(".access-toggle-btn") ||
+                  e.target.closest(".access-select")
+                )
+                  return;
+                navigateToPlatform(platform);
+              });
             }
             grid.appendChild(card);
           });
@@ -3394,28 +3381,28 @@
 
           setTimeout(function () {
             var basePrices = {
-              basico: 1500,
-              standard: 4000,
-              avancado: 8000,
-              enterprise: 15000,
+              basico: 300,
+              standard: 800,
+              avancado: 1500,
+              enterprise: 3000,
             };
             var featureAdditions = {
-              dashboard: 600,
-              users: 500,
-              database: 400,
-              reports: 500,
-              apis: 700,
-              payments: 800,
-              notifications: 400,
-              auth: 300,
-              chat: 700,
-              cms: 500,
+              dashboard: 100,
+              users: 80,
+              database: 70,
+              reports: 80,
+              apis: 120,
+              payments: 150,
+              notifications: 60,
+              auth: 50,
+              chat: 120,
+              cms: 80,
             };
             var timelines = {
-              basico: "2-3 semanas",
-              standard: "1-2 meses",
-              avancado: "2-4 meses",
-              enterprise: "4-6 meses",
+              basico: "3-5 dias",
+              standard: "1-2 semanas",
+              avancado: "2-4 semanas",
+              enterprise: "1-2 meses",
             };
 
             var base = basePrices[complexity.value] || 4000;
