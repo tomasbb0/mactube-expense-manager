@@ -19,7 +19,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=31" />
+    <link rel="stylesheet" href="styles.css?v=32" />
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -62,97 +62,6 @@
           <h1>Maktub Art Group</h1>
         </div>
         <div class="header-user">
-          <span id="user-greeting">Madalena</span>
-          <button
-            class="header-btn-wide tutorial-btn"
-            onclick="startTutorial()"
-            title="Guia da Plataforma"
-          >
-            <span
-              style="
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                width: 20px;
-                height: 20px;
-                border-radius: 50%;
-                border: 2px solid #33e933;
-                color: #33e933;
-                font-size: 12px;
-                font-weight: 700;
-                line-height: 1;
-              "
-              >?</span
-            >
-            <span>Tutorial</span>
-          </button>
-          <a
-            href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
-            target="_blank"
-            class="header-btn-wide drive-btn"
-            title="Abrir Pasta Google Drive"
-          >
-            <svg viewBox="0 0 87.3 78" fill="none">
-              <path
-                d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
-                fill="#0066da"
-              />
-              <path
-                d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
-                fill="#00ac47"
-              />
-              <path
-                d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
-                fill="#ea4335"
-              />
-              <path
-                d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
-                fill="#00832d"
-              />
-              <path
-                d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
-                fill="#2684fc"
-              />
-              <path
-                d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
-                fill="#ffba00"
-              />
-            </svg>
-            <span>Abrir Drive</span>
-          </a>
-          <button
-            class="header-btn-wide sync-btn"
-            onclick="openSyncModal()"
-            title="Google Drive Sync"
-          >
-            <svg viewBox="0 0 87.3 78" fill="none">
-              <path
-                d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
-                fill="#0066da"
-              />
-              <path
-                d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
-                fill="#00ac47"
-              />
-              <path
-                d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
-                fill="#ea4335"
-              />
-              <path
-                d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
-                fill="#00832d"
-              />
-              <path
-                d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
-                fill="#2684fc"
-              />
-              <path
-                d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
-                fill="#ffba00"
-              />
-            </svg>
-            <span>Sync Drive</span>
-          </button>
           <button id="refresh-btn" class="header-btn" title="Atualizar">
             <svg
               viewBox="0 0 24 24"
@@ -271,6 +180,27 @@
               class="quick-action-btn"
               onclick="
                 document
+                  .querySelector('[data-tab=&quot;dashboard&quot;]')
+                  .click()
+              "
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect x="3" y="3" width="7" height="9" />
+                <rect x="14" y="3" width="7" height="5" />
+                <rect x="14" y="12" width="7" height="9" />
+                <rect x="3" y="16" width="7" height="5" />
+              </svg>
+              Dashboard
+            </button>
+            <button
+              class="quick-action-btn"
+              onclick="
+                document
                   .querySelector('[data-tab=&quot;new-expense&quot;]')
                   .click()
               "
@@ -347,6 +277,89 @@
               </svg>
               Acerto
             </button>
+            <button class="quick-action-btn" onclick="startTutorial()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              Tutorial
+            </button>
+            <a
+              class="quick-action-btn"
+              href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
+              target="_blank"
+            >
+              <svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 17px; height: 17px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Abrir Drive
+            </a>
+            <button class="quick-action-btn" onclick="openSyncModal()">
+              <svg
+                viewBox="0 0 87.3 78"
+                fill="none"
+                style="width: 17px; height: 17px"
+              >
+                <path
+                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
+                  fill="#0066da"
+                />
+                <path
+                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
+                  fill="#00ac47"
+                />
+                <path
+                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
+                  fill="#ea4335"
+                />
+                <path
+                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
+                  fill="#00832d"
+                />
+                <path
+                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
+                  fill="#2684fc"
+                />
+                <path
+                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
+                  fill="#ffba00"
+                />
+              </svg>
+              Sync Drive
+            </button>
           </div>
 
           <!-- Subtle Dashboard Filter -->
@@ -391,83 +404,6 @@
                 placeholder="Até"
               />
             </div>
-          </div>
-          <div style="display: flex; gap: 10px">
-            <a
-              class="sync-hero-btn"
-              href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing"
-              target="_blank"
-              style="text-decoration: none; flex: 1"
-            >
-              <svg
-                viewBox="0 0 87.3 78"
-                fill="none"
-                style="width: 24px; height: 24px"
-              >
-                <path
-                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
-                  fill="#fff"
-                />
-                <path
-                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
-                  fill="rgba(255,255,255,0.9)"
-                />
-                <path
-                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
-                  fill="rgba(255,255,255,0.8)"
-                />
-                <path
-                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
-                  fill="rgba(255,255,255,0.95)"
-                />
-                <path
-                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
-                  fill="rgba(255,255,255,0.85)"
-                />
-                <path
-                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
-                  fill="rgba(255,255,255,0.75)"
-                />
-              </svg>
-              <span>Abrir Drive</span>
-            </a>
-            <button
-              class="sync-hero-btn"
-              onclick="openSyncModal()"
-              style="flex: 1"
-            >
-              <svg
-                viewBox="0 0 87.3 78"
-                fill="none"
-                style="width: 24px; height: 24px"
-              >
-                <path
-                  d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z"
-                  fill="#fff"
-                />
-                <path
-                  d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z"
-                  fill="rgba(255,255,255,0.9)"
-                />
-                <path
-                  d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z"
-                  fill="rgba(255,255,255,0.8)"
-                />
-                <path
-                  d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z"
-                  fill="rgba(255,255,255,0.95)"
-                />
-                <path
-                  d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z"
-                  fill="rgba(255,255,255,0.85)"
-                />
-                <path
-                  d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z"
-                  fill="rgba(255,255,255,0.75)"
-                />
-              </svg>
-              <span>Sync Drive</span>
-            </button>
           </div>
         </div>
 
@@ -1450,6 +1386,6 @@
       </div>
     </div>
 
-    <script src="app.js?v=33"></script>
+    <script src="app.js?v=34"></script>
   </body>
 </html>
