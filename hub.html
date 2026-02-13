@@ -364,17 +364,19 @@
       }
 
       .login-logo {
-        margin-bottom: 16px;
+        margin-bottom: 20px;
       }
 
-      .login-logo img {
-        width: 72px;
+      .login-logo svg {
+        width: 100px;
         height: auto;
       }
 
       .login-title {
-        font-size: 1.5rem;
+        font-size: 1.1rem;
         font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
         color: var(--text);
         margin-bottom: 4px;
       }
@@ -616,15 +618,17 @@
         color: var(--text);
       }
 
-      .topbar-logo img {
-        width: 36px;
+      .topbar-logo svg {
+        width: 42px;
         height: auto;
         display: block;
       }
 
       .topbar-title {
-        font-size: 1.25rem;
-        font-weight: 600;
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
         color: var(--text);
         transition: color var(--transition);
       }
@@ -2045,7 +2049,30 @@
     <div id="login-screen" class="screen">
       <div class="login-container">
         <div class="login-logo">
-          <img src="maktub-logo.png" alt="Maktub Art Group" />
+          <svg viewBox="49 25 202 150" fill="none">
+            <circle
+              cx="123.75"
+              cy="100"
+              r="70"
+              stroke="#fff"
+              stroke-width="7"
+            />
+            <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
+            <circle
+              cx="176.25"
+              cy="100"
+              r="70"
+              stroke="#fff"
+              stroke-width="7"
+            />
+            <circle
+              cx="150"
+              cy="100"
+              r="43.75"
+              stroke="#fff"
+              stroke-width="7"
+            />
+          </svg>
         </div>
         <h1 class="login-title">Maktub Art Group</h1>
         <p class="login-subtitle">Plataforma Central</p>
@@ -2158,7 +2185,30 @@
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <img src="maktub-logo.png" alt="Maktub Art Group" />
+            <svg viewBox="49 25 202 150" fill="none">
+              <circle
+                cx="123.75"
+                cy="100"
+                r="70"
+                stroke="#fff"
+                stroke-width="7"
+              />
+              <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
+              <circle
+                cx="176.25"
+                cy="100"
+                r="70"
+                stroke="#fff"
+                stroke-width="7"
+              />
+              <circle
+                cx="150"
+                cy="100"
+                r="43.75"
+                stroke="#fff"
+                stroke-width="7"
+              />
+            </svg>
           </div>
           <span class="topbar-title">Maktub Art Group</span>
         </div>
@@ -2188,7 +2238,30 @@
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <img src="maktub-logo.png" alt="Maktub Art Group" />
+            <svg viewBox="49 25 202 150" fill="none">
+              <circle
+                cx="123.75"
+                cy="100"
+                r="70"
+                stroke="#fff"
+                stroke-width="7"
+              />
+              <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
+              <circle
+                cx="176.25"
+                cy="100"
+                r="70"
+                stroke="#fff"
+                stroke-width="7"
+              />
+              <circle
+                cx="150"
+                cy="100"
+                r="43.75"
+                stroke="#fff"
+                stroke-width="7"
+              />
+            </svg>
           </div>
           <span class="topbar-title">Maktub Art Group</span>
         </div>
@@ -2438,7 +2511,30 @@
       <div class="topbar">
         <div class="topbar-brand">
           <div class="topbar-logo">
-            <img src="maktub-logo.png" alt="Maktub Art Group" />
+            <svg viewBox="49 25 202 150" fill="none">
+              <circle
+                cx="123.75"
+                cy="100"
+                r="70"
+                stroke="#fff"
+                stroke-width="7"
+              />
+              <circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7" />
+              <circle
+                cx="176.25"
+                cy="100"
+                r="70"
+                stroke="#fff"
+                stroke-width="7"
+              />
+              <circle
+                cx="150"
+                cy="100"
+                r="43.75"
+                stroke="#fff"
+                stroke-width="7"
+              />
+            </svg>
           </div>
           <span class="topbar-title">Maktub Art Group</span>
         </div>
@@ -2704,15 +2800,11 @@
               showHub();
             } else {
               showLogin();
-              // Hide the PNG logo + title — SVG logo replaces them visually
+              // Hide the inline login-logo SVG — flying SVG replaces it visually
               const loginLogo = document.querySelector(
                 "#login-screen .login-logo",
               );
-              const loginTitle = document.querySelector(
-                "#login-screen .login-title",
-              );
               if (loginLogo) loginLogo.style.visibility = "hidden";
-              if (loginTitle) loginTitle.style.visibility = "hidden";
             }
 
             // Get current center position of logo
@@ -2752,16 +2844,19 @@
               container.style.height = targetH + "px";
             }
 
-            // After fly completes
+            // After fly completes — inline SVGs take over seamlessly
             setTimeout(() => {
               if (session) {
-                // Already at topbar — fade out floating logo, reveal real one
-                container.style.opacity = "0";
-                setTimeout(() => {
-                  introScreen.classList.add("hidden");
-                }, 300);
+                // Topbar inline SVG matches flying one → just hide intro
+                introScreen.classList.add("hidden");
+              } else {
+                // Restore inline login-logo, then hide intro
+                const loginLogo = document.querySelector(
+                  "#login-screen .login-logo",
+                );
+                if (loginLogo) loginLogo.style.visibility = "";
+                introScreen.classList.add("hidden");
               }
-              // If not logged in, logo stays visible above login form
             }, 900);
           }, 2600);
         }
@@ -2788,11 +2883,7 @@
 
           // Restore login-logo visibility for next visit
           const loginLogo = document.querySelector("#login-screen .login-logo");
-          const loginTitle = document.querySelector(
-            "#login-screen .login-title",
-          );
           if (loginLogo) loginLogo.style.visibility = "";
-          if (loginTitle) loginTitle.style.visibility = "";
 
           const rect = container.getBoundingClientRect();
           const tRect = targetEl.getBoundingClientRect();
@@ -2807,10 +2898,8 @@
           container.style.height = targetH + "px";
 
           setTimeout(() => {
-            container.style.opacity = "0";
-            setTimeout(() => {
-              introScreen.classList.add("hidden");
-            }, 300);
+            // Inline topbar SVG takes over seamlessly
+            introScreen.classList.add("hidden");
           }, 900);
         }
 
@@ -3085,7 +3174,7 @@
               <div class="platform-preview">
                 <div class="mini-dashboard">
                   <div class="mini-dash-header">
-                    <img class="mini-dot" src="maktub-logo.png" alt="" />
+                    <svg class="mini-dot" viewBox="49 25 202 150" fill="none" width="16" height="12"><circle cx="123.75" cy="100" r="70" stroke="#fff" stroke-width="7"/><circle cx="150" cy="100" r="70" stroke="#fff" stroke-width="7"/><circle cx="176.25" cy="100" r="70" stroke="#fff" stroke-width="7"/><circle cx="150" cy="100" r="43.75" stroke="#fff" stroke-width="7"/></svg>
                     <span>Maktub Art Group</span>
                   </div>
                   <div class="mini-dash-body">
@@ -4186,9 +4275,11 @@
       >
         <span
           style="
-            font-family: 'Avenir Next', 'Avenir', 'Montserrat', 'Helvetica Neue', sans-serif;
+            font-family:
+              &quot;Avenir Next&quot;, &quot;Avenir&quot;,
+              &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
             font-size: 10px;
-            font-weight: 300;
+            font-weight: 200;
             color: #fafafa;
             letter-spacing: 0.5px;
           "
@@ -4228,9 +4319,11 @@
         </svg>
         <span
           style="
-            font-family: 'Avenir Next', 'Avenir', 'Montserrat', 'Helvetica Neue', sans-serif;
+            font-family:
+              &quot;Avenir Next&quot;, &quot;Avenir&quot;,
+              &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
             font-size: 10px;
-            font-weight: 300;
+            font-weight: 200;
             color: #fafafa;
             letter-spacing: 0.5px;
           "
