@@ -2968,7 +2968,10 @@ function updateArtistBreakdown() {
     } else if (e.investor === "patrocinio") {
       proj.patrocinio += e.amount;
       artistData.totals.patrocinio += e.amount;
-    } else if (e.investor === "oferta_maktub" || e.investor === "oferta_maktub_50") {
+    } else if (
+      e.investor === "oferta_maktub" ||
+      e.investor === "oferta_maktub_50"
+    ) {
       proj.ofertas += e.amount;
       artistData.totals.ofertas += e.amount;
     } else {
@@ -2988,7 +2991,11 @@ function updateArtistBreakdown() {
     return;
   }
 
-  let grandMaktub = 0, grandBandidos = 0, grandPatrocinio = 0, grandOfertas = 0, grandOutro = 0;
+  let grandMaktub = 0,
+    grandBandidos = 0,
+    grandPatrocinio = 0,
+    grandOfertas = 0,
+    grandOutro = 0;
 
   container.innerHTML = artists
     .map(([artist, data]) => {
@@ -2998,17 +3005,35 @@ function updateArtistBreakdown() {
       grandOfertas += data.totals.ofertas;
       grandOutro += data.totals.outro;
 
-      const projects = Object.entries(data.projects).sort((a, b) => b[1].maktub - a[1].maktub);
+      const projects = Object.entries(data.projects).sort(
+        (a, b) => b[1].maktub - a[1].maktub,
+      );
 
       const projectRows = projects
         .map(([projName, p]) => {
-          const projTotal = p.maktub + p.bandidos + p.patrocinio + p.ofertas + p.outro;
+          const projTotal =
+            p.maktub + p.bandidos + p.patrocinio + p.ofertas + p.outro;
           const details = [];
-          if (p.maktub > 0) details.push(`<span class="breakdown-costs">Maktub: ${formatCurrency(p.maktub)}</span>`);
-          if (p.bandidos > 0) details.push(`<span class="breakdown-revenue">Bandidos: ${formatCurrency(p.bandidos)}</span>`);
-          if (p.patrocinio > 0) details.push(`<span class="breakdown-revenue">Patrocínio: ${formatCurrency(p.patrocinio)}</span>`);
-          if (p.ofertas > 0) details.push(`<span class="breakdown-revenue">Ofertas: ${formatCurrency(p.ofertas)}</span>`);
-          if (p.outro > 0) details.push(`<span class="breakdown-revenue">Outro: ${formatCurrency(p.outro)}</span>`);
+          if (p.maktub > 0)
+            details.push(
+              `<span class="breakdown-costs">Maktub: ${formatCurrency(p.maktub)}</span>`,
+            );
+          if (p.bandidos > 0)
+            details.push(
+              `<span class="breakdown-revenue">Bandidos: ${formatCurrency(p.bandidos)}</span>`,
+            );
+          if (p.patrocinio > 0)
+            details.push(
+              `<span class="breakdown-revenue">Patrocínio: ${formatCurrency(p.patrocinio)}</span>`,
+            );
+          if (p.ofertas > 0)
+            details.push(
+              `<span class="breakdown-revenue">Ofertas: ${formatCurrency(p.ofertas)}</span>`,
+            );
+          if (p.outro > 0)
+            details.push(
+              `<span class="breakdown-revenue">Outro: ${formatCurrency(p.outro)}</span>`,
+            );
           return `
                 <div class="breakdown-project-row">
                     <span class="breakdown-project-name">📁 ${projName}</span>
@@ -3043,7 +3068,8 @@ function updateArtistBreakdown() {
     .join("");
 
   // Grand total row
-  const grandTotal = grandMaktub + grandBandidos + grandPatrocinio + grandOfertas + grandOutro;
+  const grandTotal =
+    grandMaktub + grandBandidos + grandPatrocinio + grandOfertas + grandOutro;
   container.innerHTML += `
         <div class="breakdown-item breakdown-grand-total">
             <div class="breakdown-header">
@@ -3166,6 +3192,7 @@ function handleDelete() {
 // ==========================================
 
 function formatCurrency(amount) {
+  if (isNaN(amount) || amount === null || amount === undefined) return "0,00 EUR";
   return (
     amount.toLocaleString("pt-PT", {
       minimumFractionDigits: 2,
@@ -3194,7 +3221,7 @@ function getTypeName(type) {
     transporte: "Transporte",
     outros: "Outros",
   };
-  return types[type] || type;
+  return types[type] || type || "Sem tipo";
 }
 
 function getTypeIcon(type) {
