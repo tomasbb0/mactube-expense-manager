@@ -148,7 +148,8 @@ function handleLogin() {
 function handleLogout() {
   currentUser = null;
   localStorage.removeItem("maktub_user");
-  hideApp();
+  localStorage.removeItem("maktub_hub_session");
+  window.location.href = "hub.html";
 }
 
 function showApp() {

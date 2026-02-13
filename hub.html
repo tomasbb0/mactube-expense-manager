@@ -1,0 +1,1947 @@
+<!doctype html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#111111" />
+    <title>Maktub Art Group - Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="maktub-logo.png" />
+
+    <style>
+      /* ============================================
+       RESET & BASE
+       ============================================ */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: #111111;
+        color: #ffffff;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ============================================
+       CSS VARIABLES
+       ============================================ */
+      :root {
+        --bg: #111111;
+        --card: #1a1a1a;
+        --card-hover: #222222;
+        --border: #333333;
+        --text: #ffffff;
+        --text-muted: #999999;
+        --accent: #33e933;
+        --accent-hover: #2bd12b;
+        --accent-dim: rgba(51, 233, 51, 0.15);
+        --danger: #ff4444;
+        --danger-hover: #dd3333;
+        --radius: 12px;
+        --radius-sm: 8px;
+        --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+        --transition: 0.3s ease;
+      }
+
+      /* ============================================
+       ANIMATED INTRO SCREEN
+       ============================================ */
+      #intro-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        transition: opacity 0.6s ease;
+      }
+
+      #intro-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #intro-screen.hidden {
+        display: none;
+      }
+
+      /* Intro SVG Logo */
+      .intro-logo-container {
+        width: 240px;
+        height: 240px;
+        position: relative;
+      }
+
+      .intro-logo-container svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      /* Three big circles — start spread apart, animate to overlap */
+      .intro-circle-big {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 2;
+        opacity: 0.7;
+      }
+
+      .intro-circle-top {
+        animation: circleTopMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+
+      .intro-circle-left {
+        animation: circleLeftMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+
+      .intro-circle-right {
+        animation: circleRightMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+
+      @keyframes circleTopMove {
+        0% {
+          transform: translate(0, -60px);
+          opacity: 0;
+        }
+        30% {
+          opacity: 0.7;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0.7;
+        }
+      }
+
+      @keyframes circleLeftMove {
+        0% {
+          transform: translate(-50px, 40px);
+          opacity: 0;
+        }
+        30% {
+          opacity: 0.7;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0.7;
+        }
+      }
+
+      @keyframes circleRightMove {
+        0% {
+          transform: translate(50px, 40px);
+          opacity: 0;
+        }
+        30% {
+          opacity: 0.7;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0.7;
+        }
+      }
+
+      /* Small center circle — appears after big ones converge */
+      .intro-circle-center {
+        fill: var(--accent);
+        opacity: 0;
+        animation: centerAppear 0.5s ease forwards;
+        animation-delay: 1.4s;
+      }
+
+      @keyframes centerAppear {
+        0% {
+          opacity: 0;
+          transform: scale(0);
+        }
+        60% {
+          transform: scale(1.2);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Brand text — fades in after center circle */
+      .intro-text {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-top: 32px;
+        opacity: 0;
+        animation: textFadeIn 0.8s ease forwards;
+        animation-delay: 2s;
+      }
+
+      @keyframes textFadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ============================================
+       LOGIN SCREEN
+       ============================================ */
+      .screen {
+        display: none;
+        min-height: 100vh;
+      }
+
+      .screen.active {
+        display: flex;
+      }
+
+      #login-screen {
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .login-container {
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      .login-logo {
+        margin-bottom: 12px;
+      }
+
+      .login-logo svg {
+        width: 80px;
+        height: 80px;
+      }
+
+      .login-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .login-subtitle {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+      }
+
+      .login-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px 28px;
+        box-shadow: var(--shadow);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        transition: border-color var(--transition);
+      }
+
+      .form-group input:focus {
+        border-color: var(--accent);
+      }
+
+      .login-error {
+        color: var(--danger);
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        min-height: 20px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--transition);
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #111;
+        width: 100%;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--card-hover);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: var(--danger-hover);
+      }
+
+      .btn-sm {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      /* ============================================
+       EMAIL MODAL (first-time login)
+       ============================================ */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 5000;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px 28px;
+        max-width: 420px;
+        width: 100%;
+        box-shadow: var(--shadow-lg);
+        animation: modalIn 0.3s ease;
+      }
+
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95) translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      .modal h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .modal p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
+
+      .modal .form-group {
+        margin-bottom: 20px;
+      }
+
+      .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      /* ============================================
+       HUB — TOP BAR
+       ============================================ */
+      #hub-screen {
+        flex-direction: column;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .topbar-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .topbar-logo svg {
+        width: 32px;
+        height: 32px;
+      }
+
+      .topbar-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+      }
+
+      .role-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        background: var(--accent-dim);
+        color: var(--accent);
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .role-badge.owner {
+        background: rgba(255, 180, 0, 0.15);
+        color: #ffb400;
+      }
+      .role-badge.tech {
+        background: rgba(0, 150, 255, 0.15);
+        color: #0096ff;
+      }
+      .role-badge.user {
+        background: var(--accent-dim);
+        color: var(--accent);
+      }
+
+      .btn-logout {
+        padding: 8px 16px;
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+
+      .btn-logout:hover {
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+
+      /* ============================================
+       HUB — PLATFORM GRID
+       ============================================ */
+      .hub-content {
+        flex: 1;
+        padding: 32px 24px;
+        overflow-y: auto;
+      }
+
+      .hub-section-title {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .platform-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+        max-width: 1200px;
+      }
+
+      .platform-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        cursor: pointer;
+        transition: all var(--transition);
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .platform-card:hover:not(.locked):not(.disabled) {
+        border-color: var(--accent);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .platform-card.locked {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .platform-card.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .platform-preview {
+        width: 100%;
+        aspect-ratio: 1;
+        background: #0d0d0d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        position: relative;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .platform-preview .icon {
+        font-size: 3.5rem;
+        line-height: 1;
+      }
+
+      .platform-preview .preview-name {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-muted);
+        text-align: center;
+        padding: 0 12px;
+      }
+
+      .lock-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+      }
+
+      .platform-info {
+        padding: 14px 16px;
+      }
+
+      .platform-name {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .platform-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      /* "Coming soon" badge */
+      .badge-soon {
+        display: inline-block;
+        padding: 2px 8px;
+        background: rgba(255, 180, 0, 0.15);
+        color: #ffb400;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        margin-top: 4px;
+      }
+
+      /* ============================================
+       USER MANAGEMENT PANEL
+       ============================================ */
+      #management-screen {
+        flex-direction: column;
+      }
+
+      .management-content {
+        flex: 1;
+        padding: 32px 24px;
+        overflow-y: auto;
+      }
+
+      .mgmt-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .mgmt-header h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+
+      .mgmt-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        color: var(--text-muted);
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all var(--transition);
+      }
+
+      .mgmt-back:hover {
+        color: var(--text);
+        border-color: var(--text-muted);
+      }
+
+      /* User table */
+      .user-table-container {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow-x: auto;
+      }
+
+      .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+      }
+
+      .user-table th,
+      .user-table td {
+        padding: 14px 16px;
+        text-align: left;
+        font-size: 0.9rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .user-table th {
+        font-weight: 600;
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .user-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .user-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* Toggle switch */
+      .toggle {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        display: inline-block;
+      }
+
+      .toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .toggle-slider {
+        position: absolute;
+        inset: 0;
+        background: var(--border);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: background var(--transition);
+      }
+
+      .toggle-slider::before {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 16px;
+        height: 16px;
+        background: white;
+        border-radius: 50%;
+        transition: transform var(--transition);
+      }
+
+      .toggle input:checked + .toggle-slider {
+        background: var(--accent);
+      }
+
+      .toggle input:checked + .toggle-slider::before {
+        transform: translateX(18px);
+      }
+
+      /* Add user form */
+      .add-user-form {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-top: 24px;
+        display: none;
+      }
+
+      .add-user-form.active {
+        display: block;
+      }
+
+      .add-user-form h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .form-row select {
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .form-row select:focus {
+        border-color: var(--accent);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      /* Confirm dialog */
+      .confirm-dialog .modal {
+        max-width: 360px;
+        text-align: center;
+      }
+
+      .confirm-dialog .modal-actions {
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      /* ============================================
+       TOAST NOTIFICATIONS
+       ============================================ */
+      .toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .toast {
+        padding: 12px 20px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 0.9rem;
+        box-shadow: var(--shadow);
+        animation:
+          toastIn 0.3s ease,
+          toastOut 0.3s ease 2.7s forwards;
+      }
+
+      .toast.success {
+        border-left: 3px solid var(--accent);
+      }
+      .toast.error {
+        border-left: 3px solid var(--danger);
+      }
+
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes toastOut {
+        from {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateX(40px);
+        }
+      }
+
+      /* ============================================
+       RESPONSIVE
+       ============================================ */
+      @media (max-width: 600px) {
+        .topbar {
+          padding: 12px 16px;
+        }
+
+        .topbar-title {
+          font-size: 0.95rem;
+        }
+
+        .hub-content,
+        .management-content {
+          padding: 20px 16px;
+        }
+
+        .platform-grid {
+          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+          gap: 14px;
+        }
+
+        .platform-preview .icon {
+          font-size: 2.5rem;
+        }
+
+        .user-table th,
+        .user-table td {
+          padding: 10px 12px;
+          font-size: 0.82rem;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .mgmt-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ==========================================
+       ANIMATED INTRO SCREEN
+       ========================================== -->
+    <div id="intro-screen">
+      <div class="intro-logo-container">
+        <svg viewBox="0 0 240 240">
+          <!-- Top circle -->
+          <circle
+            class="intro-circle-big intro-circle-top"
+            cx="120"
+            cy="85"
+            r="55"
+          />
+          <!-- Bottom-left circle -->
+          <circle
+            class="intro-circle-big intro-circle-left"
+            cx="88"
+            cy="140"
+            r="55"
+          />
+          <!-- Bottom-right circle -->
+          <circle
+            class="intro-circle-big intro-circle-right"
+            cx="152"
+            cy="140"
+            r="55"
+          />
+          <!-- Small center circle (intersection) -->
+          <circle class="intro-circle-center" cx="120" cy="118" r="14" />
+        </svg>
+      </div>
+      <div class="intro-text">Maktub Art Group</div>
+    </div>
+
+    <!-- ==========================================
+       LOGIN SCREEN
+       ========================================== -->
+    <div id="login-screen" class="screen">
+      <div class="login-container">
+        <div class="login-logo">
+          <svg viewBox="0 0 240 240" width="80" height="80">
+            <circle
+              cx="120"
+              cy="85"
+              r="55"
+              fill="none"
+              stroke="#33E933"
+              stroke-width="2"
+              opacity="0.7"
+            />
+            <circle
+              cx="88"
+              cy="140"
+              r="55"
+              fill="none"
+              stroke="#33E933"
+              stroke-width="2"
+              opacity="0.7"
+            />
+            <circle
+              cx="152"
+              cy="140"
+              r="55"
+              fill="none"
+              stroke="#33E933"
+              stroke-width="2"
+              opacity="0.7"
+            />
+            <circle cx="120" cy="118" r="14" fill="#33E933" />
+          </svg>
+        </div>
+        <h1 class="login-title">Maktub Art Group</h1>
+        <p class="login-subtitle">Plataforma Central</p>
+
+        <div class="login-card">
+          <div class="form-group">
+            <label for="login-username">Utilizador</label>
+            <input
+              type="text"
+              id="login-username"
+              placeholder="username"
+              autocomplete="username"
+            />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Palavra-passe</label>
+            <input
+              type="password"
+              id="login-password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+          </div>
+          <div class="login-error" id="login-error"></div>
+          <button class="btn btn-primary" id="login-btn">Entrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       EMAIL COLLECTION MODAL
+       ========================================== -->
+    <div class="modal-overlay" id="email-modal">
+      <div class="modal">
+        <h3>📧 Email da empresa</h3>
+        <p>
+          Para continuar, insere o teu email de trabalho. Será usado para
+          integração com as plataformas.
+        </p>
+        <div class="form-group">
+          <label for="email-input">Email</label>
+          <input type="email" id="email-input" placeholder="nome@maktub.pt" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary btn-sm" id="email-save-btn">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       HUB SCREEN
+       ========================================== -->
+    <div id="hub-screen" class="screen">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-logo">
+            <svg viewBox="0 0 240 240" width="32" height="32">
+              <circle
+                cx="120"
+                cy="85"
+                r="55"
+                fill="none"
+                stroke="#33E933"
+                stroke-width="2"
+                opacity="0.7"
+              />
+              <circle
+                cx="88"
+                cy="140"
+                r="55"
+                fill="none"
+                stroke="#33E933"
+                stroke-width="2"
+                opacity="0.7"
+              />
+              <circle
+                cx="152"
+                cy="140"
+                r="55"
+                fill="none"
+                stroke="#33E933"
+                stroke-width="2"
+                opacity="0.7"
+              />
+              <circle cx="120" cy="118" r="14" fill="#33E933" />
+            </svg>
+          </div>
+          <span class="topbar-title">Maktub Art Group Hub</span>
+        </div>
+        <div class="topbar-right">
+          <div class="user-info">
+            <span id="hub-greeting"></span>
+            <span class="role-badge" id="hub-role-badge"></span>
+          </div>
+          <button class="btn-logout" id="logout-btn">Sair</button>
+        </div>
+      </div>
+
+      <div class="hub-content">
+        <div class="hub-section-title">Plataformas</div>
+        <div class="platform-grid" id="platform-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       USER MANAGEMENT SCREEN
+       ========================================== -->
+    <div id="management-screen" class="screen">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="topbar-logo">
+            <svg viewBox="0 0 240 240" width="32" height="32">
+              <circle
+                cx="120"
+                cy="85"
+                r="55"
+                fill="none"
+                stroke="#33E933"
+                stroke-width="2"
+                opacity="0.7"
+              />
+              <circle
+                cx="88"
+                cy="140"
+                r="55"
+                fill="none"
+                stroke="#33E933"
+                stroke-width="2"
+                opacity="0.7"
+              />
+              <circle
+                cx="152"
+                cy="140"
+                r="55"
+                fill="none"
+                stroke="#33E933"
+                stroke-width="2"
+                opacity="0.7"
+              />
+              <circle cx="120" cy="118" r="14" fill="#33E933" />
+            </svg>
+          </div>
+          <span class="topbar-title">Gestão de Utilizadores</span>
+        </div>
+        <div class="topbar-right">
+          <button class="mgmt-back" id="mgmt-back-btn">← Voltar ao Hub</button>
+        </div>
+      </div>
+
+      <div class="management-content">
+        <div class="mgmt-header">
+          <h2>Utilizadores</h2>
+          <button class="btn btn-primary btn-sm" id="add-user-toggle-btn">
+            + Adicionar Utilizador
+          </button>
+        </div>
+
+        <!-- Add user form (hidden by default) -->
+        <div class="add-user-form" id="add-user-form">
+          <h3>Novo Utilizador</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="new-username">Utilizador</label>
+              <input type="text" id="new-username" placeholder="username" />
+            </div>
+            <div class="form-group">
+              <label for="new-password">Palavra-passe</label>
+              <input type="password" id="new-password" placeholder="••••••••" />
+            </div>
+            <div class="form-group">
+              <label for="new-name">Nome</label>
+              <input type="text" id="new-name" placeholder="Nome completo" />
+            </div>
+            <div class="form-group">
+              <label for="new-role">Cargo</label>
+              <select id="new-role">
+                <option value="user">user</option>
+                <option value="tech">tech</option>
+                <option value="owner">owner</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary btn-sm" id="save-user-btn">
+              Guardar
+            </button>
+            <button class="btn btn-secondary btn-sm" id="cancel-user-btn">
+              Cancelar
+            </button>
+          </div>
+        </div>
+
+        <!-- User table -->
+        <div class="user-table-container">
+          <table class="user-table">
+            <thead>
+              <tr>
+                <th>Utilizador</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Cargo</th>
+                <th>Plataformas</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="user-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       CONFIRM DIALOG
+       ========================================== -->
+    <div class="modal-overlay confirm-dialog" id="confirm-dialog">
+      <div class="modal">
+        <h3 id="confirm-title">Confirmar</h3>
+        <p id="confirm-message">Tens a certeza?</p>
+        <div class="modal-actions">
+          <button class="btn btn-secondary btn-sm" id="confirm-cancel">
+            Cancelar
+          </button>
+          <button class="btn btn-danger btn-sm" id="confirm-ok">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ==========================================
+       APPLICATION LOGIC
+       ========================================== -->
+    <script>
+      (function () {
+        "use strict";
+
+        // ============================================
+        // CONSTANTS & CONFIG
+        // ============================================
+
+        /** Available platforms */
+        const PLATFORMS = [
+          {
+            id: "expense-manager",
+            name: "Gestão de Despesas",
+            icon: "💰",
+            url: "index.html",
+            description: "Gestão de despesas dos artistas",
+          },
+        ];
+
+        /** Default hardcoded users (SHA-256 hashed passwords) */
+        const DEFAULT_USERS = [
+          {
+            username: "owner",
+            hash: "43a0d17178a9d26c9e0fe9a74b0b45e38d32f27aed887a008a54bf6e033bf7b9",
+            role: "owner",
+            name: "Admin",
+          },
+          {
+            username: "tomasbb0",
+            hash: "e4d82322ba431aebb7cc65ab865d708bd8fd8e44abfbb2762a1c31ee93066cfb",
+            role: "tech",
+            name: "Tomás",
+          },
+          {
+            username: "madalenta",
+            hash: "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
+            role: "user",
+            name: "Madalena",
+          },
+        ];
+
+        /** Default platform access: every user gets expense-manager by default initially */
+        const DEFAULT_ACCESS = {
+          owner: ["expense-manager"],
+          tomasbb0: ["expense-manager"],
+          madalenta: ["expense-manager"],
+        };
+
+        /** Session duration: 24 hours */
+        const SESSION_TTL = 24 * 60 * 60 * 1000;
+
+        /** Role display names */
+        const ROLE_LABELS = {
+          owner: "Owner",
+          tech: "Tech",
+          user: "Utilizador",
+        };
+
+        // ============================================
+        // STATE
+        // ============================================
+
+        let currentSession = null; // { username, role, name, loginTime }
+
+        // ============================================
+        // STORAGE HELPERS
+        // ============================================
+
+        /** Get all users from localStorage (merged with defaults) */
+        function getUsers() {
+          const stored = localStorage.getItem("maktub_hub_users");
+          let users = stored ? JSON.parse(stored) : [];
+
+          // Merge defaults — ensure default users always exist
+          DEFAULT_USERS.forEach((du) => {
+            if (!users.find((u) => u.username === du.username)) {
+              users.push({ ...du });
+            }
+          });
+
+          return users;
+        }
+
+        /** Save users list to localStorage */
+        function saveUsers(users) {
+          localStorage.setItem("maktub_hub_users", JSON.stringify(users));
+        }
+
+        /** Get platform access map: { username: ['platform-id', ...] } */
+        function getAccessMap() {
+          const stored = localStorage.getItem("maktub_hub_access");
+          let access = stored ? JSON.parse(stored) : {};
+
+          // Merge defaults
+          Object.entries(DEFAULT_ACCESS).forEach(([username, platforms]) => {
+            if (!access[username]) {
+              access[username] = [...platforms];
+            }
+          });
+
+          return access;
+        }
+
+        /** Save access map */
+        function saveAccessMap(access) {
+          localStorage.setItem("maktub_hub_access", JSON.stringify(access));
+        }
+
+        /** Get user-specific data (e.g., email) */
+        function getUserData(username) {
+          const key = `maktub_hub_userdata_${username}`;
+          const stored = localStorage.getItem(key);
+          return stored ? JSON.parse(stored) : {};
+        }
+
+        /** Save user-specific data */
+        function saveUserData(username, data) {
+          const key = `maktub_hub_userdata_${username}`;
+          localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        /** Get / set session */
+        function getSession() {
+          const stored = localStorage.getItem("maktub_hub_session");
+          if (!stored) return null;
+          const session = JSON.parse(stored);
+
+          // Check TTL
+          if (Date.now() - session.loginTime > SESSION_TTL) {
+            localStorage.removeItem("maktub_hub_session");
+            return null;
+          }
+
+          return session;
+        }
+
+        function saveSession(session) {
+          localStorage.setItem("maktub_hub_session", JSON.stringify(session));
+        }
+
+        function clearSession() {
+          localStorage.removeItem("maktub_hub_session");
+        }
+
+        // ============================================
+        // CRYPTO: SHA-256 HASHING
+        // ============================================
+
+        async function sha256(message) {
+          const encoder = new TextEncoder();
+          const data = encoder.encode(message);
+          const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+        }
+
+        // ============================================
+        // INTRO ANIMATION
+        // ============================================
+
+        function handleIntro() {
+          const introScreen = document.getElementById("intro-screen");
+
+          // Only play once per session
+          if (sessionStorage.getItem("maktub_intro_played")) {
+            introScreen.classList.add("hidden");
+            onIntroComplete();
+            return;
+          }
+
+          // Show intro, then fade out after animation
+          sessionStorage.setItem("maktub_intro_played", "true");
+          setTimeout(() => {
+            introScreen.classList.add("fade-out");
+            setTimeout(() => {
+              introScreen.classList.add("hidden");
+              onIntroComplete();
+            }, 600);
+          }, 3400);
+        }
+
+        function onIntroComplete() {
+          // Check for existing valid session
+          const session = getSession();
+          if (session) {
+            currentSession = session;
+            showHub();
+          } else {
+            showLogin();
+          }
+        }
+
+        // ============================================
+        // SCREEN MANAGEMENT
+        // ============================================
+
+        function hideAllScreens() {
+          document
+            .querySelectorAll(".screen")
+            .forEach((s) => s.classList.remove("active"));
+        }
+
+        function showLogin() {
+          hideAllScreens();
+          document.getElementById("login-screen").classList.add("active");
+          document.getElementById("login-username").focus();
+        }
+
+        function showHub() {
+          hideAllScreens();
+          document.getElementById("hub-screen").classList.add("active");
+          renderHub();
+        }
+
+        function showManagement() {
+          hideAllScreens();
+          document.getElementById("management-screen").classList.add("active");
+          renderUserTable();
+        }
+
+        // ============================================
+        // LOGIN
+        // ============================================
+
+        async function handleLogin() {
+          const usernameInput = document.getElementById("login-username");
+          const passwordInput = document.getElementById("login-password");
+          const errorEl = document.getElementById("login-error");
+
+          const username = usernameInput.value.trim().toLowerCase();
+          const password = passwordInput.value;
+
+          errorEl.textContent = "";
+
+          if (!username || !password) {
+            errorEl.textContent = "Preenche todos os campos.";
+            return;
+          }
+
+          // Find user
+          const users = getUsers();
+          const user = users.find((u) => u.username === username);
+
+          if (!user) {
+            errorEl.textContent = "Utilizador não encontrado.";
+            return;
+          }
+
+          // Hash input password and compare
+          const inputHash = await sha256(password);
+          if (inputHash !== user.hash) {
+            errorEl.textContent = "Palavra-passe incorreta.";
+            return;
+          }
+
+          // Create session
+          currentSession = {
+            username: user.username,
+            role: user.role,
+            name: user.name,
+            loginTime: Date.now(),
+          };
+          saveSession(currentSession);
+
+          // Clear form
+          usernameInput.value = "";
+          passwordInput.value = "";
+
+          // Check if first-time login (no email stored)
+          const userData = getUserData(user.username);
+          if (!userData.email) {
+            showEmailModal();
+          } else {
+            showHub();
+            showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
+          }
+        }
+
+        function handleLogout() {
+          clearSession();
+          localStorage.removeItem("maktub_user"); // Also clear expense manager session
+          currentSession = null;
+          showLogin();
+          showToast("Sessão terminada.", "success");
+        }
+
+        // ============================================
+        // EMAIL MODAL (first-time login)
+        // ============================================
+
+        function showEmailModal() {
+          document.getElementById("email-modal").classList.add("active");
+          document.getElementById("email-input").focus();
+        }
+
+        function hideEmailModal() {
+          document.getElementById("email-modal").classList.remove("active");
+          document.getElementById("email-input").value = "";
+        }
+
+        function handleEmailSave() {
+          const emailInput = document.getElementById("email-input");
+          const email = emailInput.value.trim();
+
+          if (!email || !email.includes("@")) {
+            emailInput.style.borderColor = "var(--danger)";
+            return;
+          }
+
+          const userData = getUserData(currentSession.username);
+          userData.email = email;
+          saveUserData(currentSession.username, userData);
+
+          hideEmailModal();
+          showHub();
+          showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
+        }
+
+        // ============================================
+        // HUB RENDERING
+        // ============================================
+
+        function isAdmin() {
+          return (
+            currentSession &&
+            (currentSession.role === "owner" || currentSession.role === "tech")
+          );
+        }
+
+        function userHasAccess(platformId) {
+          if (isAdmin()) return true;
+          const access = getAccessMap();
+          const userAccess = access[currentSession.username] || [];
+          return userAccess.includes(platformId);
+        }
+
+        function renderHub() {
+          if (!currentSession) return;
+
+          // Update greeting
+          document.getElementById("hub-greeting").textContent =
+            `Olá, ${currentSession.name}`;
+
+          const badge = document.getElementById("hub-role-badge");
+          badge.textContent =
+            ROLE_LABELS[currentSession.role] || currentSession.role;
+          badge.className = `role-badge ${currentSession.role}`;
+
+          // Build grid
+          const grid = document.getElementById("platform-grid");
+          grid.innerHTML = "";
+
+          // Render platform cards
+          PLATFORMS.forEach((platform) => {
+            const hasAccess = userHasAccess(platform.id);
+            const card = document.createElement("div");
+            card.className = `platform-card${hasAccess ? "" : " locked"}`;
+            card.title = hasAccess ? platform.name : "Sem acesso";
+            card.innerHTML = `
+            <div class="platform-preview">
+              <span class="icon">${platform.icon}</span>
+              <span class="preview-name">${platform.name}</span>
+              ${!hasAccess ? '<div class="lock-overlay">🔒</div>' : ""}
+            </div>
+            <div class="platform-info">
+              <div class="platform-name">${platform.name}</div>
+              <div class="platform-desc">${platform.description}</div>
+            </div>
+          `;
+
+            if (hasAccess) {
+              card.addEventListener("click", () =>
+                navigateToPlatform(platform),
+              );
+            }
+
+            grid.appendChild(card);
+          });
+
+          // Admin-only cards
+          if (isAdmin()) {
+            // User Management card
+            const mgmtCard = document.createElement("div");
+            mgmtCard.className = "platform-card";
+            mgmtCard.title = "Gestão de Utilizadores";
+            mgmtCard.innerHTML = `
+            <div class="platform-preview">
+              <span class="icon">👥</span>
+              <span class="preview-name">Gestão de Utilizadores</span>
+            </div>
+            <div class="platform-info">
+              <div class="platform-name">Gestão de Utilizadores</div>
+              <div class="platform-desc">Gerir acessos e utilizadores</div>
+            </div>
+          `;
+            mgmtCard.addEventListener("click", showManagement);
+            grid.appendChild(mgmtCard);
+
+            // "Add new platform" card (coming soon)
+            const addCard = document.createElement("div");
+            addCard.className = "platform-card disabled";
+            addCard.title = "Em breve";
+            addCard.innerHTML = `
+            <div class="platform-preview">
+              <span class="icon" style="opacity:0.4">➕</span>
+              <span class="preview-name" style="opacity:0.4">Nova Plataforma</span>
+            </div>
+            <div class="platform-info">
+              <div class="platform-name">Adicionar Plataforma</div>
+              <span class="badge-soon">Em breve</span>
+            </div>
+          `;
+            grid.appendChild(addCard);
+          }
+        }
+
+        // ============================================
+        // PLATFORM NAVIGATION
+        // ============================================
+
+        function navigateToPlatform(platform) {
+          if (platform.id === "expense-manager") {
+            // Set maktub_user in localStorage so the expense manager auto-logs in
+            const userData = getUserData(currentSession.username);
+            const maktubUser = {
+              email: userData.email || `${currentSession.username}@maktub.pt`,
+              name: currentSession.name,
+            };
+            localStorage.setItem("maktub_user", JSON.stringify(maktubUser));
+          }
+
+          // Navigate to platform URL
+          window.location.href = platform.url;
+        }
+
+        // ============================================
+        // USER MANAGEMENT
+        // ============================================
+
+        function renderUserTable() {
+          const tbody = document.getElementById("user-table-body");
+          const users = getUsers();
+          const accessMap = getAccessMap();
+
+          tbody.innerHTML = "";
+
+          users.forEach((user) => {
+            const userData = getUserData(user.username);
+            const userAccess = accessMap[user.username] || [];
+            const tr = document.createElement("tr");
+
+            // Platform toggles
+            const platformToggles = PLATFORMS.map((p) => {
+              // Admin roles always have full access — show toggle but disabled
+              const forceOn = user.role === "owner" || user.role === "tech";
+              const checked = forceOn || userAccess.includes(p.id);
+              const disabled = forceOn ? "disabled" : "";
+              return `
+              <label class="toggle" title="${p.name}">
+                <input type="checkbox" ${checked ? "checked" : ""} ${disabled}
+                  data-username="${user.username}" data-platform="${p.id}"
+                  onchange="window._hub.toggleAccess(this)" />
+                <span class="toggle-slider"></span>
+              </label>
+              <span style="font-size:0.8rem;margin-left:4px;color:var(--text-muted)">${p.name}</span>
+            `;
+            }).join("<br>");
+
+            // Determine if user can be deleted (cannot delete yourself or default owner)
+            const canDelete =
+              user.username !== currentSession.username &&
+              user.username !== "owner";
+
+            tr.innerHTML = `
+            <td><strong>${user.username}</strong></td>
+            <td>${user.name}</td>
+            <td style="color:var(--text-muted)">${userData.email || "—"}</td>
+            <td><span class="role-badge ${user.role}">${ROLE_LABELS[user.role] || user.role}</span></td>
+            <td>${platformToggles}</td>
+            <td>
+              ${
+                canDelete
+                  ? `<button class="btn btn-danger btn-sm" onclick="window._hub.confirmDeleteUser('${user.username}')">Eliminar</button>`
+                  : '<span style="color:var(--text-muted);font-size:0.8rem">—</span>'
+              }
+            </td>
+          `;
+
+            tbody.appendChild(tr);
+          });
+        }
+
+        function toggleAccess(checkbox) {
+          const username = checkbox.dataset.username;
+          const platformId = checkbox.dataset.platform;
+          const accessMap = getAccessMap();
+
+          if (!accessMap[username]) accessMap[username] = [];
+
+          if (checkbox.checked) {
+            if (!accessMap[username].includes(platformId)) {
+              accessMap[username].push(platformId);
+            }
+          } else {
+            accessMap[username] = accessMap[username].filter(
+              (p) => p !== platformId,
+            );
+          }
+
+          saveAccessMap(accessMap);
+          showToast("Acesso atualizado.", "success");
+        }
+
+        // ---- Add User ----
+
+        function toggleAddUserForm() {
+          const form = document.getElementById("add-user-form");
+          form.classList.toggle("active");
+          if (form.classList.contains("active")) {
+            document.getElementById("new-username").focus();
+          }
+        }
+
+        function cancelAddUser() {
+          document.getElementById("add-user-form").classList.remove("active");
+          document.getElementById("new-username").value = "";
+          document.getElementById("new-password").value = "";
+          document.getElementById("new-name").value = "";
+          document.getElementById("new-role").value = "user";
+        }
+
+        async function saveNewUser() {
+          const username = document
+            .getElementById("new-username")
+            .value.trim()
+            .toLowerCase();
+          const password = document.getElementById("new-password").value;
+          const name = document.getElementById("new-name").value.trim();
+          const role = document.getElementById("new-role").value;
+
+          if (!username || !password || !name) {
+            showToast("Preenche todos os campos.", "error");
+            return;
+          }
+
+          // Check duplicates
+          const users = getUsers();
+          if (users.find((u) => u.username === username)) {
+            showToast("Esse utilizador já existe.", "error");
+            return;
+          }
+
+          // Hash password
+          const hash = await sha256(password);
+
+          // Add user
+          users.push({ username, hash, role, name });
+          saveUsers(users);
+
+          // Give default access to expense-manager
+          const accessMap = getAccessMap();
+          accessMap[username] = ["expense-manager"];
+          saveAccessMap(accessMap);
+
+          cancelAddUser();
+          renderUserTable();
+          showToast(`Utilizador "${username}" criado com sucesso.`, "success");
+        }
+
+        // ---- Delete User ----
+
+        let pendingDeleteUsername = null;
+
+        function confirmDeleteUser(username) {
+          pendingDeleteUsername = username;
+          document.getElementById("confirm-title").textContent =
+            "Eliminar Utilizador";
+          document.getElementById("confirm-message").textContent =
+            `Tens a certeza que queres eliminar "${username}"? Esta ação não pode ser desfeita.`;
+          document.getElementById("confirm-dialog").classList.add("active");
+        }
+
+        function executeDeleteUser() {
+          if (!pendingDeleteUsername) return;
+
+          let users = getUsers();
+          users = users.filter((u) => u.username !== pendingDeleteUsername);
+          saveUsers(users);
+
+          // Remove access
+          const accessMap = getAccessMap();
+          delete accessMap[pendingDeleteUsername];
+          saveAccessMap(accessMap);
+
+          // Remove user data
+          localStorage.removeItem(
+            `maktub_hub_userdata_${pendingDeleteUsername}`,
+          );
+
+          pendingDeleteUsername = null;
+          document.getElementById("confirm-dialog").classList.remove("active");
+          renderUserTable();
+          showToast("Utilizador eliminado.", "success");
+        }
+
+        function cancelConfirm() {
+          pendingDeleteUsername = null;
+          document.getElementById("confirm-dialog").classList.remove("active");
+        }
+
+        // ============================================
+        // TOAST NOTIFICATIONS
+        // ============================================
+
+        function showToast(message, type = "success") {
+          const container = document.getElementById("toast-container");
+          const toast = document.createElement("div");
+          toast.className = `toast ${type}`;
+          toast.textContent = message;
+          container.appendChild(toast);
+
+          setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+          }, 3200);
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+
+        function initEventListeners() {
+          // Login
+          document
+            .getElementById("login-btn")
+            .addEventListener("click", handleLogin);
+          document
+            .getElementById("login-password")
+            .addEventListener("keydown", (e) => {
+              if (e.key === "Enter") handleLogin();
+            });
+          document
+            .getElementById("login-username")
+            .addEventListener("keydown", (e) => {
+              if (e.key === "Enter")
+                document.getElementById("login-password").focus();
+            });
+
+          // Logout
+          document
+            .getElementById("logout-btn")
+            .addEventListener("click", handleLogout);
+
+          // Email modal
+          document
+            .getElementById("email-save-btn")
+            .addEventListener("click", handleEmailSave);
+          document
+            .getElementById("email-input")
+            .addEventListener("keydown", (e) => {
+              if (e.key === "Enter") handleEmailSave();
+            });
+
+          // Management: back
+          document
+            .getElementById("mgmt-back-btn")
+            .addEventListener("click", showHub);
+
+          // Management: add user
+          document
+            .getElementById("add-user-toggle-btn")
+            .addEventListener("click", toggleAddUserForm);
+          document
+            .getElementById("save-user-btn")
+            .addEventListener("click", saveNewUser);
+          document
+            .getElementById("cancel-user-btn")
+            .addEventListener("click", cancelAddUser);
+
+          // Confirm dialog
+          document
+            .getElementById("confirm-ok")
+            .addEventListener("click", executeDeleteUser);
+          document
+            .getElementById("confirm-cancel")
+            .addEventListener("click", cancelConfirm);
+        }
+
+        // ============================================
+        // EXPOSE FUNCTIONS FOR INLINE HANDLERS
+        // ============================================
+
+        window._hub = {
+          toggleAccess,
+          confirmDeleteUser,
+        };
+
+        // ============================================
+        // BOOTSTRAP
+        // ============================================
+
+        document.addEventListener("DOMContentLoaded", () => {
+          initEventListeners();
+          handleIntro();
+        });
+      })();
+    </script>
+  </body>
+</html>
