@@ -63,7 +63,7 @@
         --text: #f6f6f6;
         --text-secondary: #a0a0a0;
         --text-muted: #666666;
-        --accent: #33E933;
+        --accent: #33e933;
         --accent-hover: #2bc42b;
         --accent-dim: rgba(51, 233, 51, 0.15);
         --accent-glow: rgba(51, 233, 51, 0.15);
@@ -100,31 +100,95 @@
         display: none;
       }
 
+      /* Intro SVG container — circles animate in */
       .intro-logo-container {
-        width: 140px;
-        height: 140px;
+        width: 200px;
+        height: 200px;
         position: relative;
-        opacity: 0;
-        transform: scale(0.8);
-        animation: introLogoIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
       }
 
-      .intro-logo-container img {
+      .intro-logo-container svg {
         width: 100%;
         height: 100%;
-        object-fit: contain;
-        filter: drop-shadow(0 0 0px rgba(51, 233, 51, 0));
-        animation: introLogoGlow 1.6s ease 0.8s forwards;
+        overflow: visible;
       }
 
-      @keyframes introLogoIn {
+      /* Three circles — start spread apart, animate to overlap (Venn diagram) */
+      .intro-circle {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 1.5;
+        opacity: 0;
+      }
+
+      .intro-circle-top {
+        animation: circleTopMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+      .intro-circle-left {
+        animation: circleLeftMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+      .intro-circle-right {
+        animation: circleRightMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+
+      @keyframes circleTopMove {
+        0% {
+          transform: translate(0, -50px);
+          opacity: 0;
+        }
+        25% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0.6;
+        }
+      }
+      @keyframes circleLeftMove {
+        0% {
+          transform: translate(-45px, 35px);
+          opacity: 0;
+        }
+        25% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0.6;
+        }
+      }
+      @keyframes circleRightMove {
+        0% {
+          transform: translate(45px, 35px);
+          opacity: 0;
+        }
+        25% {
+          opacity: 0.6;
+        }
+        100% {
+          transform: translate(0, 0);
+          opacity: 0.6;
+        }
+      }
+
+      /* Small center dot — appears after circles converge */
+      .intro-center-dot {
+        fill: var(--accent);
+        opacity: 0;
+        animation: centerDotIn 0.4s ease forwards;
+        animation-delay: 1.4s;
+      }
+
+      @keyframes centerDotIn {
         0% {
           opacity: 0;
-          transform: scale(0.8);
+          transform: scale(0);
         }
         60% {
-          opacity: 1;
-          transform: scale(1.02);
+          transform: scale(1.3);
         }
         100% {
           opacity: 1;
@@ -132,15 +196,30 @@
         }
       }
 
-      @keyframes introLogoGlow {
+      /* After circles converge, the actual logo fades in on top */
+      .intro-logo-overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        animation: logoOverlayIn 0.6s ease forwards;
+        animation-delay: 1.8s;
+      }
+
+      .intro-logo-overlay img {
+        width: 70%;
+        height: 70%;
+        object-fit: contain;
+      }
+
+      @keyframes logoOverlayIn {
         0% {
-          filter: drop-shadow(0 0 0px rgba(51, 233, 51, 0));
-        }
-        50% {
-          filter: drop-shadow(0 0 20px rgba(51, 233, 51, 0.3));
+          opacity: 0;
         }
         100% {
-          filter: drop-shadow(0 0 10px rgba(51, 233, 51, 0.15));
+          opacity: 1;
         }
       }
 
@@ -153,7 +232,7 @@
         margin-top: 28px;
         opacity: 0;
         animation: textFadeIn 0.8s ease forwards;
-        animation-delay: 1.8s;
+        animation-delay: 2.2s;
       }
 
       @keyframes textFadeIn {
@@ -565,7 +644,7 @@
 
       .platform-preview {
         width: 100%;
-        aspect-ratio: 1;
+        aspect-ratio: 4/3;
         background: var(--bg);
         display: flex;
         flex-direction: column;
@@ -573,6 +652,7 @@
         justify-content: center;
         gap: 12px;
         position: relative;
+        overflow: hidden;
       }
 
       .platform-preview .icon {
@@ -586,6 +666,196 @@
         color: var(--text-muted);
         text-align: center;
         padding: 0 12px;
+      }
+
+      /* Mini dashboard preview (expense manager screenshot lookalike) */
+      .mini-dashboard {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .mini-dash-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        background: #1a1a1a;
+        flex-shrink: 0;
+      }
+
+      .mini-dash-header .mini-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        object-fit: contain;
+      }
+
+      .mini-dash-header span {
+        font-size: 0.55rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        letter-spacing: 0.3px;
+      }
+
+      .mini-dash-body {
+        flex: 1;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .mini-stat-row {
+        display: flex;
+        gap: 5px;
+      }
+
+      .mini-stat {
+        flex: 1;
+        background: #1a1a1a;
+        border-radius: 4px;
+        padding: 6px 7px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .mini-stat-bar {
+        width: 60%;
+        height: 3px;
+        border-radius: 2px;
+        background: var(--text-muted);
+        opacity: 0.4;
+      }
+
+      .mini-stat-val {
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .mini-stat-label {
+        font-size: 0.4rem;
+        color: var(--text-muted);
+      }
+
+      .mini-table {
+        flex: 1;
+        background: #1a1a1a;
+        border-radius: 4px;
+        padding: 6px 7px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .mini-table-row {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .mini-table-cell {
+        height: 3px;
+        border-radius: 2px;
+        background: var(--text-muted);
+        opacity: 0.25;
+      }
+
+      .mini-table-cell:nth-child(1) {
+        flex: 2;
+      }
+      .mini-table-cell:nth-child(2) {
+        flex: 1;
+      }
+      .mini-table-cell:nth-child(3) {
+        flex: 1;
+        opacity: 0.15;
+      }
+
+      /* Mini user management preview */
+      .mini-users {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .mini-users-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        background: #1a1a1a;
+        flex-shrink: 0;
+      }
+
+      .mini-users-header span {
+        font-size: 0.55rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .mini-users-body {
+        flex: 1;
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .mini-user-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 6px;
+        background: #1a1a1a;
+        border-radius: 4px;
+      }
+
+      .mini-avatar {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        border: 1px solid rgba(51, 233, 51, 0.3);
+        flex-shrink: 0;
+      }
+
+      .mini-user-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+
+      .mini-user-bar {
+        height: 3px;
+        border-radius: 2px;
+        background: var(--text-muted);
+        opacity: 0.3;
+      }
+
+      .mini-user-bar:first-child {
+        width: 70%;
+        opacity: 0.4;
+      }
+      .mini-user-bar:last-child {
+        width: 45%;
+      }
+
+      .mini-toggle {
+        width: 14px;
+        height: 8px;
+        border-radius: 4px;
+        background: var(--accent);
+        opacity: 0.6;
+        flex-shrink: 0;
       }
 
       .lock-overlay {
@@ -931,7 +1201,30 @@
        ========================================== -->
     <div id="intro-screen">
       <div class="intro-logo-container">
-        <img src="maktub-logo.png" alt="Maktub Art Group" />
+        <svg viewBox="0 0 200 200">
+          <circle
+            class="intro-circle intro-circle-top"
+            cx="100"
+            cy="72"
+            r="48"
+          />
+          <circle
+            class="intro-circle intro-circle-left"
+            cx="74"
+            cy="118"
+            r="48"
+          />
+          <circle
+            class="intro-circle intro-circle-right"
+            cx="126"
+            cy="118"
+            r="48"
+          />
+          <circle class="intro-center-dot" cx="100" cy="100" r="12" />
+        </svg>
+        <div class="intro-logo-overlay">
+          <img src="maktub-logo.png" alt="Maktub Art Group" />
+        </div>
       </div>
       <div class="intro-text">Maktub Art Group</div>
     </div>
@@ -1261,7 +1554,7 @@
               introScreen.classList.add("hidden");
               onIntroComplete();
             }, 600);
-          }, 3400);
+          }, 3800);
         }
 
         function onIntroComplete() {
@@ -1400,12 +1693,54 @@
             const card = document.createElement("div");
             card.className = `platform-card${hasAccess ? "" : " locked"}`;
             card.title = hasAccess ? platform.name : "Sem acesso";
+
+            // Build preview based on platform type
+            let previewHTML;
+            if (platform.id === "expense-manager") {
+              previewHTML = `
+              <div class="platform-preview">
+                <div class="mini-dashboard">
+                  <div class="mini-dash-header">
+                    <img class="mini-dot" src="maktub-logo.png" alt="" />
+                    <span>Maktub Art Group</span>
+                  </div>
+                  <div class="mini-dash-body">
+                    <div class="mini-stat-row">
+                      <div class="mini-stat">
+                        <div class="mini-stat-val">2,450€</div>
+                        <div class="mini-stat-label">Total</div>
+                      </div>
+                      <div class="mini-stat">
+                        <div class="mini-stat-val" style="color:#ff4444">890€</div>
+                        <div class="mini-stat-label">Pendente</div>
+                      </div>
+                      <div class="mini-stat">
+                        <div class="mini-stat-val">1,560€</div>
+                        <div class="mini-stat-label">Pago</div>
+                      </div>
+                    </div>
+                    <div class="mini-table">
+                      <div class="mini-table-row"><div class="mini-table-cell"></div><div class="mini-table-cell"></div><div class="mini-table-cell"></div></div>
+                      <div class="mini-table-row"><div class="mini-table-cell"></div><div class="mini-table-cell"></div><div class="mini-table-cell"></div></div>
+                      <div class="mini-table-row"><div class="mini-table-cell"></div><div class="mini-table-cell"></div><div class="mini-table-cell"></div></div>
+                      <div class="mini-table-row"><div class="mini-table-cell"></div><div class="mini-table-cell"></div><div class="mini-table-cell"></div></div>
+                      <div class="mini-table-row"><div class="mini-table-cell"></div><div class="mini-table-cell"></div><div class="mini-table-cell"></div></div>
+                    </div>
+                  </div>
+                </div>
+                ${!hasAccess ? '<div class="lock-overlay">🔒</div>' : ""}
+              </div>`;
+            } else {
+              previewHTML = `
+              <div class="platform-preview">
+                <span class="icon">${platform.icon}</span>
+                <span class="preview-name">${platform.name}</span>
+                ${!hasAccess ? '<div class="lock-overlay">🔒</div>' : ""}
+              </div>`;
+            }
+
             card.innerHTML = `
-            <div class="platform-preview">
-              <span class="icon">${platform.icon}</span>
-              <span class="preview-name">${platform.name}</span>
-              ${!hasAccess ? '<div class="lock-overlay">🔒</div>' : ""}
-            </div>
+            ${previewHTML}
             <div class="platform-info">
               <div class="platform-name">${platform.name}</div>
               <div class="platform-desc">${platform.description}</div>
@@ -1424,8 +1759,29 @@
             mgmtCard.title = "Gestão de Utilizadores";
             mgmtCard.innerHTML = `
             <div class="platform-preview">
-              <span class="icon">👥</span>
-              <span class="preview-name">Gestão de Utilizadores</span>
+              <div class="mini-users">
+                <div class="mini-users-header">
+                  <span>Utilizadores</span>
+                  <span style="color:var(--accent);font-size:0.5rem">+ Novo</span>
+                </div>
+                <div class="mini-users-body">
+                  <div class="mini-user-row">
+                    <div class="mini-avatar"></div>
+                    <div class="mini-user-info"><div class="mini-user-bar"></div><div class="mini-user-bar"></div></div>
+                    <div class="mini-toggle"></div>
+                  </div>
+                  <div class="mini-user-row">
+                    <div class="mini-avatar"></div>
+                    <div class="mini-user-info"><div class="mini-user-bar"></div><div class="mini-user-bar"></div></div>
+                    <div class="mini-toggle"></div>
+                  </div>
+                  <div class="mini-user-row">
+                    <div class="mini-avatar"></div>
+                    <div class="mini-user-info"><div class="mini-user-bar"></div><div class="mini-user-bar"></div></div>
+                    <div class="mini-toggle" style="background:var(--text-muted);opacity:0.3"></div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="platform-info">
               <div class="platform-name">Gestão de Utilizadores</div>
@@ -1438,9 +1794,8 @@
             addCard.className = "platform-card disabled";
             addCard.title = "Em breve";
             addCard.innerHTML = `
-            <div class="platform-preview">
-              <span class="icon" style="opacity:0.4">➕</span>
-              <span class="preview-name" style="opacity:0.4">Nova Plataforma</span>
+            <div class="platform-preview" style="justify-content:center;align-items:center">
+              <span class="icon" style="opacity:0.3;font-size:2.5rem">➕</span>
             </div>
             <div class="platform-info">
               <div class="platform-name">Adicionar Plataforma</div>
@@ -1659,8 +2014,8 @@
             .addEventListener("click", cancelConfirm);
 
           // Topbar brand clicks → go to hub
-          document.querySelectorAll('.topbar-brand').forEach(el => {
-            el.addEventListener('click', showHub);
+          document.querySelectorAll(".topbar-brand").forEach((el) => {
+            el.addEventListener("click", showHub);
           });
         }
 
