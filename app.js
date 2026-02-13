@@ -575,6 +575,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "equipamento",
     project: "Gerais Bandidos",
     amount: 591.0,
     entity: "Vodafone Play - Styling",
@@ -586,6 +587,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Gerais Bandidos",
     amount: 13.8,
     entity: "Vodafone Play - Cervejas",
@@ -597,6 +599,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "outros",
     project: "Gerais Bandidos",
     amount: 500.0,
     entity: "Vodafone Play - Pagamento recebido",
@@ -610,6 +613,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alojamento",
     project: "Gerais Bandidos",
     amount: 134.86,
     entity: "Airbnb 04/06",
@@ -621,6 +625,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "outros",
     project: "Gerais Bandidos",
     amount: 147.0,
     entity: "Ovibeja - Pagamento Aftermovie",
@@ -633,6 +638,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 60.0,
     entity: "Design Single de Ouro",
@@ -644,6 +650,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 250.0,
     entity: "Design - Pax Julia 'Ao vivo em Beja'",
@@ -655,6 +662,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 200.0,
     entity: "Design Ledwalls",
@@ -668,6 +676,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 403.0,
     entity: "Sessão fotográfica - Styling (Isa)",
@@ -679,6 +688,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 89.0,
     entity: "Sessão fotográfica - Tela",
@@ -690,6 +700,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 71.0,
     entity: "Sessão fotográfica - Estúdio SET",
@@ -701,6 +712,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 100.0,
     entity: "Sessão fotográfica - Estúdio Sítio",
@@ -712,6 +724,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Gerais Bandidos",
     amount: 76.53,
     entity: "Sessão fotográfica - Almoço",
@@ -723,6 +736,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Gerais Bandidos",
     amount: 34.12,
     entity: "Sessão fotográfica - Snacks",
@@ -734,6 +748,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 12.88,
     entity: "Sessão fotográfica - Adereços",
@@ -745,6 +760,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 460.0,
     entity: "Sessão fotográfica - Cajó (fotografia)",
@@ -757,6 +773,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 200.0,
     entity: "Técnico de Som Gracinha",
@@ -770,6 +787,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 40.0,
     entity: "Design - Press Kit Bandidos nos teatros",
@@ -783,6 +801,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 80.0,
     entity: "Design Press Kit",
@@ -794,6 +813,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 375.0,
     entity: "Design Merch",
@@ -807,6 +827,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "outros",
     project: "Gerais Bandidos",
     amount: 70.0,
     entity: "Advogada 25",
@@ -818,6 +839,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 150.0,
     entity: "Design Datas mensais + Cartaz geral Datas Tour",
@@ -829,6 +851,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Gerais Bandidos",
     amount: 100.0,
     entity: "Design Beja Pax Julia - Derivações 2nd Data e Convidados",
@@ -840,6 +863,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "equipamento",
     project: "Gerais Bandidos",
     amount: 65.0,
     entity: "Molduras Galardões (10 molduras)",
@@ -851,6 +875,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "equipamento",
     project: "Gerais Bandidos",
     amount: 64.275,
     entity: "Impressão Galardões",
@@ -862,6 +887,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "equipamento",
     project: "Gerais Bandidos",
     amount: 81.0,
     entity: "Photocall (impressão só de 1 lado)",
@@ -873,6 +899,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "equipamento",
     project: "Gerais Bandidos",
     amount: 25.0,
     entity: "Roll Up álbum Pax Júlia",
@@ -884,6 +911,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 2860.0,
     entity: "Produção Merch",
@@ -895,6 +923,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Gerais Bandidos",
     amount: 216.0,
     entity: "Ensaio Pax Júlia",
@@ -910,6 +939,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 312.5,
     entity: "Ramos flores - Promo Álbum",
@@ -921,6 +951,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 200.0,
     entity: "Capa Álbum - Fellypa",
@@ -932,6 +963,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 300.0,
     entity: "Teresa lemos - Assessoria Primavera e álbum",
@@ -943,6 +975,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 1259.23,
     entity: "Festa Lançamento Álbum",
@@ -954,6 +987,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 800.0,
     entity:
@@ -966,6 +1000,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 75.0,
     entity: "Lucas - conteúdo promo Mega e RR",
@@ -977,6 +1012,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 21.98,
     entity: "Disco 'Bairro das Flores' casa Amália",
@@ -988,6 +1024,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 2000.0,
     entity: "Gastaram de conta conjunta",
@@ -999,6 +1036,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 750.0,
     entity: "Writting Camp",
@@ -1010,6 +1048,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "outros",
     project: "Álbum Bairro das Flores - Geral",
     amount: 6000.0,
     entity: "Acin (Luís)",
@@ -1021,6 +1060,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Álbum Bairro das Flores - Geral",
     amount: 1250.0,
     entity: "Herdade do Sobroso - Videoclipe AMIGOS COLORIDOS",
@@ -1032,6 +1072,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "outros",
     project: "Álbum Bairro das Flores - Geral",
     amount: 10000.0,
     entity: "SPA - Apoio Fundo SPA",
@@ -1045,6 +1086,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 300.0,
     entity: "Promo - Youtube",
@@ -1056,6 +1098,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 300.0,
     entity: "Promo - Instagram",
@@ -1067,6 +1110,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 300.0,
     entity: "Promo - Tiktok",
@@ -1078,6 +1122,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 100.0,
     entity: "Promo - FB",
@@ -1089,6 +1134,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 60.0,
     entity: "Single de Ouro",
@@ -1100,6 +1146,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "transporte",
     project: "Amigos Coloridos",
     amount: 356.7,
     entity: "Aluguer e transporte sofás (THE VOICE)",
@@ -1111,6 +1158,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Amigos Coloridos",
     amount: 300.0,
     entity: "Produção música",
@@ -1122,6 +1170,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Amigos Coloridos",
     amount: 150.0,
     entity: "Mix e master",
@@ -1133,6 +1182,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Amigos Coloridos",
     amount: 300.0,
     entity: "Aluguer estúdio",
@@ -1144,6 +1194,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Amigos Coloridos",
     amount: 100.0,
     entity: "Mapi - piano",
@@ -1155,6 +1206,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Amigos Coloridos",
     amount: 150.0,
     entity: "Rodrigo - guitarra",
@@ -1166,6 +1218,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 200.0,
     entity: "Promo - Youtube",
@@ -1177,6 +1230,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 200.0,
     entity: "Promo - Tik tok",
@@ -1188,6 +1242,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Amigos Coloridos",
     amount: 100.0,
     entity: "Promo - Instagram",
@@ -1201,6 +1256,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Já não há pardais no céu",
     amount: 1353.0,
     entity: "Blitz Promo",
@@ -1212,6 +1268,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Já não há pardais no céu",
     amount: 150.0,
     entity: "Blitz - Fotografia",
@@ -1223,6 +1280,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Já não há pardais no céu",
     amount: 100.0,
     entity: "Almoço imprensa (Solar)",
@@ -1234,6 +1292,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Já não há pardais no céu",
     amount: 190.0,
     entity: "Festa Lançamento - Catering",
@@ -1245,6 +1304,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Já não há pardais no céu",
     amount: 553.0,
     entity: "Festa Lançamento - Espaço",
@@ -1256,6 +1316,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Já não há pardais no céu",
     amount: 100.0,
     entity: "Design - capa, comunicação redes e convite LP",
@@ -1267,6 +1328,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Já não há pardais no céu",
     amount: 3300.0,
     entity: "Videoclipe",
@@ -1278,6 +1340,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Já não há pardais no céu",
     amount: 300.0,
     entity: "Produção",
@@ -1289,6 +1352,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Já não há pardais no céu",
     amount: 100.0,
     entity: "Mix",
@@ -1300,6 +1364,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Já não há pardais no céu",
     amount: 50.0,
     entity: "Master",
@@ -1311,6 +1376,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Já não há pardais no céu",
     amount: 100.0,
     entity: "Ivo Costa - Bateria",
@@ -1324,6 +1390,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tanto Tempo",
     amount: 500.0,
     entity: "Produção Edu",
@@ -1335,6 +1402,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Tanto Tempo",
     amount: 90.0,
     entity: "Design",
@@ -1346,6 +1414,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tanto Tempo",
     amount: 250.0,
     entity: "Dia Estúdio - Vale de Lobos",
@@ -1357,6 +1426,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tanto Tempo",
     amount: 150.0,
     entity: "Mix e Master",
@@ -1368,6 +1438,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tanto Tempo",
     amount: 3447.73,
     entity: "Videoclipe",
@@ -1379,6 +1450,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "promocao",
     project: "Tanto Tempo",
     amount: 300.0,
     entity: "Assessoria de Imprensa - Teresa Lemos",
@@ -1392,6 +1464,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "QUERO ACREDITAR",
     amount: 615.0,
     entity: "Produção (50%) - Rodrigo",
@@ -1403,6 +1476,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "QUERO ACREDITAR",
     amount: 500.0,
     entity: "Produção Jon",
@@ -1414,6 +1488,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "QUERO ACREDITAR",
     amount: 150.0,
     entity: "Mapi - piano",
@@ -1425,6 +1500,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "QUERO ACREDITAR",
     amount: 100.0,
     entity: "Gui Melo - Bateria",
@@ -1438,6 +1514,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Voltar a Ver-te",
     amount: 500.0,
     entity: "Produção JON",
@@ -1449,6 +1526,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Voltar a Ver-te",
     amount: 500.0,
     entity: "Produção Rodrigo",
@@ -1462,6 +1540,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Primavera - Zambujo",
     amount: 396.74,
     entity: "Almoço António Zambujo - Solar dos Presentes",
@@ -1473,6 +1552,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 100.0,
     entity: "Fotos Estúdio mudsea",
@@ -1484,6 +1564,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 250.0,
     entity: "Dia Estúdio - Vale de Lobos",
@@ -1495,6 +1576,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 4000.0,
     entity: "Videoclipe GUI",
@@ -1506,6 +1588,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 500.0,
     entity: "António - arranjos e Gravação",
@@ -1517,6 +1600,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 75.0,
     entity: "Técnica Estúdio Valentim de Carvalho - Cordas",
@@ -1528,6 +1612,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 250.0,
     entity: "Mix e Master Náná",
@@ -1539,6 +1624,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 500.0,
     entity: "Quarteto Cordas",
@@ -1550,6 +1636,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 150.0,
     entity: "Contrabaixo Rodrigo",
@@ -1561,6 +1648,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Primavera - Zambujo",
     amount: 500.0,
     entity: "Produção Edu",
@@ -1574,6 +1662,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Nada Mais",
     amount: 500.0,
     entity: "Produção Edu",
@@ -1587,6 +1676,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Bairro das Flores",
     amount: 500.0,
     entity: "Produção Edu",
@@ -1600,6 +1690,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 500.0,
     entity: "António - Arranjo e Gravação",
@@ -1611,6 +1702,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 390.0,
     entity: "Aluguer estúdio - Paço de Arcos",
@@ -1622,6 +1714,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 75.0,
     entity: "Técnica Estúdio Valentim de Carvalho - Cordas",
@@ -1633,6 +1726,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 250.0,
     entity: "Mix e Master Náná",
@@ -1644,6 +1738,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 70.0,
     entity: "Preparação multificheiros para o Festival da Canção",
@@ -1655,6 +1750,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 500.0,
     entity: "Quarteto Cordas",
@@ -1666,6 +1762,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 150.0,
     entity: "Contrabaixo Rodrigo",
@@ -1677,6 +1774,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Rosa",
     amount: 500.0,
     entity: "Produção Edu",
@@ -1688,6 +1786,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "equipamento",
     project: "Rosa",
     amount: 1250.0,
     entity: "Festival da Canção - Arte Palco (Alexandre)",
@@ -1701,6 +1800,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Tu És - 4 e Meia",
     amount: 202.5,
     entity: "Ida ao Porto - Almoço Porto",
@@ -1712,6 +1812,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Tu És - 4 e Meia",
     amount: 221.5,
     entity: "Ida ao Porto - Almoço Porto",
@@ -1723,6 +1824,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alimentacao",
     project: "Tu És - 4 e Meia",
     amount: 92.9,
     entity: "Ida ao Porto - Refeição Porto",
@@ -1734,6 +1836,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "alojamento",
     project: "Tu És - 4 e Meia",
     amount: 420.41,
     entity: "Ida ao Porto - Alojamento",
@@ -1745,6 +1848,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tu És - 4 e Meia",
     amount: 300.0,
     entity: "Ida ao Porto - Estúdio Porto",
@@ -1756,6 +1860,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "transporte",
     project: "Tu És - 4 e Meia",
     amount: 265.0,
     entity: "Ida ao Porto - Transporte ida e volta para o Porto",
@@ -1767,6 +1872,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tu És - 4 e Meia",
     amount: 250.0,
     entity: "Ida ao Porto - Fotógrafo",
@@ -1778,6 +1884,7 @@ function getAllDemoData() {
   data.push({
     id: (id++).toString(),
     artist: "Bandidos do Cante",
+    type: "producao",
     project: "Tu És - 4 e Meia",
     amount: 200.0,
     entity: "Lisboa - Estúdio Lisboa",
