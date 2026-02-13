@@ -100,9 +100,9 @@
         display: none;
       }
 
-      /* Intro SVG container — circles animate in */
+      /* Intro SVG container — 3 horizontal circles animate in */
       .intro-logo-container {
-        width: 200px;
+        width: 300px;
         height: 200px;
         position: relative;
       }
@@ -113,113 +113,100 @@
         overflow: visible;
       }
 
-      /* Three circles — start spread apart, animate to overlap (Venn diagram) */
+      /*
+        Geometry:
+        R = 70, outer centers 0.75R = 52.5 apart
+        Each outer at ±26.25 from middle
+        viewBox="0 0 300 200" center at (150, 100)
+        Left:  cx=123.75  Middle: cx=150  Right: cx=176.25
+        Small inscribed: r = R - 26.25 = 43.75
+        Stroke = 7
+      */
+
       .intro-circle {
         fill: none;
         stroke: var(--accent);
-        stroke-width: 1.5;
+        stroke-width: 7;
         opacity: 0;
       }
 
-      .intro-circle-top {
-        animation: circleTopMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
-      }
+      /* Left circle — starts further left, slides in */
       .intro-circle-left {
-        animation: circleLeftMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+        animation: circleLeftIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
           forwards;
       }
+      /* Middle circle — fades in at center */
+      .intro-circle-mid {
+        animation: circleMidIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+      }
+      /* Right circle — starts further right, slides in */
       .intro-circle-right {
-        animation: circleRightMove 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+        animation: circleRightIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
           forwards;
       }
 
-      @keyframes circleTopMove {
+      @keyframes circleLeftIn {
         0% {
-          transform: translate(0, -50px);
+          transform: translate(-80px, 0);
           opacity: 0;
         }
-        25% {
-          opacity: 0.6;
+        20% {
+          opacity: 0.7;
         }
         100% {
           transform: translate(0, 0);
-          opacity: 0.6;
+          opacity: 0.7;
         }
       }
-      @keyframes circleLeftMove {
+      @keyframes circleMidIn {
         0% {
-          transform: translate(-45px, 35px);
+          transform: scale(0.5);
           opacity: 0;
         }
-        25% {
-          opacity: 0.6;
+        20% {
+          opacity: 0.7;
         }
         100% {
-          transform: translate(0, 0);
-          opacity: 0.6;
+          transform: scale(1);
+          opacity: 0.7;
         }
       }
-      @keyframes circleRightMove {
+      @keyframes circleRightIn {
         0% {
-          transform: translate(45px, 35px);
+          transform: translate(80px, 0);
           opacity: 0;
         }
-        25% {
-          opacity: 0.6;
+        20% {
+          opacity: 0.7;
         }
         100% {
           transform: translate(0, 0);
-          opacity: 0.6;
+          opacity: 0.7;
         }
       }
 
-      /* Small center dot — appears after circles converge */
-      .intro-center-dot {
-        fill: var(--accent);
+      /* Small inscribed circle — appears after convergence */
+      .intro-inner-circle {
+        fill: none;
+        stroke: var(--accent);
+        stroke-width: 7;
         opacity: 0;
-        animation: centerDotIn 0.4s ease forwards;
-        animation-delay: 1.4s;
+        animation: innerCircleIn 0.5s ease forwards;
+        animation-delay: 1.6s;
       }
 
-      @keyframes centerDotIn {
+      @keyframes innerCircleIn {
         0% {
           opacity: 0;
           transform: scale(0);
         }
         60% {
-          transform: scale(1.3);
+          transform: scale(1.08);
         }
         100% {
-          opacity: 1;
+          opacity: 0.7;
           transform: scale(1);
-        }
-      }
-
-      /* After circles converge, the actual logo fades in on top */
-      .intro-logo-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        animation: logoOverlayIn 0.6s ease forwards;
-        animation-delay: 1.8s;
-      }
-
-      .intro-logo-overlay img {
-        width: 70%;
-        height: 70%;
-        object-fit: contain;
-      }
-
-      @keyframes logoOverlayIn {
-        0% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
         }
       }
 
@@ -232,7 +219,7 @@
         margin-top: 28px;
         opacity: 0;
         animation: textFadeIn 0.8s ease forwards;
-        animation-delay: 2.2s;
+        animation-delay: 2.4s;
       }
 
       @keyframes textFadeIn {
@@ -1729,30 +1716,31 @@
        ========================================== -->
     <div id="intro-screen">
       <div class="intro-logo-container">
-        <svg viewBox="0 0 200 200">
-          <circle
-            class="intro-circle intro-circle-top"
-            cx="100"
-            cy="72"
-            r="48"
-          />
+        <svg viewBox="0 0 300 200">
+          <!-- Left circle -->
           <circle
             class="intro-circle intro-circle-left"
-            cx="74"
-            cy="118"
-            r="48"
+            cx="123.75"
+            cy="100"
+            r="70"
           />
+          <!-- Middle circle -->
+          <circle
+            class="intro-circle intro-circle-mid"
+            cx="150"
+            cy="100"
+            r="70"
+          />
+          <!-- Right circle -->
           <circle
             class="intro-circle intro-circle-right"
-            cx="126"
-            cy="118"
-            r="48"
+            cx="176.25"
+            cy="100"
+            r="70"
           />
-          <circle class="intro-center-dot" cx="100" cy="100" r="12" />
+          <!-- Inscribed inner circle -->
+          <circle class="intro-inner-circle" cx="150" cy="100" r="43.75" />
         </svg>
-        <div class="intro-logo-overlay">
-          <img src="maktub-logo.png" alt="Maktub Art Group" />
-        </div>
       </div>
       <div class="intro-text">Maktub Art Group</div>
     </div>
