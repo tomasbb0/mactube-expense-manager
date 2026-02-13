@@ -2183,5 +2183,72 @@
       })();
     </script>
     <script src="app.v14.js"></script>
+
+    <!-- Custom cursor -->
+    <div class="cursor-ball" id="cursor-ball"></div>
+    <script>
+      (function () {
+        const ball = document.getElementById("cursor-ball");
+        const trailCount = 8;
+        const trails = [];
+        const positions = [];
+
+        for (let i = 0; i < trailCount; i++) {
+          const t = document.createElement("div");
+          t.className = "cursor-trail";
+          document.body.appendChild(t);
+          trails.push(t);
+          positions.push({ x: -100, y: -100 });
+        }
+
+        let mouseX = -100,
+          mouseY = -100;
+
+        document.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        });
+
+        document.addEventListener("mousedown", () =>
+          ball.classList.add("clicking"),
+        );
+        document.addEventListener("mouseup", () =>
+          ball.classList.remove("clicking"),
+        );
+
+        document.addEventListener("mouseleave", () => {
+          ball.style.opacity = "0";
+          trails.forEach((t) => (t.style.opacity = "0"));
+        });
+        document.addEventListener("mouseenter", () => {
+          ball.style.opacity = "1";
+          trails.forEach((t) => (t.style.opacity = "1"));
+        });
+
+        function animate() {
+          ball.style.left = mouseX + "px";
+          ball.style.top = mouseY + "px";
+
+          let prevX = mouseX,
+            prevY = mouseY;
+          for (let i = 0; i < trailCount; i++) {
+            const pos = positions[i];
+            pos.x += (prevX - pos.x) * 0.35;
+            pos.y += (prevY - pos.y) * 0.35;
+            trails[i].style.left = pos.x + "px";
+            trails[i].style.top = pos.y + "px";
+            const opacity = 0.3 * (1 - i / trailCount);
+            const size = 6 * (1 - i / (trailCount * 1.5));
+            trails[i].style.opacity = opacity;
+            trails[i].style.width = size + "px";
+            trails[i].style.height = size + "px";
+            prevX = pos.x;
+            prevY = pos.y;
+          }
+          requestAnimationFrame(animate);
+        }
+        animate();
+      })();
+    </script>
   </body>
 </html>

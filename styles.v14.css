@@ -1,6 +1,53 @@
 /* Maktub Art Group - Expense Manager Styles */
 /* Inspired by maktubartgroup.com dark theme */
 
+/* ============================================
+   CUSTOM CURSOR
+   ============================================ */
+*,
+*::before,
+*::after {
+  cursor: none !important;
+}
+
+.cursor-ball {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 2px 1px rgba(255, 255, 255, 0.1),
+    0 0 5px 2px rgba(255, 255, 255, 0.04);
+  transition:
+    width 0.15s,
+    height 0.15s,
+    box-shadow 0.15s;
+}
+
+.cursor-ball.clicking {
+  width: 7px;
+  height: 7px;
+  box-shadow:
+    0 0 3px 1px rgba(255, 255, 255, 0.15),
+    0 0 6px 2px rgba(255, 255, 255, 0.06);
+}
+
+.cursor-trail {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.03);
+}
+
 :root {
   /* Maktub Brand Colors */
   --bg-primary: #111111;

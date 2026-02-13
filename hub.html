@@ -23,6 +23,53 @@
 
     <style>
       /* ============================================
+       CUSTOM CURSOR
+       ============================================ */
+      *,
+      *::before,
+      *::after {
+        cursor: none !important;
+      }
+
+      .cursor-ball {
+        position: fixed;
+        width: 12px;
+        height: 12px;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+        box-shadow:
+          0 0 3px 1px rgba(255, 255, 255, 0.12),
+          0 0 6px 2px rgba(255, 255, 255, 0.05);
+        transition:
+          width 0.15s,
+          height 0.15s,
+          box-shadow 0.15s;
+      }
+
+      .cursor-ball.clicking {
+        width: 8px;
+        height: 8px;
+        box-shadow:
+          0 0 4px 2px rgba(255, 255, 255, 0.18),
+          0 0 8px 3px rgba(255, 255, 255, 0.08);
+      }
+
+      .cursor-trail {
+        position: fixed;
+        width: 6px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99998;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.04);
+      }
+
+      /* ============================================
        RESET & BASE
        ============================================ */
       *,
@@ -111,6 +158,8 @@
         width: 100%;
         height: 100%;
         overflow: visible;
+        filter: none;
+        transition: filter 0.6s ease;
       }
 
       /*
@@ -121,93 +170,142 @@
         Left:  cx=123.75  Middle: cx=150  Right: cx=176.25
         Small inscribed: r = R - 26.25 = 43.75
         Stroke = 7
+        Circumference = 2π×70 ≈ 440
       */
 
       .intro-circle {
         fill: none;
-        stroke: var(--accent);
+        stroke: #ffffff;
         stroke-width: 7;
+        stroke-linecap: round;
         opacity: 0;
+        /* stroke-draw setup: total dash = circumference (overshoot slightly to avoid gap) */
+        stroke-dasharray: 442;
+        stroke-dashoffset: 442;
+        transition:
+          stroke 0.6s ease,
+          filter 0.6s ease;
       }
 
-      /* Left circle — starts further left, slides in */
+      /* Left circle — draws itself while sliding smoothly from left to final position */
       .intro-circle-left {
-        animation: circleLeftIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
+        animation:
+          circleLeftSlide 2s ease-out forwards,
+          circleDraw 2s ease-out forwards;
       }
-      /* Middle circle — fades in at center */
+      /* Middle circle — draws itself while fading in at center */
       .intro-circle-mid {
-        animation: circleMidIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
+        animation:
+          circleMidFade 2s ease-out forwards,
+          circleDraw 2s ease-out forwards;
+        animation-delay: 0.15s, 0.15s;
       }
-      /* Right circle — starts further right, slides in */
+      /* Right circle — draws itself while sliding smoothly from right to final position */
       .intro-circle-right {
-        animation: circleRightIn 1.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-          forwards;
+        animation:
+          circleRightSlide 2s ease-out forwards,
+          circleDraw 2s ease-out forwards;
+        animation-delay: 0.3s, 0.3s;
       }
 
-      @keyframes circleLeftIn {
+      /* Slide animations — smooth ease to final position, no bounce */
+      @keyframes circleLeftSlide {
         0% {
           transform: translate(-80px, 0);
           opacity: 0;
         }
-        20% {
-          opacity: 0.7;
+        10% {
+          opacity: 0.9;
         }
         100% {
           transform: translate(0, 0);
-          opacity: 0.7;
+          opacity: 0.9;
         }
       }
-      @keyframes circleMidIn {
+      @keyframes circleMidFade {
         0% {
-          transform: scale(0.5);
+          transform: scale(0.6);
           opacity: 0;
         }
-        20% {
-          opacity: 0.7;
+        10% {
+          opacity: 0.9;
         }
         100% {
           transform: scale(1);
-          opacity: 0.7;
+          opacity: 0.9;
         }
       }
-      @keyframes circleRightIn {
+      @keyframes circleRightSlide {
         0% {
           transform: translate(80px, 0);
           opacity: 0;
         }
-        20% {
-          opacity: 0.7;
+        10% {
+          opacity: 0.9;
         }
         100% {
           transform: translate(0, 0);
-          opacity: 0.7;
+          opacity: 0.9;
         }
       }
 
-      /* Small inscribed circle — appears after convergence */
-      .intro-inner-circle {
-        fill: none;
-        stroke: var(--accent);
-        stroke-width: 7;
-        opacity: 0;
-        animation: innerCircleIn 0.5s ease forwards;
-        animation-delay: 1.6s;
-      }
-
-      @keyframes innerCircleIn {
+      /* Stroke draw-in effect */
+      @keyframes circleDraw {
         0% {
-          opacity: 0;
-          transform: scale(0);
-        }
-        60% {
-          transform: scale(1.08);
+          stroke-dashoffset: 442;
         }
         100% {
-          opacity: 0.7;
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /* Small inscribed circle — appears after all circles converge, draws in smoothly */
+      .intro-inner-circle {
+        fill: none;
+        stroke: #ffffff;
+        transition: stroke 0.6s ease;
+        stroke-width: 7;
+        stroke-linecap: round;
+        opacity: 0;
+        stroke-dasharray: 277;
+        stroke-dashoffset: 277;
+        animation:
+          innerCircleReveal 0.8s ease-out forwards,
+          innerCircleDraw 0.8s ease-out forwards;
+        animation-delay: 2.4s, 2.4s;
+      }
+
+      @keyframes innerCircleReveal {
+        0% {
+          opacity: 0;
+          transform: scale(0.7);
+        }
+        30% {
+          opacity: 0.9;
+        }
+        100% {
+          opacity: 0.9;
           transform: scale(1);
         }
+      }
+      @keyframes innerCircleDraw {
+        0% {
+          stroke-dashoffset: 277;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      /* Turn green + glow after circles converge */
+      .intro-logo-container.converged .intro-circle {
+        stroke: var(--accent);
+      }
+      .intro-logo-container.converged .intro-inner-circle {
+        stroke: var(--accent);
+      }
+      .intro-logo-container.converged svg {
+        filter: drop-shadow(0 0 12px rgba(51, 233, 51, 0.3));
       }
 
       .intro-text {
@@ -219,7 +317,7 @@
         margin-top: 28px;
         opacity: 0;
         animation: textFadeIn 0.8s ease forwards;
-        animation-delay: 2.4s;
+        animation-delay: 3s;
       }
 
       @keyframes textFadeIn {
@@ -1693,6 +1791,177 @@
         line-height: 1.5;
       }
 
+      /* ============================================
+         ACTIVE PROJECTS SECTION
+         ============================================ */
+      .projects-section {
+        margin-bottom: 32px;
+      }
+
+      .projects-section-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .active-projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+
+      .active-project-card {
+        background: var(--card);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--shadow);
+        transition:
+          border-color var(--transition),
+          box-shadow var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .active-project-card:hover {
+        border-color: rgba(51, 233, 51, 0.2);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      }
+
+      .active-project-card .project-card-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 4px;
+      }
+
+      .active-project-card .project-card-desc {
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
+
+      .live-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #33e933;
+      }
+
+      .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #33e933;
+        box-shadow:
+          0 0 6px 2px rgba(51, 233, 51, 0.5),
+          0 0 12px 4px rgba(51, 233, 51, 0.25),
+          0 0 20px 8px rgba(51, 233, 51, 0.1);
+        animation: livePulse 2s ease-in-out infinite;
+      }
+
+      @keyframes livePulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 6px 2px rgba(51, 233, 51, 0.5),
+            0 0 12px 4px rgba(51, 233, 51, 0.25),
+            0 0 20px 8px rgba(51, 233, 51, 0.1);
+        }
+        50% {
+          box-shadow:
+            0 0 8px 3px rgba(51, 233, 51, 0.7),
+            0 0 16px 6px rgba(51, 233, 51, 0.4),
+            0 0 28px 12px rgba(51, 233, 51, 0.15);
+        }
+      }
+
+      .inactive-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+      }
+
+      .inactive-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--text-muted);
+        opacity: 0.5;
+      }
+
+      /* Mini preview for Projects card on hub */
+      .mini-projects {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 12px;
+      }
+
+      .mini-project-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 6px;
+      }
+
+      .mini-project-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .mini-project-dot.live {
+        background: #33e933;
+        box-shadow: 0 0 4px rgba(51, 233, 51, 0.5);
+      }
+
+      .mini-project-dot.pending {
+        background: #ffb400;
+        box-shadow: 0 0 4px rgba(255, 180, 0, 0.3);
+      }
+
+      .mini-project-dot.dev {
+        background: #0096ff;
+        box-shadow: 0 0 4px rgba(0, 150, 255, 0.3);
+      }
+
+      .mini-project-bar {
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        flex: 1;
+      }
+
+      .mini-project-status {
+        font-size: 0.45rem;
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+
       @media (max-width: 600px) {
         .checkbox-grid {
           grid-template-columns: 1fr;
@@ -1797,6 +2066,43 @@
         </div>
         <div class="modal-actions">
           <button class="btn btn-primary btn-sm" id="email-save-btn">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       PASSWORD CHANGE MODAL (first login)
+       ========================================== -->
+    <div class="modal-overlay" id="password-change-modal">
+      <div class="modal">
+        <h3>🔒 Criar nova palavra-passe</h3>
+        <p>
+          Como é o teu primeiro acesso, cria uma nova palavra-passe
+          personalizada para proteger a tua conta.
+        </p>
+        <div class="form-group">
+          <label for="pwd-new">Nova palavra-passe</label>
+          <input
+            type="password"
+            id="pwd-new"
+            placeholder="••••••••"
+            autocomplete="new-password"
+          />
+        </div>
+        <div class="form-group">
+          <label for="pwd-confirm">Confirmar palavra-passe</label>
+          <input
+            type="password"
+            id="pwd-confirm"
+            placeholder="••••••••"
+            autocomplete="new-password"
+          />
+        </div>
+        <div class="login-error" id="pwd-change-error"></div>
+        <div class="modal-actions">
+          <button class="btn btn-primary btn-sm" id="pwd-save-btn">
             Guardar
           </button>
         </div>
@@ -2104,10 +2410,26 @@
       <div class="projects-content">
         <div class="projects-inner">
           <div class="projects-header">
-            <h2>📋 Pedidos &amp; Projetos</h2>
+            <h2>📋 Projetos &amp; Pedidos</h2>
+            <button class="btn btn-primary btn-sm" id="projects-add-btn">
+              + Pedir Nova Plataforma
+            </button>
           </div>
-          <div id="projects-list">
-            <!-- Dynamically populated -->
+
+          <!-- Active / Live Projects -->
+          <div class="projects-section">
+            <h3 class="projects-section-title">Projetos Ativos</h3>
+            <div class="active-projects-grid" id="active-projects-grid">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+          <!-- Requested Projects / Pending -->
+          <div class="projects-section">
+            <h3 class="projects-section-title">Pedidos de Plataforma</h3>
+            <div id="projects-list">
+              <!-- Dynamically populated -->
+            </div>
           </div>
         </div>
       </div>
@@ -2281,19 +2603,26 @@
 
         function handleIntro() {
           const introScreen = document.getElementById("intro-screen");
-          if (sessionStorage.getItem("maktub_intro_played")) {
+          // Skip animation only when navigating internally (hub ↔ platform)
+          if (sessionStorage.getItem("maktub_internal_nav")) {
+            sessionStorage.removeItem("maktub_internal_nav");
             introScreen.classList.add("hidden");
             onIntroComplete();
             return;
           }
-          sessionStorage.setItem("maktub_intro_played", "true");
+          // Play animation on every reload / direct visit
+          // Add glow pulse after circles converge
+          setTimeout(() => {
+            const container = document.querySelector(".intro-logo-container");
+            if (container) container.classList.add("converged");
+          }, 2400);
           setTimeout(() => {
             introScreen.classList.add("fade-out");
             setTimeout(() => {
               introScreen.classList.add("hidden");
               onIntroComplete();
             }, 600);
-          }, 3800);
+          }, 4500);
         }
 
         function onIntroComplete() {
@@ -2361,6 +2690,11 @@
           saveSession(currentSession);
           usernameInput.value = "";
           passwordInput.value = "";
+          // Check if user needs to set their own password (first login)
+          if (!user.passwordChanged) {
+            showPasswordChangeModal();
+            return;
+          }
           const userData = getUserData(user.username);
           if (!userData.email) {
             showEmailModal();
@@ -2401,6 +2735,69 @@
           hideEmailModal();
           showHub();
           showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
+        }
+
+        // ===== PASSWORD CHANGE (first login) =====
+        function showPasswordChangeModal() {
+          document
+            .getElementById("password-change-modal")
+            .classList.add("active");
+          document.getElementById("pwd-new").value = "";
+          document.getElementById("pwd-confirm").value = "";
+          document.getElementById("pwd-change-error").textContent = "";
+          document.getElementById("pwd-new").focus();
+        }
+
+        function hidePasswordChangeModal() {
+          document
+            .getElementById("password-change-modal")
+            .classList.remove("active");
+          document.getElementById("pwd-new").value = "";
+          document.getElementById("pwd-confirm").value = "";
+          document.getElementById("pwd-change-error").textContent = "";
+        }
+
+        async function handlePasswordChange() {
+          const newPwd = document.getElementById("pwd-new").value;
+          const confirmPwd = document.getElementById("pwd-confirm").value;
+          const errorEl = document.getElementById("pwd-change-error");
+          errorEl.textContent = "";
+
+          if (!newPwd || newPwd.length < 4) {
+            errorEl.textContent =
+              "A palavra-passe deve ter pelo menos 4 caracteres.";
+            return;
+          }
+          if (newPwd !== confirmPwd) {
+            errorEl.textContent = "As palavras-passe não coincidem.";
+            return;
+          }
+
+          const users = getUsers();
+          const user = users.find(
+            (u) => u.username === currentSession.username,
+          );
+          if (!user) {
+            errorEl.textContent = "Utilizador não encontrado.";
+            return;
+          }
+
+          user.hash = await sha256(newPwd);
+          user.passwordChanged = true;
+          saveUsers(users);
+          hidePasswordChangeModal();
+
+          // Continue normal post-login flow
+          const userData = getUserData(currentSession.username);
+          if (!userData.email) {
+            showEmailModal();
+          } else {
+            showHub();
+            showToast(
+              `Bem-vindo(a), ${currentSession.name}! Palavra-passe atualizada.`,
+              "success",
+            );
+          }
         }
 
         function isAdmin() {
@@ -2585,18 +2982,76 @@
             grid.appendChild(mgmtCard);
           }
 
-          // Projects card (all users)
+          // Projects card (all users) — mini preview style
           const projectsCard = document.createElement("div");
           projectsCard.className = "platform-card";
-          projectsCard.title = "Pedidos & Projetos";
+          projectsCard.title = "Projetos & Pedidos";
+
+          // Build mini preview rows based on actual state
+          var reqs = getRequests();
+          var miniRows = "";
+          // Show existing platforms as live
+          PLATFORMS.forEach(function (p) {
+            miniRows +=
+              '<div class="mini-project-row">' +
+              '<div class="mini-project-dot live"></div>' +
+              '<div class="mini-project-bar" style="flex:2"></div>' +
+              '<div class="mini-project-status" style="background:rgba(51,233,51,0.15);color:#33e933">LIVE</div>' +
+              "</div>";
+          });
+          // Show latest 2 requests
+          reqs.slice(-2).forEach(function (r) {
+            var dotClass = r.status === "development" ? "dev" : "pending";
+            var statusLabel =
+              r.status === "completed"
+                ? "LIVE"
+                : r.status === "development"
+                  ? "DEV"
+                  : r.status === "analysis"
+                    ? "ANÁLISE"
+                    : "PENDENTE";
+            var bg =
+              r.status === "development"
+                ? "rgba(0,150,255,0.15)"
+                : "rgba(255,180,0,0.15)";
+            var col = r.status === "development" ? "#0096ff" : "#ffb400";
+            miniRows +=
+              '<div class="mini-project-row">' +
+              '<div class="mini-project-dot ' +
+              dotClass +
+              '"></div>' +
+              '<div class="mini-project-bar" style="flex:2"></div>' +
+              '<div class="mini-project-status" style="background:' +
+              bg +
+              ";color:" +
+              col +
+              '">' +
+              statusLabel +
+              "</div>" +
+              "</div>";
+          });
+          // Fill to at least 3 rows
+          while (miniRows.split("mini-project-row").length - 1 < 3) {
+            miniRows +=
+              '<div class="mini-project-row">' +
+              '<div class="mini-project-dot" style="background:rgba(255,255,255,0.1)"></div>' +
+              '<div class="mini-project-bar"></div>' +
+              '<div class="mini-project-bar" style="flex:0.5"></div>' +
+              "</div>";
+          }
+
           projectsCard.innerHTML = `
             <div class="platform-preview">
-              <span class="icon">📋</span>
-              <span class="preview-name">Pedidos & Projetos</span>
+              <div class="mini-projects">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:0.55rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px">Projetos & Pedidos</span>
+                </div>
+                ${miniRows}
+              </div>
             </div>
             <div class="platform-info">
-              <div class="platform-name">Pedidos & Projetos</div>
-              <div class="platform-desc">Ver pedidos de plataformas</div>
+              <div class="platform-name">Projetos & Pedidos</div>
+              <div class="platform-desc">Projetos ativos e pedidos de plataforma</div>
             </div>
           `;
           projectsCard.addEventListener("click", showProjects);
@@ -2628,6 +3083,8 @@
             };
             localStorage.setItem("maktub_user", JSON.stringify(maktubUser));
           }
+          // Mark as internal navigation so the target page skips the intro animation
+          sessionStorage.setItem("maktub_internal_nav", "true");
           window.location.href = platform.url;
         }
 
@@ -2817,6 +3274,20 @@
               if (e.key === "Enter") handleEmailSave();
             });
           document
+            .getElementById("pwd-save-btn")
+            .addEventListener("click", handlePasswordChange);
+          document
+            .getElementById("pwd-new")
+            .addEventListener("keydown", (e) => {
+              if (e.key === "Enter")
+                document.getElementById("pwd-confirm").focus();
+            });
+          document
+            .getElementById("pwd-confirm")
+            .addEventListener("keydown", (e) => {
+              if (e.key === "Enter") handlePasswordChange();
+            });
+          document
             .getElementById("mgmt-back-btn")
             .addEventListener("click", showHub);
           document
@@ -2846,6 +3317,9 @@
           document
             .getElementById("projects-back-btn")
             .addEventListener("click", showHub);
+          document
+            .getElementById("projects-add-btn")
+            .addEventListener("click", showRequestModal);
           document
             .getElementById("request-modal")
             .addEventListener("click", function (e) {
@@ -3093,10 +3567,33 @@
         }
 
         function renderProjects() {
+          var activeGrid = document.getElementById("active-projects-grid");
           var container = document.getElementById("projects-list");
           var requests = getRequests();
           var admin = isAdmin();
 
+          // === Render Active / Live projects (from PLATFORMS) ===
+          var activeHTML = PLATFORMS.map(function (p) {
+            return (
+              '<div class="active-project-card">' +
+              '<div class="project-card-name">' +
+              p.name +
+              "</div>" +
+              '<div class="project-card-desc">' +
+              p.description +
+              "</div>" +
+              '<div class="live-indicator"><span class="live-dot"></span> LIVE</div>' +
+              "</div>"
+            );
+          }).join("");
+
+          if (PLATFORMS.length === 0) {
+            activeHTML =
+              '<div style="color:var(--text-muted);font-size:0.9rem;padding:16px 0">Nenhum projeto ativo.</div>';
+          }
+          activeGrid.innerHTML = activeHTML;
+
+          // === Render Requested projects ===
           var filtered = admin
             ? requests
             : requests.filter(function (r) {
@@ -3105,10 +3602,10 @@
 
           if (filtered.length === 0) {
             container.innerHTML =
-              '<div style="text-align:center;padding:60px 20px;color:var(--text-muted)">' +
-              '<div style="font-size:3rem;margin-bottom:16px">📋</div>' +
-              '<div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;color:var(--text-secondary)">Sem pedidos</div>' +
-              '<div style="font-size:0.9rem">Ainda não existem pedidos de plataformas.</div>' +
+              '<div style="text-align:center;padding:40px 20px;color:var(--text-muted)">' +
+              '<div style="font-size:2rem;margin-bottom:12px">📋</div>' +
+              '<div style="font-size:0.95rem;font-weight:600;margin-bottom:6px;color:var(--text-secondary)">Sem pedidos</div>' +
+              '<div style="font-size:0.85rem">Ainda não existem pedidos de plataformas.</div>' +
               "</div>";
             return;
           }
@@ -3355,6 +3852,76 @@
           initEventListeners();
           handleIntro();
         });
+      })();
+    </script>
+
+    <!-- Custom cursor -->
+    <div class="cursor-ball" id="cursor-ball"></div>
+    <script>
+      (function () {
+        const ball = document.getElementById("cursor-ball");
+        const trailCount = 8;
+        const trails = [];
+        const positions = [];
+
+        for (let i = 0; i < trailCount; i++) {
+          const t = document.createElement("div");
+          t.className = "cursor-trail";
+          document.body.appendChild(t);
+          trails.push(t);
+          positions.push({ x: -100, y: -100 });
+        }
+
+        let mouseX = -100,
+          mouseY = -100;
+
+        document.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        });
+
+        document.addEventListener("mousedown", () =>
+          ball.classList.add("clicking"),
+        );
+        document.addEventListener("mouseup", () =>
+          ball.classList.remove("clicking"),
+        );
+
+        // Hide cursor when mouse leaves window
+        document.addEventListener("mouseleave", () => {
+          ball.style.opacity = "0";
+          trails.forEach((t) => (t.style.opacity = "0"));
+        });
+        document.addEventListener("mouseenter", () => {
+          ball.style.opacity = "1";
+          trails.forEach((t) => (t.style.opacity = "1"));
+        });
+
+        function animate() {
+          ball.style.left = mouseX + "px";
+          ball.style.top = mouseY + "px";
+
+          let prevX = mouseX,
+            prevY = mouseY;
+          for (let i = 0; i < trailCount; i++) {
+            const pos = positions[i];
+            // Ease toward previous position
+            pos.x += (prevX - pos.x) * 0.35;
+            pos.y += (prevY - pos.y) * 0.35;
+            trails[i].style.left = pos.x + "px";
+            trails[i].style.top = pos.y + "px";
+            // Fade out further trail dots
+            const opacity = 0.3 * (1 - i / trailCount);
+            const size = 6 * (1 - i / (trailCount * 1.5));
+            trails[i].style.opacity = opacity;
+            trails[i].style.width = size + "px";
+            trails[i].style.height = size + "px";
+            prevX = pos.x;
+            prevY = pos.y;
+          }
+          requestAnimationFrame(animate);
+        }
+        animate();
       })();
     </script>
   </body>
