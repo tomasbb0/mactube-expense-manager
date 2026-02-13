@@ -1043,7 +1043,6 @@ body {
   gap: 10px;
   margin-top: 16px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .quick-action-btn {
