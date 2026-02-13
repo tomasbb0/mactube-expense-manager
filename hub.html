@@ -2139,18 +2139,35 @@
             hash: "43a0d17178a9d26c9e0fe9a74b0b45e38d32f27aed887a008a54bf6e033bf7b9",
             role: "owner",
             name: "Admin",
+            email: "",
           },
           {
             username: "tomasbb0",
             hash: "e4d82322ba431aebb7cc65ab865d708bd8fd8e44abfbb2762a1c31ee93066cfb",
             role: "tech",
             name: "Tomás",
+            email: "",
           },
           {
             username: "madalenta",
             hash: "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f",
             role: "user",
             name: "Madalena",
+            email: "Madalena@maktubartgroup.com",
+          },
+          {
+            username: "guima",
+            hash: "13cc7e94df91a3fbc2d8f055faf2673b2b53d30ae6e639775ccdc9e02f6c86ff",
+            role: "user",
+            name: "Guima",
+            email: "Guima@maktubartgroup.com",
+          },
+          {
+            username: "rich",
+            hash: "d632d354cdaea35ccbbc076b1b0d5d733a1ab100247f72f4a6a77397945fb727",
+            role: "user",
+            name: "Rich",
+            email: "Rich@maktubartgroup.com",
           },
         ];
 
@@ -2159,6 +2176,8 @@
           owner: { "expense-manager": "edit" },
           tomasbb0: { "expense-manager": "edit" },
           madalenta: { "expense-manager": "edit" },
+          guima: { "expense-manager": "edit" },
+          rich: { "expense-manager": "edit" },
         };
 
         /** Permission labels */
@@ -2640,7 +2659,7 @@
             tr.innerHTML = `
             <td><strong>${user.username}</strong></td>
             <td>${user.name}</td>
-            <td style="color:var(--text-muted)">${userData.email || "—"}</td>
+            <td style="color:var(--text-muted)">${userData.email || user.email || "—"}</td>
             <td><span class="role-badge ${user.role}">${ROLE_LABELS[user.role] || user.role}</span></td>
             <td>${platformPerms}</td>
             <td>
