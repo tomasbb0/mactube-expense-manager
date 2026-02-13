@@ -491,7 +491,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 7; // Increment to force reload - v7: Added type field to all Bandidos entries
+const DATA_VERSION = 8; // Increment to force reload - v8: Dashboard filters + quick links
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
@@ -1901,38 +1901,73 @@ function getAllDemoData() {
 // DASHBOARD
 // ==========================================
 
-function updateDashboard() {
-  updateStats();
-  updateCharts();
-  updateStackedCharts();
-  updateRecentList();
+function getDashboardFilteredExpenses() {
+  const artistFilter = document.getElementById("dashboard-artist-filter")?.value || "all";
+  const dateFrom = document.getElementById("dashboard-date-from")?.value || "";
+  const dateTo = document.getElementById("dashboard-date-to")?.value || "";
+
+  return expenses.filter((e) => {
+    const matchArtist = artistFilter === "all" || e.artist === artistFilter;
+    const matchFrom = !dateFrom || e.date >= dateFrom;
+    const matchTo = !dateTo || e.date <= dateTo;
+    return matchArtist && matchFrom && matchTo;
+  });
 }
 
-function updateStats() {
-  const total = expenses.reduce((sum, e) => sum + e.amount, 0);
-  const maktub = expenses
+function populateDashboardArtistFilter() {
+  const select = document.getElementById("dashboard-artist-filter");
+  if (!select) return;
+  const current = select.value;
+  const artists = Object.keys(artistProjects).sort();
+  select.innerHTML = '<option value="all">Todos os Artistas</option>' +
+    artists.map(a => `<option value="${a}"${a === current ? ' selected' : ''}>${a}</option>`).join('');
+}
+
+function filterDashboard() {
+  updateDashboard();
+}
+
+function updateDashboard() {
+  populateDashboardArtistFilter();
+  const filtered = getDashboardFilteredExpenses();
+  updateStats(filtered);
+  updateCharts(filtered);
+  updateStackedCharts(filtered);
+  updateRecentList(filtered);
+}
+
+function updateStats(data) {
+  data = data || expenses;
+  const total = data.reduce((sum, e) => sum + e.amount, 0);
+  const maktub = data
     .filter((e) => e.investor === "maktub")
     .reduce((sum, e) => sum + e.amount, 0);
-  const others = expenses
+  const others = data
     .filter((e) => e.investor === "outro")
     .reduce((sum, e) => sum + e.amount, 0);
 
   document.getElementById("stat-total").textContent = formatCurrency(total);
   document.getElementById("stat-maktub").textContent = formatCurrency(maktub);
   document.getElementById("stat-others").textContent = formatCurrency(others);
-  document.getElementById("stat-count").textContent = expenses.length;
+  document.getElementById("stat-count").textContent = data.length;
 }
 
-function updateCharts() {
-  updateArtistChart();
-  updateTypeChart();
+function updateCharts(data) {
+  updateArtistChart(data);
+  updateTypeChart(data);
 }
 
-function updateArtistChart() {
+function updateArtistChart(data) {
+  data = data || expenses;
   const container = document.getElementById("chart-artists");
   const byArtist = {};
 
-  expenses.forEach((e) => {
+  // Include all defined artists with 0 as default
+  Object.keys(artistProjects).forEach((artist) => {
+    byArtist[artist] = 0;
+  });
+
+  data.forEach((e) => {
     byArtist[e.artist] = (byArtist[e.artist] || 0) + e.amount;
   });
 
@@ -1950,7 +1985,7 @@ function updateArtistChart() {
         <div class="chart-bar-item">
             <span class="chart-bar-label">${artist}</span>
             <div class="chart-bar-track">
-                <div class="chart-bar-fill" style="width: ${(amount / max) * 100}%"></div>
+                <div class="chart-bar-fill" style="width: ${max > 0 ? (amount / max) * 100 : 0}%"></div>
             </div>
             <span class="chart-bar-value">${formatCurrency(amount)}</span>
         </div>
@@ -1959,11 +1994,12 @@ function updateArtistChart() {
     .join("");
 }
 
-function updateTypeChart() {
+function updateTypeChart(data) {
+  data = data || expenses;
   const container = document.getElementById("chart-types");
   const byType = {};
 
-  expenses.forEach((e) => {
+  data.forEach((e) => {
     byType[e.type] = (byType[e.type] || 0) + e.amount;
   });
 
@@ -1990,16 +2026,22 @@ function updateTypeChart() {
     .join("");
 }
 
-function updateStackedCharts() {
-  updateArtistInvestorChart();
-  updateArtistCategoryChart();
+function updateStackedCharts(data) {
+  updateArtistInvestorChart(data);
+  updateArtistCategoryChart(data);
 }
 
-function updateArtistInvestorChart() {
+function updateArtistInvestorChart(data) {
+  data = data || expenses;
   const container = document.getElementById("chart-artist-investor");
   const byArtist = {};
 
-  expenses.forEach((e) => {
+  // Include all defined artists with 0 as default
+  Object.keys(artistProjects).forEach((artist) => {
+    byArtist[artist] = { maktub: 0, outros: 0, total: 0 };
+  });
+
+  data.forEach((e) => {
     if (!byArtist[e.artist]) {
       byArtist[e.artist] = { maktub: 0, outros: 0, total: 0 };
     }
@@ -2023,8 +2065,8 @@ function updateArtistInvestorChart() {
 
   let html = sorted
     .map(([artist, data]) => {
-      const maktubPct = (data.maktub / data.total) * 100;
-      const outrosPct = (data.outros / data.total) * 100;
+      const maktubPct = data.total > 0 ? (data.maktub / data.total) * 100 : 0;
+      const outrosPct = data.total > 0 ? (data.outros / data.total) * 100 : 0;
 
       return `
             <div class="chart-bar-item">
@@ -2049,7 +2091,8 @@ function updateArtistInvestorChart() {
   container.innerHTML = html;
 }
 
-function updateArtistCategoryChart() {
+function updateArtistCategoryChart(data) {
+  data = data || expenses;
   const container = document.getElementById("chart-artist-category");
   const byArtist = {};
   const types = [
@@ -2073,7 +2116,13 @@ function updateArtistCategoryChart() {
     outros: "#868e96",
   };
 
-  expenses.forEach((e) => {
+  // Include all defined artists with 0 as default
+  Object.keys(artistProjects).forEach((artist) => {
+    byArtist[artist] = { total: 0 };
+    types.forEach((t) => (byArtist[artist][t] = 0));
+  });
+
+  data.forEach((e) => {
     if (!byArtist[e.artist]) {
       byArtist[e.artist] = { total: 0 };
       types.forEach((t) => (byArtist[e.artist][t] = 0));
@@ -2095,7 +2144,7 @@ function updateArtistCategoryChart() {
     .map(([artist, data]) => {
       let segments = types
         .map((type) => {
-          const pct = (data[type] / data.total) * 100;
+          const pct = data.total > 0 ? (data[type] / data.total) * 100 : 0;
           if (pct > 0) {
             return `<div class="chart-bar-segment ${type}" style="width: ${pct}%" title="${getTypeName(type)}: ${formatCurrency(data[type])}"></div>`;
           }
@@ -2124,9 +2173,10 @@ function updateArtistCategoryChart() {
   container.innerHTML = html;
 }
 
-function updateRecentList() {
+function updateRecentList(data) {
+  data = data || expenses;
   const container = document.getElementById("recent-list");
-  const recent = [...expenses]
+  const recent = [...data]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 5);
 
@@ -2168,8 +2218,10 @@ function updateRecentList() {
 // ==========================================
 
 function updateFilterDropdowns() {
-  // Get unique artists and projects
-  const artists = [...new Set(expenses.map((e) => e.artist))].sort();
+  // Get unique artists (including all defined) and projects
+  const expenseArtists = expenses.map((e) => e.artist);
+  const allArtistNames = Object.keys(artistProjects);
+  const artists = [...new Set([...allArtistNames, ...expenseArtists])].sort();
   const projects = [...new Set(expenses.map((e) => e.project))].sort();
 
   // Update artist filter
@@ -2210,6 +2262,14 @@ function initFilters() {
     renderTable();
     renderPivotTables();
   });
+  document.getElementById("filter-date-from").addEventListener("change", () => {
+    renderTable();
+    renderPivotTables();
+  });
+  document.getElementById("filter-date-to").addEventListener("change", () => {
+    renderTable();
+    renderPivotTables();
+  });
 
   document.getElementById("export-csv").addEventListener("click", exportCSV);
   document
@@ -2227,6 +2287,8 @@ function getFilteredExpenses() {
   const projectFilter = document.getElementById("filter-project").value;
   const typeFilter = document.getElementById("filter-type").value;
   const investorFilter = document.getElementById("filter-investor").value;
+  const dateFrom = document.getElementById("filter-date-from").value;
+  const dateTo = document.getElementById("filter-date-to").value;
 
   return expenses.filter((e) => {
     const matchSearch =
@@ -2241,9 +2303,11 @@ function getFilteredExpenses() {
     const matchType = typeFilter === "all" || e.type === typeFilter;
     const matchInvestor =
       investorFilter === "all" || e.investor === investorFilter;
+    const matchDateFrom = !dateFrom || e.date >= dateFrom;
+    const matchDateTo = !dateTo || e.date <= dateTo;
 
     return (
-      matchSearch && matchArtist && matchProject && matchType && matchInvestor
+      matchSearch && matchArtist && matchProject && matchType && matchInvestor && matchDateFrom && matchDateTo
     );
   });
 }
@@ -2327,8 +2391,11 @@ function renderTable() {
 function renderPivotTables() {
   const filtered = getFilteredExpenses();
 
-  // By Artist
+  // By Artist - include all defined artists
   const byArtist = {};
+  Object.keys(artistProjects).forEach((artist) => {
+    byArtist[artist] = { total: 0, maktub: 0, outros: 0 };
+  });
   filtered.forEach((e) => {
     if (!byArtist[e.artist])
       byArtist[e.artist] = { total: 0, maktub: 0, outros: 0 };
