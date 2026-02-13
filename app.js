@@ -321,6 +321,14 @@ const artistProjects = {
     "Rosa",
     "Tu És - 4 e Meia",
   ],
+  "Buba Espinho": [],
+  MAR: [],
+  "D.A.M.A": [],
+  BRUCE: [],
+  INÊS: [],
+  LUTZ: [],
+  "REAL GUNS": [],
+  SUAVE: [],
 };
 
 // All available projects (for fallback)
@@ -618,7 +626,8 @@ function getAllDemoData() {
     entity: "Ovibeja - Pagamento Aftermovie",
     investor: "oferta_maktub",
     date: "2025-06-01",
-    notes: "Aparece na folha só para os bandidos saberem que oferecemos, mas não conta para o que os bandidos nos devem.",
+    notes:
+      "Aparece na folha só para os bandidos saberem que oferecemos, mas não conta para o que os bandidos nos devem.",
     createdAt: "2025-06-01T10:00:00Z",
   });
   data.push({
@@ -947,7 +956,8 @@ function getAllDemoData() {
     artist: "Bandidos do Cante",
     project: "Álbum Bairro das Flores - Geral",
     amount: 800.0,
-    entity: "Mix e master simões: Quero acreditar, nada mais, bairro das flores e voltar a ver-te",
+    entity:
+      "Mix e master simões: Quero acreditar, nada mais, bairro das flores e voltar a ver-te",
     investor: "maktub",
     date: "2025-01-01",
     notes: "",
