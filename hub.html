@@ -96,6 +96,19 @@
       }
 
       /* ============================================
+         INTERACTIVE GRID BACKGROUND
+         ============================================ */
+      .grid-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      /* ============================================
        CSS VARIABLES
        ============================================ */
       :root {
@@ -184,8 +197,8 @@
 
       /* Intro SVG container — 3 horizontal circles animate in */
       .intro-logo-container {
-        width: 300px;
-        height: 200px;
+        width: 220px;
+        height: 150px;
         position: relative;
       }
 
@@ -358,6 +371,8 @@
       .screen {
         display: none;
         min-height: 100vh;
+        position: relative;
+        z-index: 1;
       }
 
       .screen.active {
@@ -384,7 +399,7 @@
       }
 
       .login-logo svg {
-        width: 100px;
+        width: 70px;
         height: auto;
       }
 
@@ -404,11 +419,39 @@
       }
 
       .login-card {
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: var(--radius);
         padding: 32px 28px;
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      .login-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.12),
+          rgba(255, 255, 255, 0.03)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
       }
 
       .form-group {
@@ -539,12 +582,13 @@
         position: fixed;
         inset: 0;
         z-index: 5000;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.6);
         display: none;
         align-items: center;
         justify-content: center;
         padding: 20px;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
       }
 
       .modal-overlay.active {
@@ -552,13 +596,17 @@
       }
 
       .modal {
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(28, 28, 28, 0.6);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius);
         padding: 32px 28px;
         max-width: 420px;
         width: 100%;
-        box-shadow: var(--shadow-lg);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.35),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
         animation: modalIn 0.3s ease;
       }
 
@@ -608,9 +656,11 @@
         align-items: center;
         justify-content: space-between;
         padding: 16px 24px;
-        background: var(--bg-secondary);
-        border-bottom: none;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        background: rgba(26, 26, 26, 0.45);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
         flex-shrink: 0;
         gap: 12px;
         flex-wrap: wrap;
@@ -741,25 +791,58 @@
       }
 
       .platform-card {
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(180%);
+        -webkit-backdrop-filter: blur(10px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius);
         overflow: hidden;
         cursor: pointer;
-        transition: all var(--transition);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
         color: inherit;
         display: flex;
         flex-direction: column;
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+        position: relative;
+      }
+
+      /* Glass shine sweep on hover */
+      .platform-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.08),
+          transparent
+        );
+        transition: 0.5s;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .platform-card:hover:not(.locked):not(.disabled)::before {
+        left: 100%;
       }
 
       .platform-card:hover:not(.locked):not(.disabled) {
         transform: translateY(-4px);
+        background: rgba(255, 255, 255, 0.025);
+        border-color: rgba(255, 255, 255, 0.1);
         box-shadow:
-          0 4px 16px rgba(0, 0, 0, 0.4),
-          0 0 20px rgba(51, 233, 51, 0.1),
-          0 0 40px rgba(51, 233, 51, 0.05);
+          0 12px 40px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(51, 233, 51, 0.06),
+          0 0 40px rgba(51, 233, 51, 0.03),
+          inset 0 1px 0 rgba(255, 255, 255, 0.08),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.12);
       }
 
       .platform-card.locked {
@@ -1647,10 +1730,14 @@
       }
 
       .project-card {
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(180%);
+        -webkit-backdrop-filter: blur(10px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius);
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
         margin-bottom: 16px;
         overflow: hidden;
       }
@@ -1862,21 +1949,27 @@
       }
 
       .active-project-card {
-        background: var(--card);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(180%);
+        -webkit-backdrop-filter: blur(10px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius);
         padding: 20px;
-        box-shadow: var(--shadow);
-        transition:
-          border-color var(--transition),
-          box-shadow var(--transition);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
       }
 
       .active-project-card:hover {
-        border-color: rgba(51, 233, 51, 0.2);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        border-color: rgba(51, 233, 51, 0.12);
+        background: rgba(255, 255, 255, 0.025);
+        box-shadow:
+          0 12px 40px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(51, 233, 51, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
       }
 
       .active-project-card .project-card-name {
@@ -2025,6 +2118,30 @@
     </style>
   </head>
   <body>
+    <!-- SVG Filters for Glass Distortion -->
+    <svg style="display: none">
+      <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.005 0.005"
+          numOctaves="2"
+          seed="2"
+          result="noise"
+        />
+        <feGaussianBlur in="noise" stdDeviation="1.5" result="blurred" />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="blurred"
+          scale="15"
+          xChannelSelector="R"
+          yChannelSelector="G"
+        />
+      </filter>
+    </svg>
+
+    <!-- Interactive grid background canvas -->
+    <canvas class="grid-canvas" id="grid-canvas"></canvas>
+
     <!-- ==========================================
        ANIMATED INTRO SCREEN
        ========================================== -->
@@ -2616,6 +2733,7 @@
             role: "owner",
             name: "Admin",
             email: "",
+            passwordChanged: true,
           },
           {
             username: "tomasbb0",
@@ -2623,6 +2741,7 @@
             role: "tech",
             name: "Tomás",
             email: "",
+            passwordChanged: true,
           },
           {
             username: "madalenta",
@@ -2630,6 +2749,7 @@
             role: "user",
             name: "Madalena",
             email: "Madalena@maktubartgroup.com",
+            passwordChanged: true,
           },
           {
             username: "guima",
@@ -2637,6 +2757,7 @@
             role: "user",
             name: "Guima",
             email: "Guima@maktubartgroup.com",
+            passwordChanged: true,
           },
           {
             username: "rich",
@@ -2644,6 +2765,7 @@
             role: "user",
             name: "Rich",
             email: "Rich@maktubartgroup.com",
+            passwordChanged: true,
           },
         ];
 
@@ -2677,11 +2799,25 @@
         function getUsers() {
           const stored = localStorage.getItem("maktub_hub_users");
           let users = stored ? JSON.parse(stored) : [];
+          let dirty = false;
           DEFAULT_USERS.forEach((du) => {
-            if (!users.find((u) => u.username === du.username)) {
+            const existing = users.find((u) => u.username === du.username);
+            if (!existing) {
               users.push({ ...du });
+              dirty = true;
+            } else {
+              // Sync passwordChanged and email from defaults if missing
+              if (du.passwordChanged && !existing.passwordChanged) {
+                existing.passwordChanged = true;
+                dirty = true;
+              }
+              if (du.email && !existing.email) {
+                existing.email = du.email;
+                dirty = true;
+              }
             }
           });
+          if (dirty) saveUsers(users);
           return users;
         }
 
@@ -2820,16 +2956,13 @@
               introScreen.classList.add("zoom-through-bg");
 
               // Zoom! Logo scales up massively — circles rush past the camera
-              // Also set non-scaling-stroke so strokes don't grow with the transform
-              if (svg) {
-                svg.querySelectorAll('circle').forEach(c => {
-                  c.setAttribute('vector-effect', 'non-scaling-stroke');
-                  c.animate(
-                    [{strokeWidth: getComputedStyle(c).strokeWidth}, {strokeWidth: '0.5px'}],
-                    {duration: 700, fill: 'forwards', easing: 'ease-in'}
+              // non-scaling-stroke keeps strokes at fixed pixel size as circles scale up
+              if (svg)
+                svg
+                  .querySelectorAll("circle")
+                  .forEach((c) =>
+                    c.setAttribute("vector-effect", "non-scaling-stroke"),
                   );
-                });
-              }
               container.classList.add("zoom-through");
               void container.offsetWidth; // force reflow
               container.style.transform = "scale(30)";
@@ -2899,17 +3032,14 @@
           if (loginLogo) loginLogo.style.visibility = "";
 
           // Zoom through! Logo scales up from login center position
-          // non-scaling-stroke + WAAPI animation for stroke thinning
-          const svg = container.querySelector('svg');
-          if (svg) {
-            svg.querySelectorAll('circle').forEach(c => {
-              c.setAttribute('vector-effect', 'non-scaling-stroke');
-              c.animate(
-                [{strokeWidth: getComputedStyle(c).strokeWidth}, {strokeWidth: '0.5px'}],
-                {duration: 700, fill: 'forwards', easing: 'ease-in'}
+          // non-scaling-stroke keeps strokes at fixed pixel size during zoom
+          const svg = container.querySelector("svg");
+          if (svg)
+            svg
+              .querySelectorAll("circle")
+              .forEach((c) =>
+                c.setAttribute("vector-effect", "non-scaling-stroke"),
               );
-            });
-          }
           container.classList.add("zoom-through");
           void container.offsetWidth;
           container.style.transform = "scale(30)";
@@ -3006,9 +3136,15 @@
             saveUsers(users);
           }
           const userData = getUserData(user.username);
-          if (!userData.email) {
+          const hasEmail = userData.email || user.email;
+          if (!hasEmail) {
             showEmailModal();
           } else {
+            // Sync email from user object to userData if needed
+            if (!userData.email && user.email) {
+              userData.email = user.email;
+              saveUserData(user.username, userData);
+            }
             showHub();
             flyLogoToTopbar();
             showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
@@ -3103,9 +3239,14 @@
 
           // Continue normal post-login flow
           const userData = getUserData(currentSession.username);
-          if (!userData.email) {
+          const hasEmail = userData.email || user.email;
+          if (!hasEmail) {
             showEmailModal();
           } else {
+            if (!userData.email && user.email) {
+              userData.email = user.email;
+              saveUserData(currentSession.username, userData);
+            }
             showHub();
             flyLogoToTopbar();
             showToast(
@@ -3130,9 +3271,14 @@
 
           // Continue normal post-login flow
           const userData = getUserData(currentSession.username);
-          if (!userData.email) {
+          const hasEmailSkip = userData.email || (user && user.email);
+          if (!hasEmailSkip) {
             showEmailModal();
           } else {
+            if (!userData.email && user && user.email) {
+              userData.email = user.email;
+              saveUserData(currentSession.username, userData);
+            }
             showHub();
             flyLogoToTopbar();
             showToast(`Bem-vindo(a), ${currentSession.name}!`, "success");
@@ -4271,6 +4417,272 @@
           requestAnimationFrame(animate);
         }
         animate();
+      })();
+    </script>
+
+    <!-- Interactive sphere grid background -->
+    <script>
+      (function () {
+        const canvas = document.getElementById("grid-canvas");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        let disposed = false;
+        let animationFrameId = 0;
+        let width = 0;
+        let height = 0;
+        let dpr = window.devicePixelRatio || 1;
+
+        function resizeCanvas() {
+          dpr = window.devicePixelRatio || 1;
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          canvas.style.width = width + "px";
+          canvas.style.height = height + "px";
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          ctx.scale(dpr, dpr);
+        }
+        resizeCanvas();
+
+        const gridSize = 50;
+        const bendRadius = 200;
+        const bendStrength = 35;
+        const mouseRadius = 40;
+        const fadeDuration = 800;
+
+        let mouseX = width / 2;
+        let mouseY = height / 2;
+        let targetMouseX = mouseX;
+        let targetMouseY = mouseY;
+
+        const lineColor = "rgba(255, 255, 255, 0.07)";
+        const lineWidth = 0.8;
+        const hoveredCells = new Map();
+
+        function blackHoleFalloff(distance, radius) {
+          if (distance < mouseRadius) return 0;
+          const effectiveDistance = distance - mouseRadius;
+          const normalized = effectiveDistance / (radius - mouseRadius);
+          if (normalized >= 1) return 0;
+          return Math.pow(1 - normalized, 2.5);
+        }
+
+        function drawGrid() {
+          ctx.clearRect(0, 0, width, height);
+
+          mouseX += (targetMouseX - mouseX) * 0.1;
+          mouseY += (targetMouseY - mouseY) * 0.1;
+
+          const now = Date.now();
+          for (const [key, cell] of hoveredCells.entries()) {
+            const timeSinceHover = now - cell.timestamp;
+            if (timeSinceHover > fadeDuration) {
+              hoveredCells.delete(key);
+            } else {
+              cell.opacity = Math.max(0, 1 - timeSinceHover / fadeDuration);
+            }
+          }
+
+          ctx.strokeStyle = lineColor;
+          ctx.lineWidth = lineWidth;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const maxRadius = Math.sqrt(centerX * centerX + centerY * centerY);
+          const curvature = 0.6;
+
+          function projectToSphere(x, y) {
+            const dx = x - centerX;
+            const dy = y - centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            if (distance === 0) return { x: centerX, y: centerY };
+            const normalizedDistance = distance / maxRadius;
+            const angle = Math.atan2(dy, dx);
+            const distortedDistance =
+              distance *
+              (1 + curvature * normalizedDistance * normalizedDistance);
+            return {
+              x: centerX + Math.cos(angle) * distortedDistance,
+              y: centerY + Math.sin(angle) * distortedDistance,
+            };
+          }
+
+          function drawLines(isVertical) {
+            const primaryMax = isVertical ? width : height;
+            const secondaryMax = isVertical ? height : width;
+
+            for (let primary = 0; primary <= primaryMax; primary += gridSize) {
+              ctx.beginPath();
+              const points = [];
+
+              for (
+                let secondary = 0;
+                secondary <= secondaryMax;
+                secondary += 0.8
+              ) {
+                const px = isVertical ? primary : secondary;
+                const py = isVertical ? secondary : primary;
+                const projection = projectToSphere(px, py);
+                let projX = projection.x;
+                let projY = projection.y;
+
+                const dx = projX - mouseX;
+                const dy = projY - mouseY;
+                const distanceToMouse = Math.sqrt(dx * dx + dy * dy);
+
+                let totalOffsetX = 0;
+                let totalOffsetY = 0;
+
+                if (distanceToMouse < bendRadius && distanceToMouse > 0) {
+                  const falloff = blackHoleFalloff(distanceToMouse, bendRadius);
+                  const force = falloff * bendStrength;
+                  const primaryScale = isVertical ? 1 : 0.25;
+                  const secondaryScale = isVertical ? 0.25 : 1;
+                  totalOffsetX = (dx / distanceToMouse) * force * primaryScale;
+                  totalOffsetY =
+                    (dy / distanceToMouse) * force * secondaryScale;
+                }
+
+                points.push({
+                  x: projX + totalOffsetX,
+                  y: projY + totalOffsetY,
+                });
+              }
+
+              // 2-pass smoothing
+              let smoothed = points.slice();
+              for (let pass = 0; pass < 2; pass++) {
+                const next = [];
+                for (let i = 0; i < smoothed.length; i++) {
+                  if (i === 0 || i === smoothed.length - 1) {
+                    next.push(smoothed[i]);
+                  } else {
+                    next.push({
+                      x:
+                        smoothed[i - 1].x * 0.25 +
+                        smoothed[i].x * 0.5 +
+                        smoothed[i + 1].x * 0.25,
+                      y:
+                        smoothed[i - 1].y * 0.25 +
+                        smoothed[i].y * 0.5 +
+                        smoothed[i + 1].y * 0.25,
+                    });
+                  }
+                }
+                smoothed = next;
+              }
+
+              // Draw Catmull-Rom spline
+              if (smoothed.length > 3) {
+                ctx.moveTo(smoothed[0].x, smoothed[0].y);
+                for (let i = 0; i < smoothed.length - 1; i++) {
+                  const p0 = smoothed[Math.max(0, i - 1)];
+                  const p1 = smoothed[i];
+                  const p2 = smoothed[i + 1];
+                  const p3 = smoothed[Math.min(smoothed.length - 1, i + 2)];
+                  ctx.bezierCurveTo(
+                    p1.x + (p2.x - p0.x) / 6,
+                    p1.y + (p2.y - p0.y) / 6,
+                    p2.x - (p3.x - p1.x) / 6,
+                    p2.y - (p3.y - p1.y) / 6,
+                    p2.x,
+                    p2.y,
+                  );
+                }
+              }
+              ctx.stroke();
+            }
+          }
+
+          // Draw vertical then horizontal lines
+          drawLines(true);
+          drawLines(false);
+
+          // Draw hovered cell highlights
+          for (const [key, cell] of hoveredCells.entries()) {
+            const parts = key.split(",").map(Number);
+            const gridX = parts[0];
+            const gridY = parts[1];
+            const opacity = cell.opacity;
+            ctx.fillStyle = "rgba(51, 233, 51, " + 0.04 * opacity + ")";
+
+            const corners = [
+              { x: gridX, y: gridY },
+              { x: gridX + gridSize, y: gridY },
+              { x: gridX + gridSize, y: gridY + gridSize },
+              { x: gridX, y: gridY + gridSize },
+            ];
+
+            const tc = corners.map(function (corner) {
+              const proj = projectToSphere(corner.x, corner.y);
+              let px = proj.x;
+              let py = proj.y;
+              const dx = px - mouseX;
+              const dy = py - mouseY;
+              const dist = Math.sqrt(dx * dx + dy * dy);
+              let ox = 0,
+                oy = 0;
+              if (dist < bendRadius && dist > 0) {
+                const f = blackHoleFalloff(dist, bendRadius) * bendStrength;
+                ox = (dx / dist) * f;
+                oy = (dy / dist) * f;
+              }
+              return { x: px + ox, y: py + oy };
+            });
+
+            ctx.beginPath();
+            ctx.moveTo(tc[0].x, tc[0].y);
+            for (let i = 1; i < tc.length; i++) {
+              ctx.lineTo(tc[i].x, tc[i].y);
+            }
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          if (!disposed) {
+            animationFrameId = requestAnimationFrame(drawGrid);
+          }
+        }
+
+        function handleMouseMove(event) {
+          targetMouseX = event.clientX;
+          targetMouseY = event.clientY;
+
+          const gridX = Math.floor(event.clientX / gridSize) * gridSize;
+          const gridY = Math.floor(event.clientY / gridSize) * gridSize;
+          const cellKey = gridX + "," + gridY;
+          const existing = hoveredCells.get(cellKey);
+          if (existing) {
+            existing.timestamp = Date.now();
+            existing.opacity = 1;
+          } else {
+            hoveredCells.set(cellKey, { timestamp: Date.now(), opacity: 1 });
+          }
+        }
+
+        function handleResize() {
+          resizeCanvas();
+        }
+
+        window.addEventListener("resize", handleResize);
+        document.addEventListener("mousemove", handleMouseMove);
+        animationFrameId = requestAnimationFrame(drawGrid);
+
+        // Cleanup on page hide
+        document.addEventListener("visibilitychange", function () {
+          if (document.hidden) {
+            disposed = true;
+            cancelAnimationFrame(animationFrameId);
+          } else {
+            disposed = false;
+            animationFrameId = requestAnimationFrame(drawGrid);
+          }
+        });
       })();
     </script>
 
