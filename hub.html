@@ -197,8 +197,8 @@
 
       /* Intro SVG container — 3 horizontal circles animate in */
       .intro-logo-container {
-        width: 220px;
-        height: 150px;
+        width: 260px;
+        height: 175px;
         position: relative;
       }
 
@@ -395,11 +395,11 @@
       }
 
       .login-logo {
-        margin-bottom: 20px;
+        margin-bottom: 56px;
       }
 
       .login-logo svg {
-        width: 70px;
+        width: 96px;
         height: auto;
       }
 
@@ -419,16 +419,16 @@
       }
 
       .login-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(8px) saturate(160%);
+        -webkit-backdrop-filter: blur(8px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius);
         padding: 32px 28px;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.06),
-          inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.08);
         position: relative;
       }
 
@@ -440,8 +440,8 @@
         padding: 1px;
         background: linear-gradient(
           135deg,
-          rgba(255, 255, 255, 0.12),
-          rgba(255, 255, 255, 0.03)
+          rgba(255, 255, 255, 0.08),
+          rgba(255, 255, 255, 0.02)
         );
         -webkit-mask:
           linear-gradient(#000 0 0) content-box,
@@ -596,9 +596,9 @@
       }
 
       .modal {
-        background: rgba(28, 28, 28, 0.6);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        background: rgba(28, 28, 28, 0.35);
+        backdrop-filter: blur(10px) saturate(160%);
+        -webkit-backdrop-filter: blur(10px) saturate(160%);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius);
         padding: 32px 28px;
@@ -656,9 +656,9 @@
         align-items: center;
         justify-content: space-between;
         padding: 16px 24px;
-        background: rgba(26, 26, 26, 0.45);
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        background: rgba(26, 26, 26, 0.25);
+        backdrop-filter: blur(8px) saturate(160%);
+        -webkit-backdrop-filter: blur(8px) saturate(160%);
         border-bottom: 1px solid rgba(255, 255, 255, 0.03);
         box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
         flex-shrink: 0;
@@ -791,9 +791,9 @@
       }
 
       .platform-card {
-        background: rgba(255, 255, 255, 0.015);
-        backdrop-filter: blur(10px) saturate(180%);
-        -webkit-backdrop-filter: blur(10px) saturate(180%);
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius);
         overflow: hidden;
@@ -835,7 +835,7 @@
 
       .platform-card:hover:not(.locked):not(.disabled) {
         transform: translateY(-4px);
-        background: rgba(255, 255, 255, 0.025);
+        background: rgba(255, 255, 255, 0.01);
         border-color: rgba(255, 255, 255, 0.1);
         box-shadow:
           0 12px 40px rgba(0, 0, 0, 0.3),
@@ -896,7 +896,9 @@
         align-items: center;
         gap: 6px;
         padding: 8px 10px;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         flex-shrink: 0;
       }
 
@@ -929,7 +931,9 @@
 
       .mini-stat {
         flex: 1;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border-radius: 4px;
         padding: 6px 7px;
         display: flex;
@@ -958,7 +962,9 @@
 
       .mini-table {
         flex: 1;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border-radius: 4px;
         padding: 6px 7px;
         display: flex;
@@ -1004,7 +1010,9 @@
         align-items: center;
         justify-content: space-between;
         padding: 8px 10px;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         flex-shrink: 0;
       }
 
@@ -1027,7 +1035,9 @@
         align-items: center;
         gap: 6px;
         padding: 4px 6px;
-        background: #1a1a1a;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border-radius: 4px;
       }
 
@@ -1212,7 +1222,7 @@
       }
 
       .access-select option {
-        background: var(--card);
+        background: #1a1a1a;
       }
 
       /* ============================================
@@ -1264,11 +1274,15 @@
       }
 
       .user-table-container {
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius);
         overflow-x: auto;
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .user-table {
@@ -1351,13 +1365,17 @@
 
       /* Add user form */
       .add-user-form {
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius);
         padding: 24px;
         margin-top: 24px;
         display: none;
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
       }
 
       .add-user-form.active {
@@ -1428,12 +1446,16 @@
 
       .toast {
         padding: 12px 20px;
-        background: var(--card);
-        border: 1px solid transparent;
+        background: rgba(26, 26, 26, 0.35);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius-sm);
         font-size: 0.9rem;
         color: var(--text);
-        box-shadow: var(--shadow);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
         animation:
           toastIn 0.3s ease,
           toastOut 0.3s ease 2.7s forwards;
@@ -1730,9 +1752,9 @@
       }
 
       .project-card {
-        background: rgba(255, 255, 255, 0.015);
-        backdrop-filter: blur(10px) saturate(180%);
-        -webkit-backdrop-filter: blur(10px) saturate(180%);
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius);
         box-shadow:
@@ -1949,9 +1971,9 @@
       }
 
       .active-project-card {
-        background: rgba(255, 255, 255, 0.015);
-        backdrop-filter: blur(10px) saturate(180%);
-        -webkit-backdrop-filter: blur(10px) saturate(180%);
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border: 1px solid rgba(255, 255, 255, 0.05);
         border-radius: var(--radius);
         padding: 20px;
@@ -1965,7 +1987,7 @@
 
       .active-project-card:hover {
         border-color: rgba(51, 233, 51, 0.12);
-        background: rgba(255, 255, 255, 0.025);
+        background: rgba(255, 255, 255, 0.01);
         box-shadow:
           0 12px 40px rgba(0, 0, 0, 0.3),
           0 0 20px rgba(51, 233, 51, 0.04),
@@ -2059,7 +2081,9 @@
         align-items: center;
         gap: 8px;
         padding: 5px 8px;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(255, 255, 255, 0.005);
+        backdrop-filter: blur(6px) saturate(160%);
+        -webkit-backdrop-filter: blur(6px) saturate(160%);
         border-radius: 6px;
       }
 
@@ -2965,7 +2989,7 @@
                   );
               container.classList.add("zoom-through");
               void container.offsetWidth; // force reflow
-              container.style.transform = "scale(30)";
+              container.style.transform = "scale(8)";
 
               // After zoom completes, hide intro
               setTimeout(() => {
@@ -3042,7 +3066,7 @@
               );
           container.classList.add("zoom-through");
           void container.offsetWidth;
-          container.style.transform = "scale(30)";
+          container.style.transform = "scale(8)";
 
           // BG already transparent from bg-fade, reinforce with zoom-through-bg
           introScreen.classList.add("zoom-through-bg");
