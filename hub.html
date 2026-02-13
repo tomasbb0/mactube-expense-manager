@@ -159,95 +159,103 @@
         transition: filter 0.6s ease;
       }
 
-      /*
-        Geometry:
-        R = 70, outer centers 0.75R = 52.5 apart
-        Each outer at ±26.25 from middle
-        viewBox="0 0 300 200" center at (150, 100)
-        Left:  cx=123.75  Middle: cx=150  Right: cx=176.25
-        Small inscribed: r = R - 26.25 = 43.75
-        Stroke = 7
-        Circumference = 2π×70 ≈ 440
-      */
-
+      /* --- Intro circle base styles --- */
       .intro-circle {
         fill: none;
-        stroke: #ffffff;
+        stroke: #fff;
+        stroke-width: 1;
+        stroke-linecap: butt;
+        transition: stroke 0.15s ease;
+      }
+      .intro-inner-circle {
+        fill: none;
+        stroke: #fff;
         stroke-width: 7;
-        stroke-linecap: round;
+        stroke-linecap: butt;
         opacity: 0;
-        /* stroke-draw setup: total dash = circumference (overshoot slightly to avoid gap) */
+        transition: stroke 0.15s ease;
+      }
+
+      /* Green class toggled by JS */
+      .intro-circle.green,
+      .intro-inner-circle.green {
+        stroke: var(--accent);
+      }
+      .intro-logo-container.glow svg {
+        filter: drop-shadow(0 0 12px rgba(51, 233, 51, 0.3));
+      }
+
+      /* Diagonal converge + stroke draw + thicken */
+      .intro-circle-left {
+        opacity: 1;
+        stroke-dasharray: 442;
+        stroke-dashoffset: -442;
+        transform-origin: 123.75px 100px;
+        animation:
+          mL 0.96s ease-out forwards,
+          dCCW 0.64s ease-out forwards,
+          tS 1.12s ease-out forwards;
+      }
+      .intro-circle-mid {
+        opacity: 1;
         stroke-dasharray: 442;
         stroke-dashoffset: 442;
-        transition:
-          stroke 0.6s ease,
-          filter 0.6s ease;
-      }
-
-      /* Left circle — draws itself while sliding smoothly from left to final position */
-      .intro-circle-left {
+        transform-origin: 150px 100px;
         animation:
-          circleLeftSlide 2s ease-out forwards,
-          circleDraw 2s ease-out forwards;
+          mM 0.96s ease-out forwards,
+          dCW 0.64s ease-out forwards,
+          tS 1.12s ease-out 0.18s forwards;
       }
-      /* Middle circle — draws itself while fading in at center */
-      .intro-circle-mid {
-        animation:
-          circleMidFade 2s ease-out forwards,
-          circleDraw 2s ease-out forwards;
-        animation-delay: 0.15s, 0.15s;
-      }
-      /* Right circle — draws itself while sliding smoothly from right to final position */
       .intro-circle-right {
+        opacity: 1;
+        stroke-dasharray: 442;
+        stroke-dashoffset: -442;
+        transform-origin: 176.25px 100px;
         animation:
-          circleRightSlide 2s ease-out forwards,
-          circleDraw 2s ease-out forwards;
-        animation-delay: 0.3s, 0.3s;
+          mR 0.96s ease-out forwards,
+          dCCW 0.64s ease-out forwards,
+          tS 1.12s ease-out 0.36s forwards;
+      }
+      .intro-inner-circle {
+        animation: fadeInCircle 0.4s ease-out 1.1s forwards;
       }
 
-      /* Slide animations — smooth ease to final position, no bounce */
-      @keyframes circleLeftSlide {
+      /* Keyframes: diagonal converge with rotation */
+      @keyframes mL {
         0% {
-          transform: translate(-80px, 0);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
+          transform: translate(-35px, -30px) rotate(-120deg);
         }
         100% {
-          transform: translate(0, 0);
-          opacity: 1;
+          transform: translate(0, 0) rotate(0);
         }
       }
-      @keyframes circleMidFade {
+      @keyframes mM {
         0% {
-          transform: scale(0.6);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
+          transform: translateY(35px) rotate(90deg);
         }
         100% {
-          transform: scale(1);
-          opacity: 1;
+          transform: translateY(0) rotate(0);
         }
       }
-      @keyframes circleRightSlide {
+      @keyframes mR {
         0% {
-          transform: translate(80px, 0);
-          opacity: 0;
-        }
-        10% {
-          opacity: 1;
+          transform: translate(35px, -30px) rotate(150deg);
         }
         100% {
-          transform: translate(0, 0);
-          opacity: 1;
+          transform: translate(0, 0) rotate(0);
         }
       }
 
-      /* Stroke draw-in effect */
-      @keyframes circleDraw {
+      /* Stroke draw counter-clockwise / clockwise */
+      @keyframes dCCW {
+        0% {
+          stroke-dashoffset: -442;
+        }
+        100% {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes dCW {
         0% {
           stroke-dashoffset: 442;
         }
@@ -256,36 +264,27 @@
         }
       }
 
-      /* Small inscribed circle — fades in complete after outer circles converge */
-      .intro-inner-circle {
-        fill: none;
-        stroke: #ffffff;
-        transition: stroke 0.6s ease;
-        stroke-width: 7;
-        stroke-linecap: round;
-        opacity: 0;
-        animation: innerCircleFadeIn 0.8s ease-out forwards;
-        animation-delay: 2.4s;
+      /* Thicken slow: stays thin, then grows to full width */
+      @keyframes tS {
+        0% {
+          stroke-width: 1;
+        }
+        60% {
+          stroke-width: 1;
+        }
+        100% {
+          stroke-width: 7;
+        }
       }
 
-      @keyframes innerCircleFadeIn {
+      /* Inner fade in */
+      @keyframes fadeInCircle {
         0% {
           opacity: 0;
         }
         100% {
           opacity: 1;
         }
-      }
-
-      /* Turn green + glow after circles converge */
-      .intro-logo-container.converged .intro-circle {
-        stroke: var(--accent);
-      }
-      .intro-logo-container.converged .intro-inner-circle {
-        stroke: var(--accent);
-      }
-      .intro-logo-container.converged svg {
-        filter: drop-shadow(0 0 12px rgba(51, 233, 51, 0.3));
       }
 
       .intro-text {
@@ -297,7 +296,7 @@
         margin-top: 28px;
         opacity: 0;
         animation: textFadeIn 0.8s ease forwards;
-        animation-delay: 3s;
+        animation-delay: 1.8s;
       }
 
       @keyframes textFadeIn {
