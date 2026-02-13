@@ -395,11 +395,12 @@
       }
 
       .login-logo {
-        margin-bottom: 56px;
+        margin-bottom: 82px;
+        display: inline-block;
       }
 
       .login-logo svg {
-        width: 96px;
+        width: 160px;
         height: auto;
       }
 
@@ -419,16 +420,16 @@
       }
 
       .login-card {
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(8px) saturate(160%);
-        -webkit-backdrop-filter: blur(8px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         padding: 32px 28px;
         box-shadow:
           0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04),
-          inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
         position: relative;
       }
 
@@ -440,8 +441,8 @@
         padding: 1px;
         background: linear-gradient(
           135deg,
-          rgba(255, 255, 255, 0.08),
-          rgba(255, 255, 255, 0.02)
+          rgba(255, 255, 255, 0.2),
+          rgba(255, 255, 255, 0.05)
         );
         -webkit-mask:
           linear-gradient(#000 0 0) content-box,
@@ -470,18 +471,21 @@
       .form-group input {
         width: 100%;
         padding: 12px 16px;
-        background: var(--bg);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: var(--radius-sm);
         color: var(--text);
         font-family: inherit;
         font-size: 0.95rem;
         outline: none;
-        transition: border-color var(--transition);
+        transition:
+          border-color var(--transition),
+          background var(--transition);
       }
 
       .form-group input:focus {
         border-color: var(--accent);
+        background: rgba(255, 255, 255, 0.05);
       }
 
       .form-group input::placeholder {
@@ -546,13 +550,16 @@
       }
 
       .btn-secondary {
-        background: var(--bg-secondary);
+        background: rgba(255, 255, 255, 0.04);
         color: var(--text);
-        border: 1px solid transparent;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
       }
 
       .btn-secondary:hover {
-        background: var(--card-hover);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.12);
       }
 
       .btn-danger {
@@ -596,18 +603,42 @@
       }
 
       .modal {
-        background: rgba(28, 28, 28, 0.35);
-        backdrop-filter: blur(10px) saturate(160%);
-        -webkit-backdrop-filter: blur(10px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         padding: 32px 28px;
         max-width: 420px;
         width: 100%;
         box-shadow:
           0 8px 32px rgba(0, 0, 0, 0.35),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
         animation: modalIn 0.3s ease;
+        position: relative;
+      }
+
+      .modal::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.18),
+          rgba(255, 255, 255, 0.04)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
       }
 
       @keyframes modalIn {
@@ -656,11 +687,13 @@
         align-items: center;
         justify-content: space-between;
         padding: 16px 24px;
-        background: rgba(26, 26, 26, 0.25);
-        backdrop-filter: blur(8px) saturate(160%);
-        -webkit-backdrop-filter: blur(8px) saturate(160%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow:
+          0 2px 16px rgba(0, 0, 0, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
         flex-shrink: 0;
         gap: 12px;
         flex-wrap: wrap;
@@ -791,10 +824,10 @@
       }
 
       .platform-card {
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.06);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         overflow: hidden;
         cursor: pointer;
@@ -804,9 +837,9 @@
         display: flex;
         flex-direction: column;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04),
-          inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
         position: relative;
       }
 
@@ -835,14 +868,14 @@
 
       .platform-card:hover:not(.locked):not(.disabled) {
         transform: translateY(-4px);
-        background: rgba(255, 255, 255, 0.01);
-        border-color: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.18);
         box-shadow:
           0 12px 40px rgba(0, 0, 0, 0.3),
           0 0 20px rgba(51, 233, 51, 0.06),
           0 0 40px rgba(51, 233, 51, 0.03),
-          inset 0 1px 0 rgba(255, 255, 255, 0.08),
-          inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+          inset 0 1px 1px rgba(255, 255, 255, 0.15),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.15);
       }
 
       .platform-card.locked {
@@ -858,7 +891,7 @@
       .platform-preview {
         width: 100%;
         aspect-ratio: 4/3;
-        background: var(--bg);
+        background: rgba(0, 0, 0, 0.3);
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -896,9 +929,9 @@
         align-items: center;
         gap: 6px;
         padding: 8px 10px;
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px) saturate(180%);
+        -webkit-backdrop-filter: blur(8px) saturate(180%);
         flex-shrink: 0;
       }
 
@@ -931,9 +964,9 @@
 
       .mini-stat {
         flex: 1;
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px) saturate(180%);
+        -webkit-backdrop-filter: blur(8px) saturate(180%);
         border-radius: 4px;
         padding: 6px 7px;
         display: flex;
@@ -962,9 +995,9 @@
 
       .mini-table {
         flex: 1;
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px) saturate(180%);
+        -webkit-backdrop-filter: blur(8px) saturate(180%);
         border-radius: 4px;
         padding: 6px 7px;
         display: flex;
@@ -1010,9 +1043,9 @@
         align-items: center;
         justify-content: space-between;
         padding: 8px 10px;
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px) saturate(180%);
+        -webkit-backdrop-filter: blur(8px) saturate(180%);
         flex-shrink: 0;
       }
 
@@ -1035,9 +1068,9 @@
         align-items: center;
         gap: 6px;
         padding: 4px 6px;
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px) saturate(180%);
+        -webkit-backdrop-filter: blur(8px) saturate(180%);
         border-radius: 4px;
       }
 
@@ -1205,7 +1238,7 @@
 
       .access-select {
         padding: 4px 8px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 6px;
         color: var(--text);
@@ -1274,15 +1307,16 @@
       }
 
       .user-table-container {
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         overflow-x: auto;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
       }
 
       .user-table {
@@ -1365,17 +1399,18 @@
 
       /* Add user form */
       .add-user-form {
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         padding: 24px;
         margin-top: 24px;
         display: none;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
       }
 
       .add-user-form.active {
@@ -1399,8 +1434,8 @@
       .form-row select {
         width: 100%;
         padding: 12px 16px;
-        background: var(--bg);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: var(--radius-sm);
         color: var(--text);
         font-family: inherit;
@@ -1446,16 +1481,16 @@
 
       .toast {
         padding: 12px 20px;
-        background: rgba(26, 26, 26, 0.35);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius-sm);
         font-size: 0.9rem;
         color: var(--text);
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1);
         animation:
           toastIn 0.3s ease,
           toastOut 0.3s ease 2.7s forwards;
@@ -1563,8 +1598,8 @@
       .request-modal .form-group textarea {
         width: 100%;
         padding: 12px 16px;
-        background: var(--bg);
-        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: var(--radius-sm);
         color: var(--text);
         font-family: inherit;
@@ -1572,11 +1607,14 @@
         outline: none;
         resize: vertical;
         min-height: 80px;
-        transition: border-color var(--transition);
+        transition:
+          border-color var(--transition),
+          background var(--transition);
       }
 
       .request-modal .form-group textarea:focus {
         border-color: var(--accent);
+        background: rgba(255, 255, 255, 0.05);
       }
 
       .request-modal .form-group textarea::placeholder {
@@ -1594,16 +1632,20 @@
         align-items: center;
         gap: 8px;
         padding: 8px 12px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius-sm);
         cursor: pointer;
-        transition: background var(--transition);
+        transition:
+          background var(--transition),
+          border-color var(--transition);
         font-size: 0.85rem;
         color: var(--text-secondary);
       }
 
       .checkbox-item:hover {
-        background: var(--card-hover);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.1);
       }
 
       .checkbox-item input[type="checkbox"] {
@@ -1624,14 +1666,18 @@
         align-items: flex-start;
         gap: 10px;
         padding: 10px 14px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: var(--radius-sm);
         cursor: pointer;
-        transition: background var(--transition);
+        transition:
+          background var(--transition),
+          border-color var(--transition);
       }
 
       .radio-item:hover {
-        background: var(--card-hover);
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.1);
       }
 
       .radio-item input[type="radio"] {
@@ -1690,7 +1736,7 @@
 
       .estimate-result {
         display: none;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
         border-radius: var(--radius-sm);
         padding: 20px;
         margin-top: 16px;
@@ -1752,14 +1798,15 @@
       }
 
       .project-card {
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
         margin-bottom: 16px;
         overflow: hidden;
       }
@@ -1859,7 +1906,7 @@
 
       .project-eta-input {
         padding: 6px 10px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 6px;
         color: var(--text);
@@ -1882,7 +1929,7 @@
       .project-comment-input {
         flex: 1;
         padding: 8px 12px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 6px;
         color: var(--text);
@@ -1917,7 +1964,7 @@
 
       .comment-item {
         padding: 10px 12px;
-        background: var(--bg);
+        background: rgba(255, 255, 255, 0.03);
         border-radius: var(--radius-sm);
         margin-bottom: 8px;
       }
@@ -1971,27 +2018,29 @@
       }
 
       .active-project-card {
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.01);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: var(--radius);
         padding: 20px;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.04);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
       }
 
       .active-project-card:hover {
-        border-color: rgba(51, 233, 51, 0.12);
-        background: rgba(255, 255, 255, 0.01);
+        border-color: rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.02);
         box-shadow:
           0 12px 40px rgba(0, 0, 0, 0.3),
-          0 0 20px rgba(51, 233, 51, 0.04),
-          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          0 0 20px rgba(51, 233, 51, 0.06),
+          inset 0 1px 1px rgba(255, 255, 255, 0.15),
+          inset 0 -1px 1px rgba(0, 0, 0, 0.15);
       }
 
       .active-project-card .project-card-name {
@@ -2081,9 +2130,9 @@
         align-items: center;
         gap: 8px;
         padding: 5px 8px;
-        background: rgba(255, 255, 255, 0.005);
-        backdrop-filter: blur(6px) saturate(160%);
-        -webkit-backdrop-filter: blur(6px) saturate(160%);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(8px) saturate(180%);
+        -webkit-backdrop-filter: blur(8px) saturate(180%);
         border-radius: 6px;
       }
 
@@ -4687,6 +4736,27 @@
           } else {
             hoveredCells.set(cellKey, { timestamp: Date.now(), opacity: 1 });
           }
+
+          // Dynamic glass blur — containers get blurrier when mouse approaches
+          const glassContainers = document.querySelectorAll(
+            ".login-card, .platform-card, .modal, .user-table-container, .add-user-form, .project-card, .active-project-card"
+          );
+          glassContainers.forEach(function (container) {
+            const rect = container.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = event.clientX - cx;
+            const dy = event.clientY - cy;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = 400;
+            const minBlur = 16;
+            const maxBlur = 40;
+            const blur = distance < maxDist
+              ? minBlur + ((maxDist - distance) / maxDist) * (maxBlur - minBlur)
+              : minBlur;
+            container.style.backdropFilter = "blur(" + blur + "px) saturate(180%)";
+            container.style.webkitBackdropFilter = "blur(" + blur + "px) saturate(180%)";
+          });
         }
 
         function handleResize() {
