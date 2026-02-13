@@ -1081,8 +1081,8 @@ body {
 .quick-action-btn.active {
   position: relative;
   color: var(--green-primary);
-  border-color: transparent;
-  box-shadow: 0 0 4px rgba(51, 233, 51, 0.12);
+  border: 1px solid rgba(51, 233, 51, 0.28);
+  box-shadow: 0 0 8px rgba(51, 233, 51, 0.12), 0 0 2px rgba(51, 233, 51, 0.08);
   z-index: 0;
   overflow: hidden;
 }
@@ -1095,12 +1095,14 @@ body {
   width: 300%;
   height: 300%;
   background: conic-gradient(
-    rgba(51, 233, 51, 0.18),
-    rgba(51, 233, 51, 0.42),
-    rgba(51, 233, 51, 0.18),
-    rgba(51, 233, 51, 0.18)
+    transparent 0deg,
+    transparent 300deg,
+    rgba(51, 233, 51, 0.10) 330deg,
+    rgba(51, 233, 51, 0.18) 345deg,
+    rgba(51, 233, 51, 0.10) 355deg,
+    transparent 360deg
   );
-  animation: spin-border 4s linear infinite;
+  animation: spin-border 6s linear infinite;
   z-index: -2;
 }
 
