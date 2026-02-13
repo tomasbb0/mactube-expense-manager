@@ -1300,6 +1300,427 @@
           display: none;
         }
       }
+
+      /* ============================================
+         REQUEST PLATFORM MODAL
+         ============================================ */
+      .request-modal .modal {
+        max-width: 560px;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .request-modal-body {
+        overflow-y: auto;
+        flex: 1;
+        padding-right: 4px;
+      }
+
+      .request-modal-body::-webkit-scrollbar {
+        width: 4px;
+      }
+      .request-modal-body::-webkit-scrollbar-thumb {
+        background: var(--text-muted);
+        border-radius: 4px;
+      }
+
+      .request-modal .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        background: var(--bg);
+        border: 1px solid transparent;
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.95rem;
+        outline: none;
+        resize: vertical;
+        min-height: 80px;
+        transition: border-color var(--transition);
+      }
+
+      .request-modal .form-group textarea:focus {
+        border-color: var(--accent);
+      }
+
+      .request-modal .form-group textarea::placeholder {
+        color: var(--text-muted);
+      }
+
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background var(--transition);
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .checkbox-item:hover {
+        background: var(--card-hover);
+      }
+
+      .checkbox-item input[type="checkbox"] {
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      .radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .radio-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 10px 14px;
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        transition: background var(--transition);
+      }
+
+      .radio-item:hover {
+        background: var(--card-hover);
+      }
+
+      .radio-item input[type="radio"] {
+        accent-color: var(--accent);
+        width: 16px;
+        height: 16px;
+        margin-top: 2px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+
+      .radio-item-text {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .radio-item-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .radio-item-desc {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+      }
+
+      .estimate-spinner {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 24px;
+      }
+
+      .spinner-circle {
+        width: 32px;
+        height: 32px;
+        border: 3px solid rgba(51, 233, 51, 0.2);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spinnerRotate 0.8s linear infinite;
+      }
+
+      @keyframes spinnerRotate {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .spinner-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .estimate-result {
+        display: none;
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        margin-top: 16px;
+        text-align: center;
+        border: 1px solid rgba(51, 233, 51, 0.15);
+      }
+
+      .estimate-price {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+
+      .estimate-timeline-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .request-modal .modal-actions {
+        margin-top: 20px;
+        flex-shrink: 0;
+      }
+
+      /* ============================================
+         PROJECTS SCREEN
+         ============================================ */
+      #projects-screen {
+        flex-direction: column;
+      }
+
+      .projects-content {
+        flex: 1;
+        padding: 32px 24px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .projects-inner {
+        width: 100%;
+        max-width: 900px;
+      }
+
+      .projects-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .projects-header h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .project-card {
+        background: var(--card);
+        border: 1px solid transparent;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+
+      .project-card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .project-card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .project-card-title h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0;
+      }
+
+      .project-card-user {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+
+      .project-card-body {
+        padding: 16px 20px;
+      }
+
+      .project-description {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+        line-height: 1.6;
+      }
+
+      .project-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .project-detail {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .detail-label {
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+
+      .detail-value {
+        color: var(--text);
+      }
+
+      .detail-value.accent {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .project-admin-controls {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .project-admin-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .project-admin-row label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        min-width: 50px;
+      }
+
+      .project-eta-input {
+        padding: 6px 10px;
+        background: var(--bg);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color var(--transition);
+      }
+
+      .project-eta-input:focus {
+        border-color: var(--accent);
+      }
+
+      .project-comment-form {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .project-comment-input {
+        flex: 1;
+        padding: 8px 12px;
+        background: var(--bg);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.85rem;
+        outline: none;
+        transition: border-color var(--transition);
+      }
+
+      .project-comment-input:focus {
+        border-color: var(--accent);
+      }
+
+      .project-comment-input::placeholder {
+        color: var(--text-muted);
+      }
+
+      .comment-timeline {
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .comment-timeline-title {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+      }
+
+      .comment-item {
+        padding: 10px 12px;
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        margin-bottom: 8px;
+      }
+
+      .comment-meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 4px;
+      }
+
+      .comment-meta strong {
+        font-size: 0.8rem;
+        color: var(--accent);
+      }
+
+      .comment-meta span {
+        font-size: 0.7rem;
+        color: var(--text-muted);
+      }
+
+      .comment-text {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+      }
+
+      @media (max-width: 600px) {
+        .checkbox-grid {
+          grid-template-columns: 1fr;
+        }
+        .project-details {
+          grid-template-columns: 1fr;
+        }
+        .request-modal .modal {
+          max-width: 100%;
+          padding: 24px 18px;
+        }
+        .projects-content {
+          padding: 20px 16px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1518,6 +1939,188 @@
           <button class="btn btn-danger btn-sm" id="confirm-ok">
             Eliminar
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       REQUEST PLATFORM MODAL
+       ========================================== -->
+    <div class="modal-overlay request-modal" id="request-modal">
+      <div class="modal">
+        <h3>🚀 Pedir Nova Plataforma</h3>
+        <p>
+          Descreve a plataforma que precisas e recebe uma estimativa de
+          orçamento.
+        </p>
+        <div class="request-modal-body">
+          <div class="form-group">
+            <label for="req-name">Nome da Plataforma</label>
+            <input
+              type="text"
+              id="req-name"
+              placeholder="Ex: Gestão de Eventos"
+            />
+          </div>
+          <div class="form-group">
+            <label for="req-description">Descrição</label>
+            <textarea
+              id="req-description"
+              placeholder="Descreve o que precisas..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Funcionalidades</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="dashboard" />
+                Dashboard &amp; Analytics</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="users" />
+                Gestão de Utilizadores</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="database" />
+                Base de Dados</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="reports" />
+                Relatórios &amp; Exportação</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="apis" />
+                Integração com APIs</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="payments" />
+                Sistema de Pagamentos</label
+              >
+              <label class="checkbox-item"
+                ><input
+                  type="checkbox"
+                  name="req-features"
+                  value="notifications"
+                />
+                Notificações</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="auth" />
+                Autenticação</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="chat" /> Chat
+                / Mensagens</label
+              >
+              <label class="checkbox-item"
+                ><input type="checkbox" name="req-features" value="cms" />
+                Gestão de Conteúdo</label
+              >
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Complexidade</label>
+            <div class="radio-group">
+              <label class="radio-item">
+                <input type="radio" name="req-complexity" value="basico" />
+                <div class="radio-item-text">
+                  <span class="radio-item-label">Básico</span>
+                  <span class="radio-item-desc"
+                    >Landing page, formulários simples</span
+                  >
+                </div>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="req-complexity" value="standard" />
+                <div class="radio-item-text">
+                  <span class="radio-item-label">Standard</span>
+                  <span class="radio-item-desc"
+                    >Dashboard, CRUD, autenticação</span
+                  >
+                </div>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="req-complexity" value="avancado" />
+                <div class="radio-item-text">
+                  <span class="radio-item-label">Avançado</span>
+                  <span class="radio-item-desc"
+                    >Integrações, automação, real-time</span
+                  >
+                </div>
+              </label>
+              <label class="radio-item">
+                <input type="radio" name="req-complexity" value="enterprise" />
+                <div class="radio-item-text">
+                  <span class="radio-item-label">Enterprise</span>
+                  <span class="radio-item-desc"
+                    >Multi-tenant, escalável, APIs complexas</span
+                  >
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="estimate-spinner" id="estimate-spinner">
+            <div class="spinner-circle"></div>
+            <span class="spinner-text">A analisar requisitos...</span>
+          </div>
+
+          <div class="estimate-result" id="estimate-result">
+            <div class="estimate-price">
+              €<span id="estimate-min">0</span> — €<span id="estimate-max"
+                >0</span
+              >
+            </div>
+            <div class="estimate-timeline-text">
+              Prazo estimado: <strong id="estimate-timeline"></strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary btn-sm" id="req-cancel-btn">
+            Cancelar
+          </button>
+          <button class="btn btn-primary btn-sm" id="req-estimate-btn">
+            Estimar Orçamento
+          </button>
+          <button
+            class="btn btn-primary btn-sm"
+            id="req-submit-btn"
+            style="display: none; background: #0096ff; color: white"
+          >
+            Enviar Pedido
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       PROJECTS SCREEN
+       ========================================== -->
+    <div id="projects-screen" class="screen">
+      <div class="topbar">
+        <div class="topbar-brand">
+          <div class="topbar-logo">
+            <img src="maktub-logo.png" alt="Maktub Art Group" />
+          </div>
+          <span class="topbar-title">Maktub Art Group</span>
+        </div>
+        <div class="topbar-right">
+          <button class="mgmt-back" id="projects-back-btn">
+            ← Voltar ao Hub
+          </button>
+        </div>
+      </div>
+
+      <div class="projects-content">
+        <div class="projects-inner">
+          <div class="projects-header">
+            <h2>📋 Pedidos &amp; Projetos</h2>
+          </div>
+          <div id="projects-list">
+            <!-- Dynamically populated -->
+          </div>
         </div>
       </div>
     </div>
@@ -1973,20 +2576,40 @@
           `;
             mgmtCard.addEventListener("click", showManagement);
             grid.appendChild(mgmtCard);
-            const addCard = document.createElement("div");
-            addCard.className = "platform-card disabled";
-            addCard.title = "Em breve";
-            addCard.innerHTML = `
-            <div class="platform-preview" style="justify-content:center;align-items:center">
-              <span class="icon" style="opacity:0.3;font-size:2.5rem">➕</span>
+          }
+
+          // Projects card (all users)
+          const projectsCard = document.createElement("div");
+          projectsCard.className = "platform-card";
+          projectsCard.title = "Pedidos & Projetos";
+          projectsCard.innerHTML = `
+            <div class="platform-preview">
+              <span class="icon">📋</span>
+              <span class="preview-name">Pedidos & Projetos</span>
             </div>
             <div class="platform-info">
-              <div class="platform-name">Adicionar Plataforma</div>
-              <span class="badge-soon">Em breve</span>
+              <div class="platform-name">Pedidos & Projetos</div>
+              <div class="platform-desc">Ver pedidos de plataformas</div>
             </div>
           `;
-            grid.appendChild(addCard);
-          }
+          projectsCard.addEventListener("click", showProjects);
+          grid.appendChild(projectsCard);
+
+          // Add platform card (all users)
+          const addCard = document.createElement("div");
+          addCard.className = "platform-card";
+          addCard.title = "Pedir nova plataforma";
+          addCard.innerHTML = `
+            <div class="platform-preview" style="justify-content:center;align-items:center">
+              <span class="icon" style="font-size:2.5rem">➕</span>
+            </div>
+            <div class="platform-info">
+              <div class="platform-name">Pedir Plataforma</div>
+              <div class="platform-desc">Solicitar nova plataforma</div>
+            </div>
+          `;
+          addCard.addEventListener("click", showRequestModal);
+          grid.appendChild(addCard);
         }
 
         function navigateToPlatform(platform) {
@@ -2204,6 +2827,24 @@
           document
             .getElementById("confirm-cancel")
             .addEventListener("click", cancelConfirm);
+          document
+            .getElementById("req-estimate-btn")
+            .addEventListener("click", estimateBudget);
+          document
+            .getElementById("req-submit-btn")
+            .addEventListener("click", submitRequest);
+          document
+            .getElementById("req-cancel-btn")
+            .addEventListener("click", hideRequestModal);
+          document
+            .getElementById("projects-back-btn")
+            .addEventListener("click", showHub);
+          document
+            .getElementById("request-modal")
+            .addEventListener("click", function (e) {
+              if (e.target === document.getElementById("request-modal"))
+                hideRequestModal();
+            });
 
           // Topbar brand clicks → go to hub
           document.querySelectorAll(".topbar-brand").forEach((el) => {
@@ -2211,11 +2852,496 @@
           });
         }
 
+        // ===== REQUEST PLATFORM FUNCTIONS =====
+        function getRequests() {
+          const stored = localStorage.getItem("maktub_hub_requests");
+          return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveRequests(requests) {
+          localStorage.setItem("maktub_hub_requests", JSON.stringify(requests));
+        }
+
+        function showRequestModal() {
+          document.getElementById("request-modal").classList.add("active");
+          document.getElementById("req-name").value = "";
+          document.getElementById("req-description").value = "";
+          document
+            .querySelectorAll('#request-modal input[type="checkbox"]')
+            .forEach(function (cb) {
+              cb.checked = false;
+            });
+          document
+            .querySelectorAll('#request-modal input[type="radio"]')
+            .forEach(function (rb) {
+              rb.checked = false;
+            });
+          document.getElementById("estimate-result").style.display = "none";
+          document.getElementById("estimate-spinner").style.display = "none";
+          document.getElementById("req-submit-btn").style.display = "none";
+        }
+
+        function hideRequestModal() {
+          document.getElementById("request-modal").classList.remove("active");
+        }
+
+        function estimateBudget() {
+          var name = document.getElementById("req-name").value.trim();
+          var description = document
+            .getElementById("req-description")
+            .value.trim();
+          var complexity = document.querySelector(
+            'input[name="req-complexity"]:checked',
+          );
+
+          if (!name) {
+            showToast("Insere o nome da plataforma.", "error");
+            return;
+          }
+          if (!description) {
+            showToast("Insere uma descrição.", "error");
+            return;
+          }
+          if (!complexity) {
+            showToast("Seleciona a complexidade.", "error");
+            return;
+          }
+
+          document.getElementById("estimate-spinner").style.display = "flex";
+          document.getElementById("estimate-result").style.display = "none";
+          document.getElementById("req-submit-btn").style.display = "none";
+
+          setTimeout(function () {
+            var basePrices = {
+              basico: 1500,
+              standard: 4000,
+              avancado: 8000,
+              enterprise: 15000,
+            };
+            var featureAdditions = {
+              dashboard: 600,
+              users: 500,
+              database: 400,
+              reports: 500,
+              apis: 700,
+              payments: 800,
+              notifications: 400,
+              auth: 300,
+              chat: 700,
+              cms: 500,
+            };
+            var timelines = {
+              basico: "2-3 semanas",
+              standard: "1-2 meses",
+              avancado: "2-4 meses",
+              enterprise: "4-6 meses",
+            };
+
+            var base = basePrices[complexity.value] || 4000;
+            var featureTotal = 0;
+            document
+              .querySelectorAll(
+                '#request-modal input[name="req-features"]:checked',
+              )
+              .forEach(function (cb) {
+                featureTotal += featureAdditions[cb.value] || 400;
+              });
+
+            var lower = base + featureTotal;
+            var upper = Math.round(lower * 1.4);
+            var timeline = timelines[complexity.value] || "1-2 meses";
+
+            document.getElementById("estimate-spinner").style.display = "none";
+            document.getElementById("estimate-min").textContent =
+              lower.toLocaleString("pt-PT");
+            document.getElementById("estimate-max").textContent =
+              upper.toLocaleString("pt-PT");
+            document.getElementById("estimate-timeline").textContent = timeline;
+            document.getElementById("estimate-result").style.display = "block";
+            document.getElementById("req-submit-btn").style.display =
+              "inline-flex";
+
+            document.getElementById("request-modal").dataset.budgetMin = lower;
+            document.getElementById("request-modal").dataset.budgetMax = upper;
+            document.getElementById("request-modal").dataset.timeline =
+              timeline;
+          }, 2500);
+        }
+
+        function submitRequest() {
+          var modal = document.getElementById("request-modal");
+          var name = document.getElementById("req-name").value.trim();
+          var description = document
+            .getElementById("req-description")
+            .value.trim();
+          var complexity = document.querySelector(
+            'input[name="req-complexity"]:checked',
+          );
+          var features = [];
+          document
+            .querySelectorAll(
+              '#request-modal input[name="req-features"]:checked',
+            )
+            .forEach(function (cb) {
+              features.push(cb.value);
+            });
+
+          var budgetMin = parseInt(modal.dataset.budgetMin) || 0;
+          var budgetMax = parseInt(modal.dataset.budgetMax) || 0;
+          var timeline = modal.dataset.timeline || "";
+
+          var request = {
+            id: "req_" + Date.now(),
+            username: currentSession.username,
+            name: name,
+            description: description,
+            features: features,
+            complexity: complexity ? complexity.value : "standard",
+            budgetMin: budgetMin,
+            budgetMax: budgetMax,
+            timeline: timeline,
+            status: "pending",
+            eta: null,
+            comments: [],
+            createdAt: Date.now(),
+          };
+
+          var requests = getRequests();
+          requests.push(request);
+          saveRequests(requests);
+
+          var featureLabels = {
+            dashboard: "Dashboard & Analytics",
+            users: "Gestão de Utilizadores",
+            database: "Base de Dados",
+            reports: "Relatórios & Exportação",
+            apis: "Integração com APIs",
+            payments: "Sistema de Pagamentos",
+            notifications: "Notificações",
+            auth: "Autenticação",
+            chat: "Chat / Mensagens",
+            cms: "Gestão de Conteúdo",
+          };
+          var featureNames = features
+            .map(function (f) {
+              return featureLabels[f] || f;
+            })
+            .join(", ");
+          var complexityLabels = {
+            basico: "Básico",
+            standard: "Standard",
+            avancado: "Avançado",
+            enterprise: "Enterprise",
+          };
+
+          var subject = encodeURIComponent(
+            "Novo Pedido de Plataforma - " + name,
+          );
+          var body = encodeURIComponent(
+            "Novo pedido de plataforma:\n\n" +
+              "Nome: " +
+              name +
+              "\n" +
+              "Descrição: " +
+              description +
+              "\n" +
+              "Funcionalidades: " +
+              (featureNames || "Nenhuma selecionada") +
+              "\n" +
+              "Complexidade: " +
+              (complexityLabels[complexity.value] || complexity.value) +
+              "\n" +
+              "Orçamento estimado: €" +
+              budgetMin.toLocaleString("pt-PT") +
+              " — €" +
+              budgetMax.toLocaleString("pt-PT") +
+              "\n" +
+              "Prazo estimado: " +
+              timeline +
+              "\n\n" +
+              "Pedido por: " +
+              currentSession.name +
+              " (" +
+              currentSession.username +
+              ")\n" +
+              "Data: " +
+              new Date().toLocaleDateString("pt-PT"),
+          );
+
+          window.open(
+            "mailto:tomasbb0@gmail.com?subject=" + subject + "&body=" + body,
+            "_blank",
+          );
+
+          hideRequestModal();
+          showToast("Pedido enviado com sucesso!", "success");
+          renderHub();
+        }
+
+        // ===== PROJECTS SCREEN FUNCTIONS =====
+        function showProjects() {
+          hideAllScreens();
+          document.getElementById("projects-screen").classList.add("active");
+          renderProjects();
+        }
+
+        function renderProjects() {
+          var container = document.getElementById("projects-list");
+          var requests = getRequests();
+          var admin = isAdmin();
+
+          var filtered = admin
+            ? requests
+            : requests.filter(function (r) {
+                return r.username === currentSession.username;
+              });
+
+          if (filtered.length === 0) {
+            container.innerHTML =
+              '<div style="text-align:center;padding:60px 20px;color:var(--text-muted)">' +
+              '<div style="font-size:3rem;margin-bottom:16px">📋</div>' +
+              '<div style="font-size:1.1rem;font-weight:600;margin-bottom:8px;color:var(--text-secondary)">Sem pedidos</div>' +
+              '<div style="font-size:0.9rem">Ainda não existem pedidos de plataformas.</div>' +
+              "</div>";
+            return;
+          }
+
+          var statusLabels = {
+            pending: "Pendente",
+            analysis: "Em Análise",
+            development: "Em Desenvolvimento",
+            testing: "Em Teste",
+            completed: "Concluído",
+            cancelled: "Cancelado",
+          };
+          var statusColors = {
+            pending: "#ffb400",
+            analysis: "#0096ff",
+            development: "#33e933",
+            testing: "#ff8c00",
+            completed: "#33e933",
+            cancelled: "#ff4444",
+          };
+          var statusBgColors = {
+            pending: "rgba(255,180,0,0.15)",
+            analysis: "rgba(0,150,255,0.15)",
+            development: "rgba(51,233,51,0.15)",
+            testing: "rgba(255,140,0,0.15)",
+            completed: "rgba(51,233,51,0.25)",
+            cancelled: "rgba(255,68,68,0.15)",
+          };
+          var featureLabels = {
+            dashboard: "Dashboard & Analytics",
+            users: "Gestão de Utilizadores",
+            database: "Base de Dados",
+            reports: "Relatórios & Exportação",
+            apis: "Integração com APIs",
+            payments: "Sistema de Pagamentos",
+            notifications: "Notificações",
+            auth: "Autenticação",
+            chat: "Chat / Mensagens",
+            cms: "Gestão de Conteúdo",
+          };
+
+          container.innerHTML = filtered
+            .map(function (req) {
+              var statusLabel = statusLabels[req.status] || req.status;
+              var statusColor = statusColors[req.status] || "#666";
+              var statusBg =
+                statusBgColors[req.status] || "rgba(102,102,102,0.15)";
+              var createdDate = new Date(req.createdAt).toLocaleDateString(
+                "pt-PT",
+              );
+              var featuresStr =
+                (req.features || [])
+                  .map(function (f) {
+                    return featureLabels[f] || f;
+                  })
+                  .join(", ") || "—";
+
+              var adminControls = "";
+              if (admin) {
+                var statusOptions = Object.keys(statusLabels)
+                  .map(function (val) {
+                    return (
+                      '<option value="' +
+                      val +
+                      '"' +
+                      (req.status === val ? " selected" : "") +
+                      ">" +
+                      statusLabels[val] +
+                      "</option>"
+                    );
+                  })
+                  .join("");
+
+                adminControls =
+                  '<div class="project-admin-controls">' +
+                  '<div class="project-admin-row">' +
+                  "<label>Estado:</label>" +
+                  '<select class="access-select" onchange="window._hub.changeRequestStatus(\'' +
+                  req.id +
+                  "', this.value)\">" +
+                  statusOptions +
+                  "</select>" +
+                  "</div>" +
+                  '<div class="project-admin-row">' +
+                  "<label>ETA:</label>" +
+                  '<input type="date" class="project-eta-input" value="' +
+                  (req.eta || "") +
+                  '" onchange="window._hub.setRequestEta(\'' +
+                  req.id +
+                  "', this.value)\" />" +
+                  "</div>" +
+                  '<div class="project-comment-form">' +
+                  '<input type="text" class="project-comment-input" id="comment-input-' +
+                  req.id +
+                  '" placeholder="Adicionar comentário..." />' +
+                  '<button class="btn btn-primary btn-sm" onclick="window._hub.addRequestComment(\'' +
+                  req.id +
+                  "')\">Enviar</button>" +
+                  "</div>" +
+                  "</div>";
+              }
+
+              var commentsHTML = (req.comments || [])
+                .map(function (c) {
+                  var cDate = new Date(c.timestamp).toLocaleString("pt-PT");
+                  return (
+                    '<div class="comment-item">' +
+                    '<div class="comment-meta"><strong>' +
+                    c.author +
+                    "</strong><span>" +
+                    cDate +
+                    "</span></div>" +
+                    '<div class="comment-text">' +
+                    c.text +
+                    "</div>" +
+                    "</div>"
+                  );
+                })
+                .join("");
+
+              var etaHTML = req.eta
+                ? '<div class="project-detail"><span class="detail-label">ETA:</span> <span class="detail-value accent">' +
+                  new Date(req.eta).toLocaleDateString("pt-PT") +
+                  "</span></div>"
+                : "";
+
+              return (
+                '<div class="project-card">' +
+                '<div class="project-card-header">' +
+                '<div class="project-card-title">' +
+                "<h3>" +
+                req.name +
+                "</h3>" +
+                '<span class="status-badge" style="background:' +
+                statusBg +
+                ";color:" +
+                statusColor +
+                '">' +
+                statusLabel +
+                "</span>" +
+                "</div>" +
+                (admin
+                  ? '<div class="project-card-user">por <strong>' +
+                    req.username +
+                    "</strong></div>"
+                  : "") +
+                "</div>" +
+                '<div class="project-card-body">' +
+                '<p class="project-description">' +
+                req.description +
+                "</p>" +
+                '<div class="project-details">' +
+                '<div class="project-detail"><span class="detail-label">Orçamento:</span> <span class="detail-value accent">€' +
+                (req.budgetMin || 0).toLocaleString("pt-PT") +
+                " — €" +
+                (req.budgetMax || 0).toLocaleString("pt-PT") +
+                "</span></div>" +
+                '<div class="project-detail"><span class="detail-label">Prazo:</span> <span class="detail-value">' +
+                (req.timeline || "—") +
+                "</span></div>" +
+                '<div class="project-detail"><span class="detail-label">Funcionalidades:</span> <span class="detail-value">' +
+                featuresStr +
+                "</span></div>" +
+                '<div class="project-detail"><span class="detail-label">Criado:</span> <span class="detail-value">' +
+                createdDate +
+                "</span></div>" +
+                etaHTML +
+                "</div>" +
+                (commentsHTML
+                  ? '<div class="comment-timeline"><div class="comment-timeline-title">Comentários</div>' +
+                    commentsHTML +
+                    "</div>"
+                  : "") +
+                adminControls +
+                "</div>" +
+                "</div>"
+              );
+            })
+            .join("");
+        }
+
+        function changeRequestStatus(requestId, newStatus) {
+          var requests = getRequests();
+          var req = requests.find(function (r) {
+            return r.id === requestId;
+          });
+          if (req) {
+            req.status = newStatus;
+            saveRequests(requests);
+            showToast("Estado atualizado.", "success");
+            renderProjects();
+          }
+        }
+
+        function setRequestEta(requestId, dateValue) {
+          var requests = getRequests();
+          var req = requests.find(function (r) {
+            return r.id === requestId;
+          });
+          if (req) {
+            req.eta = dateValue || null;
+            saveRequests(requests);
+            showToast("ETA atualizado.", "success");
+          }
+        }
+
+        function addRequestComment(requestId) {
+          var input = document.getElementById("comment-input-" + requestId);
+          var text = input ? input.value.trim() : "";
+          if (!text) {
+            showToast("Escreve um comentário.", "error");
+            return;
+          }
+
+          var requests = getRequests();
+          var req = requests.find(function (r) {
+            return r.id === requestId;
+          });
+          if (req) {
+            if (!req.comments) req.comments = [];
+            req.comments.push({
+              author: currentSession.username,
+              text: text,
+              timestamp: Date.now(),
+            });
+            saveRequests(requests);
+            input.value = "";
+            showToast("Comentário adicionado.", "success");
+            renderProjects();
+          }
+        }
+
         window._hub = {
           toggleAccess,
           confirmDeleteUser,
           changePermission,
           toggleAccessPanel,
+          changeRequestStatus,
+          setRequestEta,
+          addRequestComment,
         };
 
         document.addEventListener("DOMContentLoaded", () => {
