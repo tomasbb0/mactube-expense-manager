@@ -2824,10 +2824,17 @@
               void container.offsetWidth; // force reflow
               container.style.transform = "scale(30)";
 
-              // Thin out circle strokes as they zoom past (uses base CSS transitions)
+              // Thin out circle strokes as they zoom past
+              // Must cancel CSS animations first — forwards fill locks stroke-width
               if (svg) {
                 svg.querySelectorAll('circle').forEach(c => {
-                  c.style.strokeWidth = '0.15';
+                  const current = getComputedStyle(c).strokeWidth;
+                  c.style.animation = 'none';      // kill forwards fill
+                  c.style.strokeWidth = current;    // lock current value
+                });
+                void svg.offsetWidth;               // force reflow
+                svg.querySelectorAll('circle').forEach(c => {
+                  c.style.strokeWidth = '0.15';     // animate to thin
                 });
               }
 
@@ -2901,8 +2908,15 @@
           container.style.transform = "scale(30)";
 
           // Thin out circle strokes as they zoom past
+          // Must cancel CSS animations first — forwards fill locks stroke-width
           const svg = container.querySelector('svg');
           if (svg) {
+            svg.querySelectorAll('circle').forEach(c => {
+              const current = getComputedStyle(c).strokeWidth;
+              c.style.animation = 'none';
+              c.style.strokeWidth = current;
+            });
+            void svg.offsetWidth;
             svg.querySelectorAll('circle').forEach(c => {
               c.style.strokeWidth = '0.15';
             });

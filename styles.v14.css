@@ -3751,7 +3751,9 @@ tr:hover td {
   position: absolute;
   bottom: calc(100% + 8px);
   right: 0;
-  background: var(--card-bg);
+  background: rgba(30, 30, 30, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 8px;
