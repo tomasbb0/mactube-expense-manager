@@ -510,7 +510,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 13; // v13: Fixed settlement OFERTA logic, cache-bust, force fresh data
+const DATA_VERSION = 14; // v14: Merged to main, force fresh data for all users
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
