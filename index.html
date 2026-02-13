@@ -2134,7 +2134,7 @@
 
     <script>
       // Force clear stale data — ensures fresh load for all users
-      (function() {
+      (function () {
         var v = localStorage.getItem("maktub_data_version");
         if (!v || parseInt(v) < 14) {
           localStorage.removeItem("maktub_expenses");

@@ -516,9 +516,15 @@ function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
   const savedVersion = localStorage.getItem("maktub_data_version");
 
-  // Force regenerate if version changed or no data
+  // Force regenerate if version changed, no data, or data is empty
   if (saved && savedVersion === String(DATA_VERSION)) {
     expenses = JSON.parse(saved);
+    // Safety: if saved data parsed to empty array, regenerate
+    if (!Array.isArray(expenses) || expenses.length === 0) {
+      console.log("⚠️ Saved data was empty, regenerating...");
+      expenses = generateDemoData(300);
+      saveData();
+    }
   } else {
     expenses = generateDemoData(300);
     saveData();
