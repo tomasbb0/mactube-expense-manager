@@ -868,10 +868,6 @@
         font-size: 2.5rem;
       }
 
-      .platform-info {
-        padding: 14px 16px;
-      }
-
       .platform-name {
         font-size: 0.9rem;
         font-weight: 600;
@@ -893,6 +889,117 @@
         font-size: 0.7rem;
         font-weight: 600;
         margin-top: 4px;
+      }
+
+      /* Platform info with access controls */
+      .platform-info {
+        padding: 14px 16px;
+        position: relative;
+      }
+
+      .platform-info-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .platform-info-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .access-toggle-btn {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all var(--transition);
+        flex-shrink: 0;
+        margin-left: 8px;
+      }
+
+      .access-toggle-btn:hover {
+        color: var(--accent);
+        background: var(--accent-dim);
+      }
+
+      .access-panel {
+        display: none;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .access-panel.open {
+        display: block;
+      }
+
+      .access-panel-title {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+
+      .access-user-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 0;
+        gap: 8px;
+      }
+
+      .access-user-row + .access-user-row {
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+      }
+
+      .access-user-name {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text);
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .access-user-name .access-role {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        font-weight: 400;
+        margin-left: 4px;
+      }
+
+      .access-select {
+        padding: 4px 8px;
+        background: var(--bg);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 6px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.75rem;
+        cursor: pointer;
+        outline: none;
+        transition: border-color var(--transition);
+        flex-shrink: 0;
+      }
+
+      .access-select:focus {
+        border-color: var(--accent);
+      }
+
+      .access-select option {
+        background: var(--card);
       }
 
       /* ============================================
@@ -1456,10 +1563,18 @@
           },
         ];
 
+        /** Default platform access: { username: { platformId: 'edit'|'view' } } */
         const DEFAULT_ACCESS = {
-          owner: ["expense-manager"],
-          tomasbb0: ["expense-manager"],
-          madalenta: ["expense-manager"],
+          owner: { "expense-manager": "edit" },
+          tomasbb0: { "expense-manager": "edit" },
+          madalenta: { "expense-manager": "edit" },
+        };
+
+        /** Permission labels */
+        const PERM_LABELS = {
+          none: "Sem acesso",
+          view: "Visualização",
+          edit: "Edição",
         };
 
         const SESSION_TTL = 24 * 60 * 60 * 1000;
@@ -1490,11 +1605,25 @@
         function getAccessMap() {
           const stored = localStorage.getItem("maktub_hub_access");
           let access = stored ? JSON.parse(stored) : {};
-          Object.entries(DEFAULT_ACCESS).forEach(([username, platforms]) => {
-            if (!access[username]) {
-              access[username] = [...platforms];
+
+          // Migrate old array format → new object format
+          Object.keys(access).forEach((username) => {
+            if (Array.isArray(access[username])) {
+              const obj = {};
+              access[username].forEach((pid) => {
+                obj[pid] = "edit";
+              });
+              access[username] = obj;
             }
           });
+
+          // Merge defaults
+          Object.entries(DEFAULT_ACCESS).forEach(([username, platforms]) => {
+            if (!access[username]) {
+              access[username] = { ...platforms };
+            }
+          });
+
           return access;
         }
 
@@ -1674,8 +1803,26 @@
         function userHasAccess(platformId) {
           if (isAdmin()) return true;
           const access = getAccessMap();
-          const userAccess = access[currentSession.username] || [];
-          return userAccess.includes(platformId);
+          const userAccess = access[currentSession.username] || {};
+          const perm = userAccess[platformId];
+          return perm === "view" || perm === "edit";
+        }
+
+        function getUserPermission(username, platformId) {
+          const access = getAccessMap();
+          const userAccess = access[username] || {};
+          return userAccess[platformId] || "none";
+        }
+
+        function setUserPermission(username, platformId, permission) {
+          const accessMap = getAccessMap();
+          if (!accessMap[username]) accessMap[username] = {};
+          if (permission === "none") {
+            delete accessMap[username][platformId];
+          } else {
+            accessMap[username][platformId] = permission;
+          }
+          saveAccessMap(accessMap);
         }
 
         function renderHub() {
@@ -1739,11 +1886,47 @@
               </div>`;
             }
 
+            // Build access panel HTML for admins
+            let accessPanelHTML = "";
+            if (isAdmin()) {
+              const users = getUsers();
+              const nonAdminUsers = users.filter(
+                (u) => u.role !== "owner" && u.role !== "tech",
+              );
+              if (nonAdminUsers.length > 0) {
+                const userRows = nonAdminUsers
+                  .map((u) => {
+                    const perm = getUserPermission(u.username, platform.id);
+                    return `
+                  <div class="access-user-row">
+                    <span class="access-user-name">${u.name} <span class="access-role">(${u.username})</span></span>
+                    <select class="access-select" data-username="${u.username}" data-platform="${platform.id}" onchange="window._hub.changePermission(this)">
+                      <option value="none" ${perm === "none" ? "selected" : ""}>Sem acesso</option>
+                      <option value="view" ${perm === "view" ? "selected" : ""}>Visualização</option>
+                      <option value="edit" ${perm === "edit" ? "selected" : ""}>Edição</option>
+                    </select>
+                  </div>`;
+                  })
+                  .join("");
+                accessPanelHTML = `
+                <div class="access-panel" id="access-panel-${platform.id}">
+                  <div class="access-panel-title">Permissões</div>
+                  ${userRows}
+                </div>`;
+              }
+            }
+
             card.innerHTML = `
             ${previewHTML}
             <div class="platform-info">
-              <div class="platform-name">${platform.name}</div>
-              <div class="platform-desc">${platform.description}</div>
+              <div class="platform-info-row">
+                <div class="platform-info-text">
+                  <div class="platform-name">${platform.name}</div>
+                  <div class="platform-desc">${platform.description}</div>
+                </div>
+                ${isAdmin() ? `<button class="access-toggle-btn" data-platform="${platform.id}" onclick="window._hub.toggleAccessPanel(event, '${platform.id}')" title="Permissões">⚙</button>` : ""}
+              </div>
+              ${accessPanelHTML}
             </div>
           `;
             if (hasAccess) {
@@ -1821,24 +2004,23 @@
         function renderUserTable() {
           const tbody = document.getElementById("user-table-body");
           const users = getUsers();
-          const accessMap = getAccessMap();
           tbody.innerHTML = "";
           users.forEach((user) => {
             const userData = getUserData(user.username);
-            const userAccess = accessMap[user.username] || [];
             const tr = document.createElement("tr");
-            const platformToggles = PLATFORMS.map((p) => {
-              const forceOn = user.role === "owner" || user.role === "tech";
-              const checked = forceOn || userAccess.includes(p.id);
-              const disabled = forceOn ? "disabled" : "";
+            const isAdminUser = user.role === "owner" || user.role === "tech";
+            const platformPerms = PLATFORMS.map((p) => {
+              if (isAdminUser) {
+                return `<span style="font-size:0.8rem;color:var(--accent)">Edição (admin)</span>`;
+              }
+              const perm = getUserPermission(user.username, p.id);
               return `
-              <label class="toggle" title="${p.name}">
-                <input type="checkbox" ${checked ? "checked" : ""} ${disabled}
-                  data-username="${user.username}" data-platform="${p.id}"
-                  onchange="window._hub.toggleAccess(this)" />
-                <span class="toggle-slider"></span>
-              </label>
-              <span style="font-size:0.8rem;margin-left:4px;color:var(--text-muted)">${p.name}</span>
+              <select class="access-select" data-username="${user.username}" data-platform="${p.id}" onchange="window._hub.changePermission(this)">
+                <option value="none" ${perm === "none" ? "selected" : ""}>Sem acesso</option>
+                <option value="view" ${perm === "view" ? "selected" : ""}>Visualização</option>
+                <option value="edit" ${perm === "edit" ? "selected" : ""}>Edição</option>
+              </select>
+              <span style="font-size:0.7rem;margin-left:4px;color:var(--text-muted)">${p.name}</span>
             `;
             }).join("<br>");
             const canDelete =
@@ -1849,7 +2031,7 @@
             <td>${user.name}</td>
             <td style="color:var(--text-muted)">${userData.email || "—"}</td>
             <td><span class="role-badge ${user.role}">${ROLE_LABELS[user.role] || user.role}</span></td>
-            <td>${platformToggles}</td>
+            <td>${platformPerms}</td>
             <td>
               ${
                 canDelete
@@ -1865,19 +2047,29 @@
         function toggleAccess(checkbox) {
           const username = checkbox.dataset.username;
           const platformId = checkbox.dataset.platform;
-          const accessMap = getAccessMap();
-          if (!accessMap[username]) accessMap[username] = [];
           if (checkbox.checked) {
-            if (!accessMap[username].includes(platformId)) {
-              accessMap[username].push(platformId);
-            }
+            setUserPermission(username, platformId, "edit");
           } else {
-            accessMap[username] = accessMap[username].filter(
-              (p) => p !== platformId,
-            );
+            setUserPermission(username, platformId, "none");
           }
-          saveAccessMap(accessMap);
           showToast("Acesso atualizado.", "success");
+        }
+
+        function changePermission(selectEl) {
+          const username = selectEl.dataset.username;
+          const platformId = selectEl.dataset.platform;
+          const permission = selectEl.value;
+          setUserPermission(username, platformId, permission);
+          showToast("Permissão atualizada.", "success");
+        }
+
+        function toggleAccessPanel(event, platformId) {
+          event.stopPropagation();
+          event.preventDefault();
+          const panel = document.getElementById(`access-panel-${platformId}`);
+          if (panel) {
+            panel.classList.toggle("open");
+          }
         }
 
         function toggleAddUserForm() {
@@ -1917,7 +2109,7 @@
           users.push({ username, hash, role, name });
           saveUsers(users);
           const accessMap = getAccessMap();
-          accessMap[username] = ["expense-manager"];
+          accessMap[username] = { "expense-manager": "edit" };
           saveAccessMap(accessMap);
           cancelAddUser();
           renderUserTable();
@@ -2022,6 +2214,8 @@
         window._hub = {
           toggleAccess,
           confirmDeleteUser,
+          changePermission,
+          toggleAccessPanel,
         };
 
         document.addEventListener("DOMContentLoaded", () => {
