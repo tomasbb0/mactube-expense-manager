@@ -3316,7 +3316,6 @@ function getAllDemoData() {
     createdAt: "2024-06-11T10:00:00Z",
   });
 
-
   // ============================================================
   // === BANDIDOS DO CANTE - REAL DATA ===
   // === Source: GERAIS BANDIDOS.xlsx + MUSICAS _ PROJETOS .xlsx ===
@@ -4618,7 +4617,6 @@ function getAllDemoData() {
     notes: "",
     createdAt: "2025-12-15T10:00:00Z",
   });
-
 
   return data;
 }
