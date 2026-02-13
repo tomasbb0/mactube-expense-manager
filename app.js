@@ -4329,53 +4329,60 @@ const tutorialSteps = [
     position: "bottom",
   },
   {
-    target: '.tab[data-tab="dashboard"]',
+    target: "#dashboard .dashboard-quick-actions",
+    title: "🧭 Navegação Rápida",
+    description:
+      "Estes botões permitem-te <strong>navegar entre as secções</strong> da plataforma. Estão sempre visíveis em cada página para acesso rápido!",
+    position: "bottom",
+  },
+  {
+    target: "#dashboard .dashboard-quick-actions :nth-child(1)",
     title: "📊 Dashboard",
     description:
-      "Aqui tens uma <strong>visão geral</strong> de todas as despesas. Podes ver totais por artista, por tipo de despesa, e filtrar por projeto. É o teu painel de controlo principal!",
+      "O teu <strong>painel de controlo</strong>. Aqui vês totais por artista, tipo de despesa, e podes filtrar por projeto. Visão geral de tudo!",
     position: "bottom",
   },
   {
-    target: '.tab[data-tab="new-expense"]',
+    target: "#dashboard .dashboard-quick-actions :nth-child(2)",
     title: "➕ Nova Despesa",
     description:
-      "Quando precisares de registar uma despesa (combustível, alojamento, produção, etc.), clica aqui. Podes associar a despesa a um <strong>artista</strong> e <strong>projeto específico</strong> (ex: Bandidos do Cante - Gerais Bandidos).",
+      "Regista despesas (combustível, alojamento, produção, etc.) associadas a um <strong>artista</strong> e <strong>projeto</strong> específico.",
     position: "bottom",
   },
   {
-    target: '.tab[data-tab="new-project"]',
+    target: "#dashboard .dashboard-quick-actions :nth-child(3)",
     title: "📁 Novo Projeto",
     description:
-      'Cada concerto, videoclipe ou evento é um <strong>projeto</strong>. Cria projetos aqui para organizar as despesas. Por exemplo: "Primavera - Zambujo", "Amigos Coloridos", etc.',
+      'Cria projetos para organizar despesas. Ex: "Primavera - Zambujo", "Amigos Coloridos", etc.',
     position: "bottom",
   },
   {
-    target: '.tab[data-tab="reports"]',
+    target: "#dashboard .dashboard-quick-actions :nth-child(4)",
     title: "📈 Relatórios",
     description:
-      "Gera <strong>relatórios detalhados</strong> com gráficos! Podes ver despesas por período, comparar artistas, analisar tipos de gastos. Perfeito para apresentar à equipa.",
+      "Gera <strong>relatórios detalhados</strong> com gráficos! Compara artistas, analisa tipos de gastos, filtra por período.",
     position: "bottom",
   },
   {
-    target: '.tab[data-tab="settlement"]',
+    target: "#dashboard .dashboard-quick-actions :nth-child(5)",
     title: "💰 Acerto de Contas",
     description:
-      "A funcionalidade que pediste! Aqui calculas o <strong>balanço entre Maktub e cada artista</strong>. Mostra quanto a Maktub investiu vs. quanto os terceiros pagaram, por projeto.",
+      "Calcula o <strong>balanço entre Maktub e cada artista</strong>. Mostra investimentos vs. pagamentos de terceiros, por projeto.",
     position: "bottom",
   },
   {
-    target: ".sync-btn",
-    title: "☁️ Google Sheets Sync",
+    target: "#dashboard .dashboard-quick-actions :nth-child(7)",
+    title: "📂 Abrir Drive",
     description:
-      "O mais importante! <strong>Sincroniza tudo para o Google Drive</strong>. Cada artista tem a sua própria spreadsheet com as despesas organizadas por projeto, exatamente como pediste!",
-    position: "bottom-left",
+      "Acesso direto à <strong>pasta partilhada no Drive</strong> com as spreadsheets de todos os artistas.",
+    position: "bottom",
   },
   {
-    target: ".drive-btn",
-    title: "📂 Pasta Google Drive",
+    target: "#dashboard .dashboard-quick-actions :nth-child(8)",
+    title: "☁️ Sync Drive",
     description:
-      "Acesso direto à <strong>pasta partilhada no Drive</strong> onde estão todas as spreadsheets dos artistas. Podes partilhar com a equipa ou aceder de qualquer dispositivo!",
-    position: "bottom-left",
+      "<strong>Sincroniza tudo para o Google Drive</strong>. Cada artista tem a sua própria spreadsheet com despesas organizadas por projeto!",
+    position: "bottom",
   },
 ];
 
@@ -4391,6 +4398,10 @@ function startTutorial() {
     showToast("Faz login primeiro para ver o tutorial", "error");
     return;
   }
+
+  // Switch to Dashboard tab so tutorial targets are visible
+  const dashTab = document.querySelector('.tab[data-tab="dashboard"]');
+  if (dashTab) dashTab.click();
 
   // Show the tutorial overlay
   const overlay = document.getElementById("tutorial-overlay");
