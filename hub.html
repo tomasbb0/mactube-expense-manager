@@ -176,11 +176,6 @@
         transform-origin: center center;
       }
 
-      .intro-logo-container.zoom-through svg circle {
-        stroke-width: 0.15 !important;
-        transition: stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
-      }
-
       .intro-text.fade-away {
         opacity: 0 !important;
         transition: opacity 0.3s ease !important;
@@ -208,7 +203,9 @@
         stroke: #fff;
         stroke-width: 1;
         stroke-linecap: butt;
-        transition: stroke 0.15s ease, stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition:
+          stroke 0.15s ease,
+          stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
       }
       .intro-inner-circle {
         fill: none;
@@ -216,7 +213,9 @@
         stroke-width: 7;
         stroke-linecap: butt;
         opacity: 0;
-        transition: stroke 0.15s ease, stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition:
+          stroke 0.15s ease,
+          stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
       }
 
       /* Green class toggled by JS */
@@ -2825,6 +2824,13 @@
               void container.offsetWidth; // force reflow
               container.style.transform = "scale(30)";
 
+              // Thin out circle strokes as they zoom past (uses base CSS transitions)
+              if (svg) {
+                svg.querySelectorAll('circle').forEach(c => {
+                  c.style.strokeWidth = '0.15';
+                });
+              }
+
               // After zoom completes, hide intro
               setTimeout(() => {
                 introScreen.classList.add("hidden");
@@ -2893,6 +2899,14 @@
           container.classList.add("zoom-through");
           void container.offsetWidth;
           container.style.transform = "scale(30)";
+
+          // Thin out circle strokes as they zoom past
+          const svg = container.querySelector('svg');
+          if (svg) {
+            svg.querySelectorAll('circle').forEach(c => {
+              c.style.strokeWidth = '0.15';
+            });
+          }
 
           // BG already transparent from bg-fade, reinforce with zoom-through-bg
           introScreen.classList.add("zoom-through-bg");
