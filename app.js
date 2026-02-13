@@ -510,7 +510,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 12; // Increment to force reload - v12: Corrected investor data, Terceiros→Bandidos
+const DATA_VERSION = 13; // v13: Fixed settlement OFERTA logic, cache-bust, force fresh data
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
@@ -2740,45 +2740,60 @@ function exportPDF() {
 // ==========================================
 
 function updateSettlement() {
-  // Maktub investment = what the band needs to repay
-  const maktubInvestment = expenses
+  // Calculate what Bandidos owe to Maktub
+  // OFERTA MAKTUB 100% items: Maktub gifted 100%, Bandidos owe nothing → 0€ in settlement
+  // OFERTA MAKTUB 50% items: Maktub gifted 50%, Bandidos owe the other 50% → half amount
+  // Plain OFERTA MAKTUB (no %): same as 100% → 0€ in settlement
+  // Regular maktub items: Bandidos owe the full amount
+
+  let maktubToRecover = 0; // What Bandidos need to repay to Maktub
+  let maktubTotalSpent = 0; // Everything Maktub actually spent (including gifts)
+  let maktubGifts = 0; // Value of Maktub's gifts (not to be repaid)
+
+  expenses
     .filter((e) => e.investor === "maktub")
-    .reduce((sum, e) => sum + e.amount, 0);
-  // Maktub gifts = spent by Maktub but NOT repaid
-  const maktubGifts = expenses
-    .filter((e) => e.investor === "maktub" || e.investor === "maktub")
-    .reduce((sum, e) => sum + e.amount, 0);
-  // Bandidos' own money
-  const bandidosOwn = expenses
-    .filter((e) => e.investor === "bandidos")
-    .reduce((sum, e) => sum + e.amount, 0);
-  // Sponsorship money
-  const sponsorship = expenses
-    .filter((e) => e.investor === "bandidos")
-    .reduce((sum, e) => sum + e.amount, 0);
-  // Other/legacy
-  const othersTotal = expenses
+    .forEach((e) => {
+      maktubTotalSpent += e.amount;
+      const notes = (e.notes || "").toUpperCase();
+      if (notes.includes("OFERTA MAKTUB")) {
+        if (notes.includes("50%")) {
+          // 50% offer: only half counts as recoverable
+          maktubToRecover += e.amount; // amount is already the 50% value in our data
+          maktubGifts += e.amount; // the other 50% was gifted (same amount)
+        } else {
+          // 100% offer: nothing to recover
+          maktubGifts += e.amount;
+        }
+      } else {
+        // Regular expense: full amount to recover
+        maktubToRecover += e.amount;
+      }
+    });
+
+  // Bandidos' own investment
+  const bandidosInvested = expenses
     .filter((e) => e.investor === "bandidos")
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const maktubTotalSpent = maktubInvestment + maktubGifts;
-  const terceirosTotal = bandidosOwn + sponsorship + othersTotal;
-  const grandTotal = maktubTotalSpent + terceirosTotal;
+  // What Bandidos owe = Maktub recoverable - Bandidos already invested
+  const bandidosOwe = Math.max(0, maktubToRecover - bandidosInvested);
+  const grandTotal = maktubTotalSpent + bandidosInvested;
 
   document.getElementById("settle-maktub").textContent =
     formatCurrency(maktubTotalSpent);
   document.getElementById("settle-bandidos").textContent =
-    formatCurrency(terceirosTotal);
+    formatCurrency(bandidosInvested);
 
   const pctMaktub = grandTotal > 0 ? (maktubTotalSpent / grandTotal) * 100 : 50;
-  const pctOthers = grandTotal > 0 ? (terceirosTotal / grandTotal) * 100 : 50;
+  const pctBandidos =
+    grandTotal > 0 ? (bandidosInvested / grandTotal) * 100 : 50;
 
   document.getElementById("bar-maktub").style.width = pctMaktub + "%";
-  document.getElementById("bar-bandidos").style.width = pctOthers + "%";
+  document.getElementById("bar-bandidos").style.width = pctBandidos + "%";
   document.getElementById("pct-maktub").textContent =
     pctMaktub.toFixed(1) + "%";
   document.getElementById("pct-bandidos").textContent =
-    pctOthers.toFixed(1) + "%";
+    pctBandidos.toFixed(1) + "%";
 
   const summaryEl = document.getElementById("settlement-summary");
   if (grandTotal === 0) {
@@ -2786,13 +2801,14 @@ function updateSettlement() {
   } else {
     summaryEl.innerHTML = `
             <p>
-                O <strong>Maktub Art Group</strong> investiu <span class="highlight">${formatCurrency(maktubInvestment)}</span> 
-                a recuperar, mais <span class="highlight">${formatCurrency(maktubGifts)}</span> em ofertas (total gasto: ${formatCurrency(maktubTotalSpent)}).
+                O <strong>Maktub Art Group</strong> gastou <span class="highlight">${formatCurrency(maktubTotalSpent)}</span> no total,
+                dos quais <span class="highlight">${formatCurrency(maktubGifts)}</span> foram ofertas.
+                A recuperar: <span class="highlight">${formatCurrency(maktubToRecover)}</span>.
             </p>
             <p>
-                Os <strong>Bandidos</strong> investiram <span class="highlight">${formatCurrency(bandidosOwn)}</span> do próprio bolso.
-                ${sponsorship > 0 ? `Patrocínios externos: <span class="highlight">${formatCurrency(sponsorship)}</span>.` : ""}
+                Os <strong>Bandidos</strong> investiram <span class="highlight">${formatCurrency(bandidosInvested)}</span> do próprio bolso.
             </p>
+            ${bandidosOwe > 0 ? `<p class="settlement-result"><strong>Os Bandidos devem ao Maktub: <span class="highlight">${formatCurrency(bandidosOwe)}</span></strong></p>` : `<p class="settlement-result"><strong>Contas equilibradas.</strong></p>`}
         `;
   }
 
