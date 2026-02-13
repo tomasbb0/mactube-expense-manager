@@ -19,7 +19,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=37" />
+    <link rel="stylesheet" href="styles.css?v=38" />
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -358,49 +358,49 @@
               Sync Drive
             </button>
           </div>
+        </div>
 
-          <!-- Subtle Dashboard Filter -->
-          <div class="dashboard-filter-bar">
-            <select id="dashboard-artist-filter" onchange="filterDashboard()">
-              <option value="all">Todos os Artistas</option>
-            </select>
-            <select id="dashboard-project-filter" onchange="filterDashboard()">
-              <option value="all">Todos os Projetos</option>
-            </select>
-            <select id="dashboard-type-filter" onchange="filterDashboard()">
-              <option value="all">Todos os Tipos</option>
-              <option value="combustivel">Combustível</option>
-              <option value="alimentacao">Alimentação</option>
-              <option value="alojamento">Alojamento</option>
-              <option value="equipamento">Equipamento</option>
-              <option value="producao">Produção</option>
-              <option value="promocao">Promoção</option>
-              <option value="transporte">Transporte</option>
-              <option value="outros">Outros</option>
-            </select>
-            <select id="dashboard-investor-filter" onchange="filterDashboard()">
-              <option value="all">Todos os Investidores</option>
-              <option value="maktub">Maktub</option>
-              <option value="bandidos">Bandidos</option>
-              <option value="patrocinio">Patrocínio</option>
-              <option value="oferta_maktub">Oferta Maktub</option>
-              <option value="oferta_maktub_50">Oferta Maktub 50%</option>
-            </select>
-            <div class="dashboard-date-range">
-              <input
-                type="date"
-                id="dashboard-date-from"
-                onchange="filterDashboard()"
-                placeholder="De"
-              />
-              <span class="date-separator">—</span>
-              <input
-                type="date"
-                id="dashboard-date-to"
-                onchange="filterDashboard()"
-                placeholder="Até"
-              />
-            </div>
+        <!-- Subtle Dashboard Filter -->
+        <div class="dashboard-filter-bar">
+          <select id="dashboard-artist-filter" onchange="filterDashboard()">
+            <option value="all">Todos os Artistas</option>
+          </select>
+          <select id="dashboard-project-filter" onchange="filterDashboard()">
+            <option value="all">Todos os Projetos</option>
+          </select>
+          <select id="dashboard-type-filter" onchange="filterDashboard()">
+            <option value="all">Todos os Tipos</option>
+            <option value="combustivel">Combustível</option>
+            <option value="alimentacao">Alimentação</option>
+            <option value="alojamento">Alojamento</option>
+            <option value="equipamento">Equipamento</option>
+            <option value="producao">Produção</option>
+            <option value="promocao">Promoção</option>
+            <option value="transporte">Transporte</option>
+            <option value="outros">Outros</option>
+          </select>
+          <select id="dashboard-investor-filter" onchange="filterDashboard()">
+            <option value="all">Todos os Investidores</option>
+            <option value="maktub">Maktub</option>
+            <option value="bandidos">Bandidos</option>
+            <option value="patrocinio">Patrocínio</option>
+            <option value="oferta_maktub">Oferta Maktub</option>
+            <option value="oferta_maktub_50">Oferta Maktub 50%</option>
+          </select>
+          <div class="dashboard-date-range">
+            <input
+              type="date"
+              id="dashboard-date-from"
+              onchange="filterDashboard()"
+              placeholder="De"
+            />
+            <span class="date-separator">—</span>
+            <input
+              type="date"
+              id="dashboard-date-to"
+              onchange="filterDashboard()"
+              placeholder="Até"
+            />
           </div>
         </div>
 
