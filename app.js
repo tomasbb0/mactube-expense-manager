@@ -491,7 +491,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 6; // Increment to force reload - v6: Bandidos do Cante only (from Excel data)
+const DATA_VERSION = 7; // Increment to force reload - v7: Added type field to all Bandidos entries
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");
