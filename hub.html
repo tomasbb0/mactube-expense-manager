@@ -118,10 +118,10 @@
        ============================================ */
       :root {
         /* ── Master layout variables (controls ALL containers) ── */
-        --layout-top: 60px;          /* topbar distance from viewport top */
+        --layout-top: 80px;          /* topbar distance from viewport top */
         --layout-side: 64px;         /* lateral margin each side */
-        --layout-max: 960px;        /* max width for all outermost containers */
-        --layout-content-top: 160px; /* vertical clearance below topbar */
+        --layout-max: 880px;        /* max width for all outermost containers */
+        --layout-content-top: 180px; /* vertical clearance below topbar */
 
         --bg: #111111;
         --bg-secondary: #1a1a1a;
@@ -729,6 +729,12 @@
         z-index: 200;
         margin: 0;
         padding: 14px 24px;
+        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* When iframe is open, topbar slides up to maximize content area */
+      body.iframe-active #hub-topbar {
+        top: max(16px, env(safe-area-inset-top, 16px));
       }
 
       .topbar-brand {
@@ -779,7 +785,7 @@
       .role-badge {
         display: inline-block;
         padding: 2px 10px;
-        background: var(--accent-dim);
+        background: rgba(51, 233, 51, 0.25);
         color: var(--accent);
         border-radius: 999px;
         font-size: 0.75rem;
@@ -789,15 +795,15 @@
       }
 
       .role-badge.owner {
-        background: rgba(255, 180, 0, 0.15);
+        background: rgba(255, 180, 0, 0.35);
         color: #ffb400;
       }
       .role-badge.tech {
-        background: rgba(0, 150, 255, 0.15);
+        background: rgba(0, 150, 255, 0.35);
         color: #0096ff;
       }
       .role-badge.user {
-        background: var(--accent-dim);
+        background: rgba(51, 233, 51, 0.25);
         color: var(--accent);
       }
 
@@ -1131,6 +1137,14 @@
       }
       #platform-iframe-container.active {
         display: block;
+      }
+
+      /* When iframe active, topbar is at 16px → adjust iframe top to follow */
+      body.iframe-active #platform-iframe-container {
+        top: 82px;
+        height: calc(100% - 94px);
+        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
       #platform-iframe-container iframe {
         width: 100%;
@@ -5579,9 +5593,11 @@
     </div>
     <script>
       // Receive mousemove from iframe and proxy to cursor/grid effects
-      window.addEventListener("message", function(e) {
+      window.addEventListener("message", function (e) {
         if (e.data && e.data.type === "iframe-mousemove") {
-          var iframeEl = document.querySelector("#platform-iframe-container iframe");
+          var iframeEl = document.querySelector(
+            "#platform-iframe-container iframe",
+          );
           if (!iframeEl) return;
           var rect = iframeEl.getBoundingClientRect();
           var pageX = rect.left + e.data.clientX;
@@ -5590,7 +5606,7 @@
           var synth = new MouseEvent("mousemove", {
             clientX: pageX,
             clientY: pageY,
-            bubbles: true
+            bubbles: true,
           });
           document.dispatchEvent(synth);
         }
