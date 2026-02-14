@@ -66,6 +66,152 @@
       .in-iframe #auth-screen.active {
         opacity: 0;
       }
+
+      /* ── Transparent background when embedded ── */
+      .in-iframe body,
+      .in-iframe #app-screen {
+        background: transparent !important;
+      }
+      .in-iframe .tabs {
+        background: rgba(255,255,255,0.03) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border: 1px solid rgba(255,255,255,0.06) !important;
+        border-radius: 14px !important;
+        margin: 8px 16px !important;
+      }
+      /* Remove form wrapper background — fields float loose */
+      .in-iframe .form-box {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      /* ── Mini glass containers for individual form fields ── */
+      .in-iframe .form-group {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+        padding: 16px 18px 12px;
+        margin-bottom: 12px;
+      }
+      /* When form-groups are inside .form-row (side-by-side), keep them glassy */
+      .in-iframe .form-row .form-group {
+        margin-bottom: 0;
+      }
+      .in-iframe .form-row {
+        gap: 12px;
+      }
+      /* Inputs inside glass groups: more subtle */
+      .in-iframe .form-group input,
+      .in-iframe .form-group select,
+      .in-iframe .form-group textarea {
+        background: rgba(255,255,255,0.04);
+        border-color: rgba(255,255,255,0.08);
+      }
+      /* ── Glass content header ── */
+      .in-iframe .content-header {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 16px;
+        padding: 20px 22px;
+        margin-bottom: 16px;
+      }
+      /* ── Glass quick-action bar ── */
+      .in-iframe .dashboard-quick-actions {
+        background: rgba(255,255,255,0.02);
+        backdrop-filter: blur(16px) saturate(160%);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 12px 14px;
+      }
+      /* ── Glass filter bar ── */
+      .in-iframe .dashboard-filter-bar {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 14px;
+      }
+      /* ── Glass stat cards ── */
+      .in-iframe .stat-card {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+      }
+      /* ── Glass chart cards ── */
+      .in-iframe .chart-card {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+      }
+      /* ── Glass activity items ── */
+      .in-iframe .activity-item {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+      }
+      /* ── Glass reports sticky header ── */
+      .in-iframe .reports-sticky-header {
+        background: rgba(255,255,255,0.03) !important;
+        backdrop-filter: blur(24px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+      }
+      /* ── Glass type buttons (expense type grid) ── */
+      .in-iframe .type-btn {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+      }
+      .in-iframe .type-btn:hover {
+        background: rgba(255,255,255,0.06);
+      }
+      .in-iframe .type-btn.selected {
+        background: rgba(51,233,51,0.08);
+        border-color: rgba(51,233,51,0.3);
+      }
+      /* ── Glass investor buttons ── */
+      .in-iframe .investor-btn {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+      }
+      .in-iframe .investor-btn:hover {
+        background: rgba(255,255,255,0.06);
+      }
+      .in-iframe .investor-btn.selected {
+        background: rgba(51,233,51,0.08);
+        border-color: rgba(51,233,51,0.3);
+      }
+      /* ── Glass bulk-add section ── */
+      .in-iframe .bulk-add-shortcut {
+        background: rgba(255,255,255,0.02);
+        backdrop-filter: blur(16px) saturate(160%);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 14px;
+        padding: 16px;
+        margin-top: 16px;
+      }
+      /* ── Glass submit button upgrade ── */
+      .in-iframe .btn-primary {
+        border-radius: 12px;
+        margin-top: 8px;
+      }
+      /* ── Summary row cards (reports) ── */
+      .in-iframe .summary-card {
+        background: rgba(255,255,255,0.03);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255,255,255,0.07);
+      }
     </style>
     <!-- Auth Screen -->
     <div id="auth-screen" class="screen active">

@@ -1094,11 +1094,11 @@
         width: calc(100% - 48px);
         height: calc(100% - 92px);
         z-index: 50;
-        background: var(--bg);
+        background: transparent;
         border-radius: 20px;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: none;
+        box-shadow: none;
       }
       #platform-iframe-container.active {
         display: block;
@@ -1107,6 +1107,7 @@
         width: 100%;
         height: 100%;
         border: none;
+        background: transparent;
       }
 
 
@@ -2785,7 +2786,7 @@
 
       <!-- Iframe container for embedded platforms -->
       <div id="platform-iframe-container">
-        <iframe id="platform-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+        <iframe id="platform-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" allowtransparency="true" style="background:transparent"></iframe>
       </div>
 
           <!-- Account Details Modal -->
