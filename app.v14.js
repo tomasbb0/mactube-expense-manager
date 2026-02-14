@@ -831,7 +831,7 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 15; // v15: Updated data from BANDIDOS 2025 - FINAL CSV
+const DATA_VERSION = 16; // v16: Force refresh to load Bandidos data after glass UI update
 
 function loadData() {
   const saved = localStorage.getItem("maktub_expenses");

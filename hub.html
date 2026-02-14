@@ -922,12 +922,14 @@
         top: calc(100% + 8px);
         right: 0;
         min-width: 260px;
-        background: rgba(28, 28, 28, 0.95);
-        backdrop-filter: blur(24px) saturate(180%);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        border: none;
+        background: rgba(255, 255, 255, 0.008);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
+        border: 1px solid rgba(255, 255, 255, 0.015);
         border-radius: 14px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        box-shadow:
+          0 2px 12px rgba(0, 0, 0, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
         padding: 8px;
         opacity: 0;
         visibility: hidden;
@@ -1339,8 +1341,8 @@
         gap: 6px;
         padding: 8px 10px;
         background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
         flex-shrink: 0;
       }
 
@@ -1374,8 +1376,8 @@
       .mini-stat {
         flex: 1;
         background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
         border-radius: 4px;
         padding: 6px 7px;
         display: flex;
@@ -1405,8 +1407,8 @@
       .mini-table {
         flex: 1;
         background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
         border-radius: 4px;
         padding: 6px 7px;
         display: flex;
@@ -1453,8 +1455,8 @@
         justify-content: space-between;
         padding: 8px 10px;
         background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
         flex-shrink: 0;
       }
 
@@ -1478,8 +1480,8 @@
         gap: 6px;
         padding: 4px 6px;
         background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
         border-radius: 4px;
       }
 
@@ -2424,29 +2426,27 @@
       }
 
       .active-project-card {
-        background: transparent;
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.008);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
+        border: 1px solid rgba(255, 255, 255, 0.015);
         border-radius: var(--radius);
         padding: 20px;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+          0 2px 12px rgba(0, 0, 0, 0.06),
+          inset 0 1px 0 rgba(255, 255, 255, 0.02);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
       }
 
       .active-project-card:hover {
-        border-color: rgba(255, 255, 255, 0.04);
-        background: transparent;
+        border-color: rgba(255, 255, 255, 0.025);
+        background: rgba(255, 255, 255, 0.012);
         box-shadow:
-          0 12px 40px rgba(0, 0, 0, 0.3),
-          0 0 20px rgba(51, 233, 51, 0.06),
-          inset 0 1px 1px rgba(255, 255, 255, 0.15),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.15);
+          0 4px 20px rgba(0, 0, 0, 0.1),
+          0 0 12px rgba(51, 233, 51, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
       }
 
       .active-project-card .project-card-name {
@@ -2537,8 +2537,8 @@
         gap: 8px;
         padding: 5px 8px;
         background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
+        backdrop-filter: blur(8px) saturate(130%);
+        -webkit-backdrop-filter: blur(8px) saturate(130%);
         border-radius: 6px;
       }
 
@@ -2936,11 +2936,19 @@
           </div>
           <div class="account-field">
             <label>Nome de utilizador</label>
-            <input type="text" id="account-username" disabled />
+            <input type="text" id="account-username" />
           </div>
           <div class="account-field">
-            <label>Nome</label>
-            <input type="text" id="account-name" disabled />
+            <label>Primeiro nome</label>
+            <input
+              type="text"
+              id="account-firstname"
+              placeholder="Primeiro nome"
+            />
+          </div>
+          <div class="account-field">
+            <label>Apelido</label>
+            <input type="text" id="account-lastname" placeholder="Apelido" />
           </div>
           <div class="account-field">
             <label>Email</label>
@@ -2951,12 +2959,59 @@
             />
           </div>
           <div class="account-field">
+            <label>Telefone</label>
+            <input
+              type="tel"
+              id="account-phone"
+              placeholder="+351 912 345 678"
+            />
+          </div>
+          <div class="account-field">
+            <label>Cargo / Função</label>
+            <input
+              type="text"
+              id="account-jobtitle"
+              placeholder="Ex: Manager, Artista, Técnico"
+            />
+          </div>
+          <div class="account-field">
+            <label>Localização</label>
+            <input
+              type="text"
+              id="account-location"
+              placeholder="Lisboa, Portugal"
+            />
+          </div>
+          <div class="account-field">
+            <label>Bio</label>
+            <textarea
+              id="account-bio"
+              rows="2"
+              placeholder="Uma breve descrição..."
+              style="
+                width: 100%;
+                resize: vertical;
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.06);
+                border-radius: 8px;
+                padding: 10px 12px;
+                color: var(--text);
+                font-family: inherit;
+                font-size: 0.9rem;
+              "
+            ></textarea>
+          </div>
+          <div class="account-field">
             <label>Nova password (deixar vazio para manter)</label>
             <input
               type="password"
               id="account-password"
               placeholder="••••••••"
             />
+          </div>
+          <div class="account-field" style="opacity: 0.5">
+            <label>Perfil</label>
+            <input type="text" id="account-role" disabled />
           </div>
           <div class="account-actions">
             <button class="btn" onclick="window._hub.closeAccountModal()">
@@ -4351,11 +4406,32 @@
           if (dd) dd.classList.remove("open");
 
           const userData = getUserData(currentSession.username);
+          const ROLE_LABELS_MAP = {
+            owner: "Dono",
+            tech: "Técnico",
+            manager: "Manager",
+            artist: "Artista",
+            viewer: "Visualizador",
+          };
+
           document.getElementById("account-username").value =
             currentSession.username;
-          document.getElementById("account-name").value = currentSession.name;
+          // Split name into first/last
+          const nameParts = (currentSession.name || "").split(" ");
+          document.getElementById("account-firstname").value =
+            nameParts[0] || "";
+          document.getElementById("account-lastname").value =
+            nameParts.slice(1).join(" ") || "";
           document.getElementById("account-email").value = userData.email || "";
+          document.getElementById("account-phone").value = userData.phone || "";
+          document.getElementById("account-jobtitle").value =
+            userData.jobtitle || "";
+          document.getElementById("account-location").value =
+            userData.location || "";
+          document.getElementById("account-bio").value = userData.bio || "";
           document.getElementById("account-password").value = "";
+          document.getElementById("account-role").value =
+            ROLE_LABELS_MAP[currentSession.role] || currentSession.role;
 
           // Photo preview
           const preview = document.getElementById("account-photo-preview");
@@ -4381,20 +4457,78 @@
         }
 
         function saveAccountDetails() {
+          const username = document
+            .getElementById("account-username")
+            .value.trim();
+          const firstname = document
+            .getElementById("account-firstname")
+            .value.trim();
+          const lastname = document
+            .getElementById("account-lastname")
+            .value.trim();
           const email = document.getElementById("account-email").value.trim();
+          const phone = document.getElementById("account-phone").value.trim();
+          const jobtitle = document
+            .getElementById("account-jobtitle")
+            .value.trim();
+          const location = document
+            .getElementById("account-location")
+            .value.trim();
+          const bio = document.getElementById("account-bio").value.trim();
           const password = document.getElementById("account-password").value;
 
-          // Save email to userdata
-          if (email) {
-            saveUserData(currentSession.username, { email: email });
+          const users = getUsers();
+          const user = users.find(function (u) {
+            return u.username === currentSession.username;
+          });
+
+          if (user) {
+            // Update username if changed
+            if (username && username !== currentSession.username) {
+              // Check uniqueness
+              const taken = users.find(function (u) {
+                return (
+                  u.username === username &&
+                  u.username !== currentSession.username
+                );
+              });
+              if (taken) {
+                alert("Este nome de utilizador já está em uso.");
+                return;
+              }
+              // Migrate user data
+              const oldData = getUserData(currentSession.username);
+              localStorage.removeItem("maktub_user_" + currentSession.username);
+              user.username = username;
+              currentSession.username = username;
+              saveUserData(username, oldData);
+            }
+
+            // Update name
+            const fullName = (firstname + " " + lastname).trim();
+            if (fullName) {
+              user.name = fullName;
+              currentSession.name = fullName;
+            }
+
+            localStorage.setItem("maktub_hub_users", JSON.stringify(users));
+            localStorage.setItem(
+              "maktub_hub_session",
+              JSON.stringify(currentSession),
+            );
           }
+
+          // Save extra fields to userdata
+          const extra = {};
+          if (email) extra.email = email;
+          if (phone) extra.phone = phone;
+          if (jobtitle) extra.jobtitle = jobtitle;
+          if (location) extra.location = location;
+          extra.bio = bio;
+          saveUserData(currentSession.username, extra);
 
           // Update password if provided
           if (password && password.length >= 4) {
-            const users = getUsers();
-            const user = users.find(function (u) {
-              return u.username === currentSession.username;
-            });
             if (user) {
               user.password = password;
               user.passwordChanged = true;
@@ -4438,7 +4572,18 @@
             <td><strong>${user.username}</strong></td>
             <td>${user.name}</td>
             <td style="color:var(--text-muted)">${userData.email || user.email || "—"}</td>
-            <td><span class="role-badge ${user.role}">${ROLE_LABELS[user.role] || user.role}</span></td>
+            <td>${(() => {
+              const canChangeRole = isAdmin() && user.username !== "owner" && user.username !== currentSession.username;
+              if (canChangeRole) {
+                return `<select class="access-select role-select" data-username="${user.username}" onchange="window._hub.changeUserRole(this)">
+                  <option value="owner" ${user.role === 'owner' ? 'selected' : ''}>Owner</option>
+                  <option value="tech" ${user.role === 'tech' ? 'selected' : ''}>Tech</option>
+                  <option value="user" ${user.role === 'user' ? 'selected' : ''}>Utilizador</option>
+                </select>`;
+              } else {
+                return `<span class="role-badge ${user.role}">${ROLE_LABELS[user.role] || user.role}</span>`;
+              }
+            })()}</td>
             <td>${platformPerms}</td>
             <td>
               ${
@@ -4450,6 +4595,28 @@
           `;
             tbody.appendChild(tr);
           });
+        }
+
+        function changeUserRole(selectEl) {
+          const username = selectEl.dataset.username;
+          const newRole = selectEl.value;
+          const users = getUsers();
+          const user = users.find(u => u.username === username);
+          if (!user) return;
+          if (username === "owner") {
+            showToast("Não é possível alterar o cargo do owner.", "error");
+            renderUserTable();
+            return;
+          }
+          if (username === currentSession.username) {
+            showToast("Não podes alterar o teu próprio cargo.", "error");
+            renderUserTable();
+            return;
+          }
+          user.role = newRole;
+          saveUsers(users);
+          renderUserTable();
+          showToast(`Cargo de ${user.name || username} alterado para ${ROLE_LABELS[newRole] || newRole}.`, "success");
         }
 
         function toggleAccess(checkbox) {
@@ -5176,6 +5343,7 @@
           toggleAccess,
           confirmDeleteUser,
           changePermission,
+          changeUserRole,
           toggleAccessPanel,
           changeRequestStatus,
           setRequestEta,
@@ -5532,9 +5700,9 @@
                   ((maxDist - distance) / maxDist) * (maxBlur - minBlur)
                 : minBlur;
             container.style.backdropFilter =
-              "blur(" + blur + "px) saturate(180%)";
+              "blur(" + blur + "px) saturate(130%)";
             container.style.webkitBackdropFilter =
-              "blur(" + blur + "px) saturate(180%)";
+              "blur(" + blur + "px) saturate(130%)";
           });
         }
 
