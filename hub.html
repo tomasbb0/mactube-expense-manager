@@ -1283,8 +1283,8 @@
       }
 
       .platform-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
         gap: 16px;
         width: 100%;
       }
@@ -1302,7 +1302,8 @@
         color: inherit;
         display: flex;
         flex-direction: column;
-        max-width: 280px;
+        min-width: 140px;
+        flex: 1 1 0;
         box-shadow:
           0 0 4px rgba(0, 0, 0, 0.015),
           inset 0 0 0 transparent;
@@ -2043,7 +2044,6 @@
         }
 
         .platform-grid {
-          grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
           gap: 14px;
         }
 
