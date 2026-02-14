@@ -1252,6 +1252,10 @@
       }
 
       /* Hide hub content when iframe is open (prevent see-through) */
+      body.iframe-active .cursor-ball,
+      body.iframe-active .cursor-trail {
+      }
+
       body.iframe-active .hub-content {
         display: none;
       }
@@ -1368,10 +1372,11 @@
       }
 
       .platform-preview.empty-preview {
-        background: rgba(255, 255, 255, 0.015);
-        border: 1.5px dashed rgba(255, 255, 255, 0.12);
+        background: transparent;
+        border: 1.5px dashed rgba(255, 255, 255, 0.10);
         border-radius: 12px;
-        backdrop-filter: blur(4px) saturate(108%);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
       }
 
       .platform-preview .icon {
@@ -2082,10 +2087,53 @@
          REQUEST PLATFORM MODAL
          ============================================ */
       .request-modal .modal {
-        max-width: 560px;
-        max-height: 90vh;
+        max-width: 620px;
+        max-height: 85vh;
         display: flex;
         flex-direction: column;
+        animation: none;
+        transform-origin: center center;
+      }
+
+      .request-modal.active .modal {
+        animation: reqZoomIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+
+      .request-modal.closing .modal {
+        animation: reqZoomOut 0.35s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+      }
+
+      .request-modal.closing {
+        animation: reqOverlayOut 0.35s ease forwards;
+      }
+
+      @keyframes reqZoomIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.35);
+          border-radius: 18px;
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+          border-radius: var(--radius);
+        }
+      }
+
+      @keyframes reqZoomOut {
+        0% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(0.35);
+        }
+      }
+
+      @keyframes reqOverlayOut {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
       }
 
       .request-modal-body {
@@ -3259,7 +3307,7 @@
        ========================================== -->
     <div class="modal-overlay request-modal" id="request-modal">
       <div class="modal">
-        <h3>🚀 Pedir Nova Plataforma</h3>
+        <h3>Pedir Nova Plataforma</h3>
         <p>
           Descreve a plataforma que precisas e recebe uma estimativa de
           orçamento.
@@ -4337,7 +4385,6 @@
           addCard.title = "Pedir nova plataforma";
           addCard.innerHTML = `
             <div class="platform-preview empty-preview" style="justify-content:center;align-items:center">
-              <span class="icon" style="font-size:2.5rem">➕</span>
             </div>
             <div class="platform-info">
               <div class="platform-name">Pedir Plataforma</div>
@@ -4969,7 +5016,23 @@
         }
 
         function showRequestModal() {
-          document.getElementById("request-modal").classList.add("active");
+          var modal = document.getElementById("request-modal");
+          var modalPanel = modal.querySelector(".modal");
+
+          // Get the add-card position to set transform-origin
+          var addCard = document.querySelector(
+            '.platform-card[title="Pedir nova plataforma"]',
+          );
+          if (addCard) {
+            var rect = addCard.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+            modalPanel.style.transformOrigin = cx + "px " + cy + "px";
+          }
+
+          modal.classList.remove("closing");
+          modal.classList.add("active");
+
           document.getElementById("req-name").value = "";
           document.getElementById("req-description").value = "";
           document
@@ -4988,7 +5051,12 @@
         }
 
         function hideRequestModal() {
-          document.getElementById("request-modal").classList.remove("active");
+          var modal = document.getElementById("request-modal");
+          modal.classList.add("closing");
+          setTimeout(function () {
+            modal.classList.remove("active");
+            modal.classList.remove("closing");
+          }, 350);
         }
 
         function estimateBudget() {
@@ -5566,12 +5634,7 @@
         document.addEventListener("mouseleave", hideCursor);
         document.addEventListener("mouseenter", showCursor);
 
-        // Hide cursor when iframe captures the pointer
-        const iframeEl = document.getElementById("platform-iframe");
-        if (iframeEl) {
-          iframeEl.addEventListener("mouseenter", hideCursor);
-          iframeEl.addEventListener("mouseleave", showCursor);
-        }
+
 
         function animate() {
           ball.style.left = mouseX + "px";
