@@ -47,11 +47,11 @@
 
 :root {
   /* Maktub Brand Colors */
-  --bg-primary: #111111;
-  --bg-secondary: #1a1a1a;
-  --bg-tertiary: #222222;
-  --bg-card: #1c1c1c;
-  --bg-hover: #2a2a2a;
+  --bg-primary: rgba(17, 17, 17, 0.6);
+  --bg-secondary: rgba(26, 26, 26, 0.5);
+  --bg-tertiary: rgba(34, 34, 34, 0.5);
+  --bg-card: rgba(28, 28, 28, 0.5);
+  --bg-hover: rgba(42, 42, 42, 0.5);
 
   --green-primary: #33e933;
   --green-dark: #2bc42b;
@@ -100,7 +100,7 @@ body {
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
-  background-color: var(--bg-primary);
+  background-color: transparent;
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;
@@ -168,8 +168,8 @@ body {
 .auth-form input {
   width: 100%;
   padding: 16px 20px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--input-border);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
   font-size: 1rem;
   color: var(--text-primary);
@@ -232,10 +232,10 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 12px 28px;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.25),
@@ -402,9 +402,13 @@ body {
 /* Tabs Navigation */
 .tabs {
   display: none;
-  background: var(--bg-secondary);
-  border-bottom: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  margin: 8px 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -467,6 +471,12 @@ body {
 }
 
 .content-header {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 20px 22px;
   margin-bottom: 16px;
 }
 
@@ -494,9 +504,11 @@ body {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: var(--card-shadow);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
@@ -567,9 +579,11 @@ body {
 }
 
 .chart-card {
-  background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: var(--card-shadow);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   border-radius: var(--radius-md);
   padding: 20px;
 }
@@ -711,9 +725,11 @@ body {
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: var(--bg-card);
-  border: none;
-  box-shadow: var(--card-shadow);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
@@ -767,15 +783,21 @@ body {
 
 /* Form Styles */
 .form-box {
-  background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  border: none;
+  box-shadow: none;
   border-radius: var(--radius-md);
-  padding: 24px;
+  padding: 0;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 16px 18px 12px;
 }
 
 .form-group label {
@@ -844,7 +866,8 @@ body {
   align-items: center;
   gap: 8px;
   padding: 16px 12px;
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
@@ -891,7 +914,8 @@ body {
   align-items: center;
   gap: 8px;
   padding: 20px;
-  background: var(--bg-secondary);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   border: 2px solid var(--input-border);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -1208,9 +1232,11 @@ body {
   margin-top: 0;
   margin-bottom: 16px;
   padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
   flex-wrap: wrap;
 }
 
