@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
@@ -119,10 +125,10 @@
        ============================================ */
       :root {
         /* ── Master layout variables (controls ALL containers) ── */
-        --layout-top: 140px;         /* topbar distance from viewport top */
+        --layout-top: 80px;         /* topbar distance from viewport top */
         --layout-side: 88px;         /* lateral margin each side */
         --layout-max: 800px;        /* max width for all outermost containers */
-        --layout-content-top: 230px; /* vertical clearance below topbar */
+        --layout-content-top: 160px; /* vertical clearance below topbar */
 
         --bg: #111111;
         --bg-secondary: #1a1a1a;
@@ -831,6 +837,38 @@
         color: var(--accent);
       }
 
+      /* Colored role select dropdowns */
+      .role-select {
+        -webkit-appearance: none;
+        appearance: none;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+        cursor: pointer;
+        width: auto;
+        max-width: 100%;
+      }
+      .role-select.role-owner {
+        background: rgba(255, 180, 0, 0.35);
+        color: #ffb400;
+      }
+      .role-select.role-tech {
+        background: rgba(0, 150, 255, 0.35);
+        color: #0096ff;
+      }
+      .role-select.role-user {
+        background: rgba(51, 233, 51, 0.25);
+        color: #33e933;
+      }
+      .role-select option {
+        background: #1a1a1a;
+        color: #f6f6f6;
+      }
+
       .btn-logout {
         padding: 8px 16px;
         background: transparent;
@@ -922,9 +960,9 @@
         top: calc(100% + 8px);
         right: 0;
         min-width: 260px;
-        background: rgba(18, 18, 18, 0.92);
-        backdrop-filter: blur(24px) saturate(150%);
-        -webkit-backdrop-filter: blur(24px) saturate(150%);
+        background: rgba(18, 18, 18, 0.78);
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
         border: 1px solid rgba(255, 255, 255, 0.10);
         border-radius: 14px;
         box-shadow:
@@ -1208,7 +1246,7 @@
        ============================================ */
       .hub-content {
         flex: 1;
-        padding: 40px var(--layout-side);
+        padding: 8px var(--layout-side);
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -1224,7 +1262,7 @@
         font-size: 0.85rem;
         font-weight: 600;
         color: var(--text-muted);
-        margin-bottom: 20px;
+        margin-bottom: 12px;
         text-transform: uppercase;
         letter-spacing: 1.5px;
       }
@@ -1249,6 +1287,7 @@
         color: inherit;
         display: flex;
         flex-direction: column;
+        max-width: 280px;
         box-shadow:
           0 1px 6px rgba(0, 0, 0, 0.03),
           inset 0 1px 0 rgba(255, 255, 255, 0.01);
@@ -1678,8 +1717,16 @@
 
       .management-content {
         flex: 1;
-        padding: 32px 24px;
+        padding: 32px var(--layout-side);
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .management-inner {
+        width: 100%;
+        max-width: var(--layout-max);
       }
 
       .mgmt-header {
@@ -1723,7 +1770,7 @@
         -webkit-backdrop-filter: blur(6px) saturate(115%);
         border: 1px solid rgba(255, 255, 255, 0.004);
         border-radius: var(--radius);
-        overflow-x: auto;
+        overflow-x: hidden;
         box-shadow:
           0 1px 6px rgba(0, 0, 0, 0.03),
           inset 0 1px 0 rgba(255, 255, 255, 0.01);
@@ -1732,16 +1779,33 @@
       .user-table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 700px;
+        table-layout: fixed;
       }
 
       .user-table th,
       .user-table td {
-        padding: 14px 16px;
+        padding: 10px 8px;
         text-align: left;
-        font-size: 0.9rem;
+        font-size: 0.78rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-wrap: break-word;
       }
+
+      /* Column widths */
+      .user-table th:nth-child(1),
+      .user-table td:nth-child(1) { width: 14%; }
+      .user-table th:nth-child(2),
+      .user-table td:nth-child(2) { width: 12%; }
+      .user-table th:nth-child(3),
+      .user-table td:nth-child(3) { width: 24%; }
+      .user-table th:nth-child(4),
+      .user-table td:nth-child(4) { width: 15%; }
+      .user-table th:nth-child(5),
+      .user-table td:nth-child(5) { width: 24%; }
+      .user-table th:nth-child(6),
+      .user-table td:nth-child(6) { width: 11%; }
 
       .user-table th {
         font-weight: 600;
@@ -1947,6 +2011,7 @@
         }
 
         .hub-content,
+        .projects-content,
         .management-content {
           padding: 20px 16px;
         }
@@ -2179,7 +2244,7 @@
 
       .projects-content {
         flex: 1;
-        padding: 32px 24px;
+        padding: 32px var(--layout-side);
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -3068,66 +3133,73 @@
       </div>
 
       <div class="management-content">
-        <div class="mgmt-header">
-          <h2>Utilizadores</h2>
-          <button class="btn btn-primary btn-sm" id="add-user-toggle-btn">
-            + Adicionar Utilizador
-          </button>
-        </div>
-
-        <!-- Add user form (hidden by default) -->
-        <div class="add-user-form" id="add-user-form">
-          <h3>Novo Utilizador</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="new-username">Utilizador</label>
-              <input type="text" id="new-username" placeholder="username" />
-            </div>
-            <div class="form-group">
-              <label for="new-password">Palavra-passe</label>
-              <input type="password" id="new-password" placeholder="••••••••" />
-            </div>
-            <div class="form-group">
-              <label for="new-name">Nome</label>
-              <input type="text" id="new-name" placeholder="Nome completo" />
-            </div>
-            <div class="form-group">
-              <label for="new-role">Cargo</label>
-              <select id="new-role">
-                <option value="user">user</option>
-                <option value="tech">tech</option>
-                <option value="owner">owner</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-primary btn-sm" id="save-user-btn">
-              Guardar
-            </button>
-            <button class="btn btn-secondary btn-sm" id="cancel-user-btn">
-              Cancelar
+        <div class="management-inner">
+          <div class="mgmt-header">
+            <h2>Utilizadores</h2>
+            <button class="btn btn-primary btn-sm" id="add-user-toggle-btn">
+              + Adicionar Utilizador
             </button>
           </div>
-        </div>
 
-        <!-- User table -->
-        <div class="user-table-container">
-          <table class="user-table">
-            <thead>
-              <tr>
-                <th>Utilizador</th>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Cargo</th>
-                <th>Plataformas</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="user-table-body">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
+          <!-- Add user form (hidden by default) -->
+          <div class="add-user-form" id="add-user-form">
+            <h3>Novo Utilizador</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="new-username">Utilizador</label>
+                <input type="text" id="new-username" placeholder="username" />
+              </div>
+              <div class="form-group">
+                <label for="new-password">Palavra-passe</label>
+                <input
+                  type="password"
+                  id="new-password"
+                  placeholder="••••••••"
+                />
+              </div>
+              <div class="form-group">
+                <label for="new-name">Nome</label>
+                <input type="text" id="new-name" placeholder="Nome completo" />
+              </div>
+              <div class="form-group">
+                <label for="new-role">Cargo</label>
+                <select id="new-role">
+                  <option value="user">user</option>
+                  <option value="tech">tech</option>
+                  <option value="owner">owner</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary btn-sm" id="save-user-btn">
+                Guardar
+              </button>
+              <button class="btn btn-secondary btn-sm" id="cancel-user-btn">
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- User table -->
+          <div class="user-table-container">
+            <table class="user-table">
+              <thead>
+                <tr>
+                  <th>Utilizador</th>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Cargo</th>
+                  <th>Plataformas</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="user-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
         </div>
+        <!-- .management-inner -->
       </div>
     </div>
 
@@ -3160,6 +3232,22 @@
           orçamento.
         </p>
         <div class="request-modal-body">
+          <div class="estimate-spinner" id="estimate-spinner">
+            <div class="spinner-circle"></div>
+            <span class="spinner-text">A analisar requisitos...</span>
+          </div>
+
+          <div class="estimate-result" id="estimate-result">
+            <div class="estimate-price">
+              €<span id="estimate-min">0</span> — €<span id="estimate-max"
+                >0</span
+              >
+            </div>
+            <div class="estimate-timeline-text">
+              Prazo estimado: <strong id="estimate-timeline"></strong>
+            </div>
+          </div>
+
           <div class="form-group">
             <label for="req-name">Nome da Plataforma</label>
             <input
@@ -3266,11 +3354,6 @@
             </div>
           </div>
 
-          <div class="estimate-spinner" id="estimate-spinner">
-            <div class="spinner-circle"></div>
-            <span class="spinner-text">A analisar requisitos...</span>
-          </div>
-
           <div class="estimate-result" id="estimate-result">
             <div class="estimate-price">
               €<span id="estimate-min">0</span> — €<span id="estimate-max"
@@ -3288,7 +3371,7 @@
             Cancelar
           </button>
           <button class="btn btn-primary btn-sm" id="req-estimate-btn">
-            Estimar Orçamento
+            Estimar Orçamento (Instant Proxy)
           </button>
           <button
             class="btn btn-primary btn-sm"
@@ -4260,7 +4343,7 @@
           );
           const iframe = document.getElementById("platform-iframe");
           if (container && iframe) {
-            iframe.src = platform.url;
+            iframe.src = platform.url + "?nocache=" + Date.now();
             container.classList.add("active");
             document.body.classList.add("iframe-active");
           } else {
@@ -4573,12 +4656,15 @@
             <td>${user.name}</td>
             <td style="color:var(--text-muted)">${userData.email || user.email || "—"}</td>
             <td>${(() => {
-              const canChangeRole = isAdmin() && user.username !== "owner" && user.username !== currentSession.username;
+              const canChangeRole =
+                isAdmin() &&
+                user.username !== "owner" &&
+                user.username !== currentSession.username;
               if (canChangeRole) {
-                return `<select class="access-select role-select" data-username="${user.username}" onchange="window._hub.changeUserRole(this)">
-                  <option value="owner" ${user.role === 'owner' ? 'selected' : ''}>Owner</option>
-                  <option value="tech" ${user.role === 'tech' ? 'selected' : ''}>Tech</option>
-                  <option value="user" ${user.role === 'user' ? 'selected' : ''}>Utilizador</option>
+                return `<select class="access-select role-select role-${user.role}" data-username="${user.username}" onchange="window._hub.changeUserRole(this)">
+                  <option value="owner" ${user.role === "owner" ? "selected" : ""}>Owner</option>
+                  <option value="tech" ${user.role === "tech" ? "selected" : ""}>Tech</option>
+                  <option value="user" ${user.role === "user" ? "selected" : ""}>Utilizador</option>
                 </select>`;
               } else {
                 return `<span class="role-badge ${user.role}">${ROLE_LABELS[user.role] || user.role}</span>`;
@@ -4601,7 +4687,7 @@
           const username = selectEl.dataset.username;
           const newRole = selectEl.value;
           const users = getUsers();
-          const user = users.find(u => u.username === username);
+          const user = users.find((u) => u.username === username);
           if (!user) return;
           if (username === "owner") {
             showToast("Não é possível alterar o cargo do owner.", "error");
@@ -4616,7 +4702,10 @@
           user.role = newRole;
           saveUsers(users);
           renderUserTable();
-          showToast(`Cargo de ${user.name || username} alterado para ${ROLE_LABELS[newRole] || newRole}.`, "success");
+          showToast(
+            `Cargo de ${user.name || username} alterado para ${ROLE_LABELS[newRole] || newRole}.`,
+            "success",
+          );
         }
 
         function toggleAccess(checkbox) {
@@ -4882,6 +4971,10 @@
           document.getElementById("estimate-result").style.display = "none";
           document.getElementById("req-submit-btn").style.display = "none";
 
+          // Scroll modal to top to show spinner
+          var modalBody = document.querySelector(".request-modal-body");
+          if (modalBody) modalBody.scrollTop = 0;
+
           setTimeout(function () {
             var basePrices = {
               basico: 300,
@@ -4929,6 +5022,9 @@
               upper.toLocaleString("pt-PT");
             document.getElementById("estimate-timeline").textContent = timeline;
             document.getElementById("estimate-result").style.display = "block";
+            // Scroll modal to top to show result
+            var modalBody = document.querySelector(".request-modal-body");
+            if (modalBody) modalBody.scrollTop = 0;
             document.getElementById("req-submit-btn").style.display =
               "inline-flex";
 
@@ -5692,17 +5788,17 @@
             const dy = event.clientY - cy;
             const distance = Math.sqrt(dx * dx + dy * dy);
             const maxDist = 400;
-            const minBlur = 8;
-            const maxBlur = 18;
+            const minBlur = 6;
+            const maxBlur = 14;
             const blur =
               distance < maxDist
                 ? minBlur +
                   ((maxDist - distance) / maxDist) * (maxBlur - minBlur)
                 : minBlur;
             container.style.backdropFilter =
-              "blur(" + blur + "px) saturate(130%)";
+              "blur(" + blur + "px) saturate(115%)";
             container.style.webkitBackdropFilter =
-              "blur(" + blur + "px) saturate(130%)";
+              "blur(" + blur + "px) saturate(115%)";
           });
         }
 

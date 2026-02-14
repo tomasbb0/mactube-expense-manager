@@ -92,15 +92,22 @@ const toast = document.getElementById("toast");
 
 // Initialize App
 function initApp() {
-  initTabs();
-  initCustomShortcuts();
-  initForm();
-  initFilters();
-  initModals();
-  initAuth();
-  initGoogleSheetsSync();
-  setDefaultDate();
-  loadData();
+  try {
+    initTabs();
+    initCustomShortcuts();
+    initForm();
+    initFilters();
+    initModals();
+    initAuth();
+    initGoogleSheetsSync();
+    setDefaultDate();
+    loadData();
+    console.log(`✅ App initialized. ${expenses.length} expenses loaded.`);
+    document.title = `Despesas (${expenses.length} registos)`;
+  } catch (err) {
+    console.error("❌ initApp error:", err);
+    document.title = `ERROR: ${err.message}`;
+  }
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initApp);
@@ -831,25 +838,34 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 16; // v16: Force refresh to load Bandidos data after glass UI update
+const DATA_VERSION = 17; // v17: Force full data regeneration
 
 function loadData() {
-  const saved = localStorage.getItem("maktub_expenses");
   const savedVersion = localStorage.getItem("maktub_data_version");
 
-  // Force regenerate if version changed, no data, or data is empty
-  if (saved && savedVersion === String(DATA_VERSION)) {
-    expenses = JSON.parse(saved);
-    // Safety: if saved data parsed to empty array, regenerate
-    if (!Array.isArray(expenses) || expenses.length === 0) {
-      console.log("⚠️ Saved data was empty, regenerating...");
-      expenses = generateDemoData(300);
-      saveData();
-    }
-  } else {
+  // Always regenerate if version mismatch — clear old data first
+  if (savedVersion !== String(DATA_VERSION)) {
+    console.log(
+      `🔄 Data version mismatch (saved: ${savedVersion}, current: ${DATA_VERSION}). Regenerating...`,
+    );
+    localStorage.removeItem("maktub_expenses");
+    localStorage.removeItem("maktub_data_version");
     expenses = generateDemoData(300);
     saveData();
     localStorage.setItem("maktub_data_version", String(DATA_VERSION));
+  } else {
+    const saved = localStorage.getItem("maktub_expenses");
+    if (saved) {
+      expenses = JSON.parse(saved);
+      if (!Array.isArray(expenses) || expenses.length === 0) {
+        console.log("⚠️ Saved data was empty, regenerating...");
+        expenses = generateDemoData(300);
+        saveData();
+      }
+    } else {
+      expenses = generateDemoData(300);
+      saveData();
+    }
   }
   updateDashboard();
   updateFilterDropdowns();
