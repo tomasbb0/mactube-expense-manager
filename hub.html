@@ -396,11 +396,12 @@
 
       .login-logo {
         margin-bottom: 82px;
+        margin-top: 2cm;
         display: inline-block;
       }
 
       .login-logo svg {
-        width: 160px;
+        width: 320px;
         height: auto;
       }
 
@@ -4739,7 +4740,7 @@
 
           // Dynamic glass blur — containers get blurrier when mouse approaches
           const glassContainers = document.querySelectorAll(
-            ".login-card, .platform-card, .modal, .user-table-container, .add-user-form, .project-card, .active-project-card"
+            ".login-card, .platform-card, .modal, .user-table-container, .add-user-form, .project-card, .active-project-card",
           );
           glassContainers.forEach(function (container) {
             const rect = container.getBoundingClientRect();
@@ -4751,11 +4752,15 @@
             const maxDist = 400;
             const minBlur = 16;
             const maxBlur = 40;
-            const blur = distance < maxDist
-              ? minBlur + ((maxDist - distance) / maxDist) * (maxBlur - minBlur)
-              : minBlur;
-            container.style.backdropFilter = "blur(" + blur + "px) saturate(180%)";
-            container.style.webkitBackdropFilter = "blur(" + blur + "px) saturate(180%)";
+            const blur =
+              distance < maxDist
+                ? minBlur +
+                  ((maxDist - distance) / maxDist) * (maxBlur - minBlur)
+                : minBlur;
+            container.style.backdropFilter =
+              "blur(" + blur + "px) saturate(180%)";
+            container.style.webkitBackdropFilter =
+              "blur(" + blur + "px) saturate(180%)";
           });
         }
 
