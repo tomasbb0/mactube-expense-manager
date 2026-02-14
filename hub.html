@@ -687,20 +687,24 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 16px 24px;
-        background: rgba(255, 255, 255, 0.01);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 14px 24px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(24px) saturate(200%);
+        -webkit-backdrop-filter: blur(24px) saturate(200%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
         box-shadow:
-          0 2px 16px rgba(0, 0, 0, 0.25),
-          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          0 8px 32px rgba(0, 0, 0, 0.25),
+          0 0 0 0.5px rgba(255, 255, 255, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.1);
         flex-shrink: 0;
         gap: 12px;
         flex-wrap: wrap;
         position: sticky;
-        top: 0;
+        top: 12px;
         z-index: 100;
+        margin: 12px 16px 0;
       }
 
       .topbar-brand {
@@ -790,6 +794,302 @@
         color: var(--danger);
         background: rgba(255, 68, 68, 0.08);
       }
+      /* ═══ PROFILE SYSTEM ═══ */
+      .profile-trigger {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 999px;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+      .profile-trigger:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .profile-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        overflow: hidden;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        transition: border-color 0.2s;
+      }
+      .profile-trigger:hover .profile-avatar {
+        border-color: var(--accent);
+      }
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .profile-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        min-width: 260px;
+        background: rgba(28, 28, 28, 0.95);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        padding: 8px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px) scale(0.96);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 200;
+      }
+      .profile-dropdown.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+      }
+      .dd-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        margin-bottom: 4px;
+      }
+      .dd-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .dd-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .dd-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+      }
+      .dd-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .dd-role {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+      }
+      .dd-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: var(--text);
+        cursor: pointer;
+        transition: background 0.15s;
+        border: none;
+        background: none;
+        width: 100%;
+        font-family: inherit;
+        text-align: left;
+      }
+      .dd-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+      }
+      .dd-item svg {
+        width: 18px;
+        height: 18px;
+        opacity: 0.6;
+      }
+      .dd-item.danger {
+        color: #ff4d4d;
+      }
+      .dd-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.06);
+        margin: 4px 0;
+      }
+
+      /* Account Details Modal */
+      .account-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 300;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.25s;
+      }
+      .account-modal-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      .account-modal {
+        background: rgba(28, 28, 28, 0.98);
+        backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 18px;
+        width: 420px;
+        max-width: 90vw;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+      .account-modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .account-modal-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+      .account-modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 8px;
+        transition: background 0.15s;
+        font-size: 1.2rem;
+        line-height: 1;
+      }
+      .account-modal-close:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .account-modal-body {
+        padding: 24px;
+      }
+      .account-photo-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .account-photo-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        overflow: hidden;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+      }
+      .account-photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .account-photo-btn {
+        font-size: 0.8rem;
+        color: var(--accent);
+        cursor: pointer;
+        background: none;
+        border: none;
+        font-family: inherit;
+        padding: 4px 12px;
+        border-radius: 6px;
+        transition: background 0.15s;
+      }
+      .account-photo-btn:hover {
+        background: var(--accent-dim);
+      }
+      .account-field {
+        margin-bottom: 16px;
+      }
+      .account-field label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        font-weight: 500;
+      }
+      .account-field input {
+        width: 100%;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 0.9rem;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+      }
+      .account-field input:focus {
+        outline: none;
+        border-color: var(--accent);
+      }
+      .account-field input:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .account-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .account-actions .btn {
+        flex: 1;
+      }
+
+      /* ═══ IFRAME CONTAINER ═══ */
+      #platform-iframe-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 50;
+        background: var(--bg);
+      }
+      #platform-iframe-container.active {
+        display: block;
+      }
+      #platform-iframe-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
 
       /* ============================================
        HUB CONTENT & PLATFORM GRID
@@ -2420,11 +2720,76 @@
           <span class="topbar-title">Maktub Art Group</span>
         </div>
         <div class="topbar-right">
-          <div class="user-info">
-            <span id="hub-greeting"></span>
-            <span class="role-badge" id="hub-role-badge"></span>
+          <div class="profile-trigger" id="profile-trigger" onclick="window._hub.toggleProfileDropdown()">
+            <div class="user-info">
+              <span id="hub-greeting"></span>
+              <span class="role-badge" id="hub-role-badge"></span>
+            </div>
+            <div class="profile-avatar" id="profile-avatar"></div>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <div class="dd-header">
+                <div class="dd-avatar" id="dd-avatar"></div>
+                <div class="dd-info">
+                  <div class="dd-name" id="dd-name"></div>
+                  <div class="dd-role" id="dd-role"></div>
+                </div>
+              </div>
+              <button class="dd-item" onclick="window._hub.showAccountModal()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                Detalhes da conta
+              </button>
+              <button class="dd-item" onclick="window._hub.handleChangePhoto()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                Alterar foto
+              </button>
+              <div class="dd-divider"></div>
+              <button class="dd-item danger" onclick="window._hub.logoutFromHub()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                Terminar sessão
+              </button>
+            </div>
           </div>
-          <button class="btn-logout" id="logout-btn">Sair</button>
+        </div>
+      </div>
+
+      <!-- Iframe container for embedded platforms -->
+      <div id="platform-iframe-container">
+        <iframe id="platform-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
+      </div>
+
+      <!-- Account Details Modal -->
+      <div class="account-modal-overlay" id="account-modal-overlay" onclick="window._hub.closeAccountModal()">
+        <div class="account-modal" onclick="event.stopPropagation()">
+          <div class="account-modal-header">
+            <h3>Detalhes da Conta</h3>
+            <button class="account-modal-close" onclick="window._hub.closeAccountModal()">&times;</button>
+          </div>
+          <div class="account-modal-body">
+            <div class="account-photo-section">
+              <div class="account-photo-preview" id="account-photo-preview"></div>
+              <button class="account-photo-btn" onclick="window._hub.handleAccountPhotoUpload()">Alterar foto</button>
+            </div>
+            <div class="account-field">
+              <label>Nome de utilizador</label>
+              <input type="text" id="account-username" disabled />
+            </div>
+            <div class="account-field">
+              <label>Nome</label>
+              <input type="text" id="account-name" disabled />
+            </div>
+            <div class="account-field">
+              <label>Email</label>
+              <input type="email" id="account-email" placeholder="nome@maktub.pt" />
+            </div>
+            <div class="account-field">
+              <label>Nova password (deixar vazio para manter)</label>
+              <input type="password" id="account-password" placeholder="••••••••" />
+            </div>
+            <div class="account-actions">
+              <button class="btn" onclick="window._hub.closeAccountModal()">Cancelar</button>
+              <button class="btn btn-primary" onclick="window._hub.saveAccountDetails()">Guardar</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -2936,7 +3301,9 @@
 
         function saveUserData(username, data) {
           const key = `maktub_hub_userdata_${username}`;
-          localStorage.setItem(key, JSON.stringify(data));
+          const existing = getUserData(username);
+          const merged = Object.assign({}, existing, data);
+          localStorage.setItem(key, JSON.stringify(merged));
         }
 
         function getSession() {
@@ -3040,6 +3407,7 @@
               container.classList.add("zoom-through");
               void container.offsetWidth; // force reflow
               container.style.transform = "scale(8)";
+              animateStrokeThinning(svg);
 
               // After zoom completes, hide intro
               setTimeout(() => {
@@ -3117,6 +3485,7 @@
           container.classList.add("zoom-through");
           void container.offsetWidth;
           container.style.transform = "scale(8)";
+          animateStrokeThinning(svg);
 
           // BG already transparent from bg-fade, reinforce with zoom-through-bg
           introScreen.classList.add("zoom-through-bg");
@@ -3232,6 +3601,8 @@
           showLogin();
           showToast("Sessão terminada.", "success");
         }
+
+        function logoutFromHub() { handleLogout(); }
 
         function showEmailModal() {
           document.getElementById("email-modal").classList.add("active");
@@ -3399,6 +3770,7 @@
           badge.textContent =
             ROLE_LABELS[currentSession.role] || currentSession.role;
           badge.className = `role-badge ${currentSession.role}`;
+          updateProfileUI();
           const grid = document.getElementById("platform-grid");
           grid.innerHTML = "";
           PLATFORMS.forEach((platform) => {
@@ -3649,9 +4021,177 @@
             };
             localStorage.setItem("maktub_user", JSON.stringify(maktubUser));
           }
-          // Mark as internal navigation so the target page skips the intro animation
-          sessionStorage.setItem("maktub_internal_nav", "true");
-          window.location.href = platform.url;
+
+          // Load platform in iframe to preserve hub topbar
+          const container = document.getElementById("platform-iframe-container");
+          const iframe = document.getElementById("platform-iframe");
+          if (container && iframe) {
+            iframe.src = platform.url;
+            container.classList.add("active");
+            document.getElementById("hub-screen").style.display = "none";
+          } else {
+            // Fallback: direct navigation
+            sessionStorage.setItem("maktub_internal_nav", "true");
+            window.location.href = platform.url;
+          }
+        }
+
+
+        function closePlatformIframe() {
+          const container = document.getElementById("platform-iframe-container");
+          const iframe = document.getElementById("platform-iframe");
+          if (container) {
+            container.classList.remove("active");
+            document.getElementById("hub-screen").style.display = "";
+          }
+          if (iframe) iframe.src = "";
+        }
+
+        // Listen for postMessage from iframe (e.g. logout)
+        window.addEventListener("message", function (e) {
+          if (e.data && e.data.type === "closePlatform") {
+            closePlatformIframe();
+          }
+        });
+
+        function animateStrokeThinning(svgEl) {
+          if (!svgEl) return;
+          const circles = svgEl.querySelectorAll("circle");
+          circles.forEach(function (c) {
+            c.animate(
+              [{ strokeWidth: "7" }, { strokeWidth: "0.3" }],
+              { duration: 700, fill: "forwards", easing: "ease-in" }
+            );
+          });
+        }
+
+        // ═══ PROFILE FUNCTIONS ═══
+        function toggleProfileDropdown() {
+          const dd = document.getElementById("profile-dropdown");
+          if (dd) dd.classList.toggle("open");
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (e) {
+          const trigger = document.getElementById("profile-trigger");
+          const dd = document.getElementById("profile-dropdown");
+          if (dd && trigger && !trigger.contains(e.target)) {
+            dd.classList.remove("open");
+          }
+        });
+
+        function getAvatarHTML(username, size) {
+          const userData = getUserData(username);
+          if (userData.photo) {
+            return '<img src="' + userData.photo + '" alt="avatar">';
+          }
+          const initials = (username || "?").substring(0, 2).toUpperCase();
+          return initials;
+        }
+
+        function updateProfileUI() {
+          if (!currentSession) return;
+          const avatar = document.getElementById("profile-avatar");
+          const ddAvatar = document.getElementById("dd-avatar");
+          const ddName = document.getElementById("dd-name");
+          const ddRole = document.getElementById("dd-role");
+
+          if (avatar) avatar.innerHTML = getAvatarHTML(currentSession.username);
+          if (ddAvatar) ddAvatar.innerHTML = getAvatarHTML(currentSession.username);
+          if (ddName) ddName.textContent = currentSession.name;
+          if (ddRole) ddRole.textContent = ROLE_LABELS[currentSession.role] || currentSession.role;
+        }
+
+        function handleChangePhoto() {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.onchange = function (e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (ev) {
+              // Resize to 200x200
+              const img = new Image();
+              img.onload = function () {
+                const canvas = document.createElement("canvas");
+                canvas.width = 200;
+                canvas.height = 200;
+                const ctx = canvas.getContext("2d");
+                const size = Math.min(img.width, img.height);
+                const sx = (img.width - size) / 2;
+                const sy = (img.height - size) / 2;
+                ctx.drawImage(img, sx, sy, size, size, 0, 0, 200, 200);
+                const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+                saveUserData(currentSession.username, { photo: dataUrl });
+                updateProfileUI();
+              };
+              img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+          };
+          input.click();
+        }
+
+        function showAccountModal() {
+          const overlay = document.getElementById("account-modal-overlay");
+          if (!overlay) return;
+          // Close dropdown first
+          const dd = document.getElementById("profile-dropdown");
+          if (dd) dd.classList.remove("open");
+
+          const userData = getUserData(currentSession.username);
+          document.getElementById("account-username").value = currentSession.username;
+          document.getElementById("account-name").value = currentSession.name;
+          document.getElementById("account-email").value = userData.email || "";
+          document.getElementById("account-password").value = "";
+
+          // Photo preview
+          const preview = document.getElementById("account-photo-preview");
+          if (preview) preview.innerHTML = getAvatarHTML(currentSession.username);
+
+          overlay.classList.add("open");
+        }
+
+        function closeAccountModal() {
+          const overlay = document.getElementById("account-modal-overlay");
+          if (overlay) overlay.classList.remove("open");
+        }
+
+        function handleAccountPhotoUpload() {
+          handleChangePhoto();
+          // Update modal preview after a short delay
+          setTimeout(function () {
+            const preview = document.getElementById("account-photo-preview");
+            if (preview) preview.innerHTML = getAvatarHTML(currentSession.username);
+          }, 500);
+        }
+
+        function saveAccountDetails() {
+          const email = document.getElementById("account-email").value.trim();
+          const password = document.getElementById("account-password").value;
+
+          // Save email to userdata
+          if (email) {
+            saveUserData(currentSession.username, { email: email });
+          }
+
+          // Update password if provided
+          if (password && password.length >= 4) {
+            const users = getUsers();
+            const user = users.find(function (u) { return u.username === currentSession.username; });
+            if (user) {
+              user.password = password;
+              user.passwordChanged = true;
+              localStorage.setItem("maktub_hub_users", JSON.stringify(users));
+            }
+          } else if (password && password.length > 0 && password.length < 4) {
+            alert("A password deve ter pelo menos 4 caracteres.");
+            return;
+          }
+
+          closeAccountModal();
+          updateProfileUI();
         }
 
         function renderUserTable() {
@@ -4407,6 +4947,18 @@
           }
         }
 
+
+        // Topbar brand click: close iframe and go back to hub
+        document.addEventListener("DOMContentLoaded", function () {
+          const hubTopbar = document.querySelector("#hub-screen .topbar-brand");
+          if (hubTopbar) {
+            hubTopbar.style.cursor = "pointer";
+            hubTopbar.addEventListener("click", function () {
+              closePlatformIframe();
+            });
+          }
+        });
+
         window._hub = {
           toggleAccess,
           confirmDeleteUser,
@@ -4415,6 +4967,15 @@
           changeRequestStatus,
           setRequestEta,
           addRequestComment,
+
+          toggleProfileDropdown: toggleProfileDropdown,
+          showAccountModal: showAccountModal,
+          closeAccountModal: closeAccountModal,
+          handleChangePhoto: handleChangePhoto,
+          handleAccountPhotoUpload: handleAccountPhotoUpload,
+          saveAccountDetails: saveAccountDetails,
+          logoutFromHub: logoutFromHub,
+          closePlatformIframe: closePlatformIframe
         };
 
         document.addEventListener("DOMContentLoaded", () => {
