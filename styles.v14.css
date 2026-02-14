@@ -38,7 +38,7 @@
   width: 6px;
   height: 6px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 50%;
   pointer-events: none;
   z-index: 99998;
@@ -169,7 +169,7 @@ body {
   width: 100%;
   padding: 16px 20px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: var(--radius-md);
   font-size: 1rem;
   color: var(--text-primary);
@@ -233,13 +233,13 @@ body {
   justify-content: space-between;
   padding: 12px 28px;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 16px;
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   position: sticky;
   top: 12px;
   z-index: 100;
@@ -401,14 +401,14 @@ body {
 .tabs {
   display: none;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 14px;
   margin: 8px 16px;
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -472,15 +472,15 @@ body {
 
 .content-header {
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 16px;
   padding: 20px 22px;
   margin-bottom: 16px;
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
 }
 
 .content-header h2 {
@@ -507,13 +507,13 @@ body {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.002);
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  background: transparent;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
@@ -585,12 +585,12 @@ body {
 
 .chart-card {
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-md);
   padding: 20px;
 }
@@ -733,12 +733,12 @@ body {
   gap: 16px;
   padding: 16px;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-md);
   transition: all var(--transition-fast);
 }
@@ -802,14 +802,14 @@ body {
 .form-group {
   margin-bottom: 12px;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 14px;
   padding: 16px 18px 12px;
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01),
+    inset 0 0 0 transparent,
     inset 0 -1px 1px rgba(255, 255, 255, 0.15);
 }
 
@@ -880,7 +880,7 @@ body {
   gap: 8px;
   padding: 16px 12px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
@@ -928,7 +928,7 @@ body {
   gap: 8px;
   padding: 20px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border: 2px solid var(--input-border);
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -978,8 +978,8 @@ body {
   width: 100%;
   padding: 16px;
   background: rgba(51, 233, 51, 0.15);
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
   border: 1px solid rgba(51, 233, 51, 0.3);
   color: var(--bg-primary);
   border: none;
@@ -1149,9 +1149,9 @@ body {
   gap: 6px;
   padding: 7px 14px;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 10px;
   color: var(--text-secondary);
   font-size: 0.78rem;
@@ -1249,13 +1249,13 @@ body {
   margin-bottom: 16px;
   padding: 10px 14px;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 14px;
   box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01),
+    inset 0 0 0 transparent,
     inset 0 -1px 1px rgba(255, 255, 255, 0.15);
   flex-wrap: wrap;
 }
@@ -1352,8 +1352,8 @@ body {
   top: -24px;
   z-index: 50;
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
   margin: -24px -24px 16px -24px;
   padding: 24px 24px 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.015);
@@ -1529,7 +1529,7 @@ tr:hover td {
   padding: 24px;
   border-radius: var(--radius-md);
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
 }
 
 .settlement-card h3 {
@@ -1582,7 +1582,7 @@ tr:hover td {
 /* Balance Box */
 .balance-box {
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow: var(--card-shadow);
   border-radius: var(--radius-md);
   padding: 24px;
@@ -1624,7 +1624,7 @@ tr:hover td {
 /* Settlement Summary */
 .settlement-summary {
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow: var(--card-shadow);
   border-radius: var(--radius-md);
   padding: 24px;
@@ -1648,7 +1648,7 @@ tr:hover td {
 /* Artist Breakdown */
 .artist-breakdown {
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow: var(--card-shadow);
   border-radius: var(--radius-md);
   padding: 24px;
@@ -1814,12 +1814,12 @@ tr:hover td {
 
 .modal-content {
   background: transparent;
-  backdrop-filter: blur(6px) saturate(115%);
-  -webkit-backdrop-filter: blur(6px) saturate(115%);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.01);
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-lg);
   width: auto;
   min-width: 400px;
@@ -1853,7 +1853,7 @@ tr:hover td {
   align-items: center;
   justify-content: center;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 8px;
   color: var(--text-secondary);
   font-size: 1.25rem;
@@ -2972,7 +2972,7 @@ tr:hover td {
   padding: 24px;
   background: var(--bg-card);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow: var(--card-shadow);
 }
 
@@ -3093,7 +3093,7 @@ tr:hover td {
   padding: 24px;
   background: var(--bg-card);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   box-shadow: var(--card-shadow);
 }
 
@@ -3824,12 +3824,12 @@ tr:hover td {
   background: transparent;
   backdrop-filter: blur(28px) saturate(1.5);
   -webkit-backdrop-filter: blur(28px) saturate(1.5);
-  border: 1px solid rgba(255, 255, 255, 0.004);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 16px;
   padding: 8px;
   min-width: 210px;
   box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.03),
+    0 0 4px rgba(0, 0, 0, 0.015),
     inset 0 0.5px 0 rgba(255, 255, 255, 0.05);
   z-index: 100;
   animation: dropdownIn 0.15s ease;
