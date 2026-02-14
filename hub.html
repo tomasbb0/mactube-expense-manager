@@ -1299,7 +1299,6 @@
         -webkit-backdrop-filter: blur(4px) saturate(108%);
         border: 1px solid rgba(255, 255, 255, 0.001);
         border-radius: var(--radius);
-        overflow: hidden;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
@@ -1381,6 +1380,15 @@
           inset 0 1px 1px rgba(255, 255, 255, 0.6),
           inset 0 -1px 1px rgba(255, 255, 255, 0.15),
           0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      .platform-card.empty-card {
+        pointer-events: none;
+        opacity: 0.35;
+      }
+
+      .platform-card.empty-card::before {
+        display: none;
       }
 
       .platform-preview .icon {
@@ -4365,6 +4373,21 @@
           `;
           addCard.addEventListener("click", showRequestModal);
           grid.appendChild(addCard);
+
+          // Add 8 empty glass placeholder cards
+          for (let i = 0; i < 8; i++) {
+            const emptyCard = document.createElement("div");
+            emptyCard.className = "platform-card empty-card";
+            emptyCard.style.cursor = "default";
+            emptyCard.innerHTML = `
+              <div class="platform-preview empty-preview"></div>
+              <div class="platform-info">
+                <div class="platform-name" style="opacity:0.15">&nbsp;</div>
+                <div class="platform-desc" style="opacity:0.1">&nbsp;</div>
+              </div>
+            `;
+            grid.appendChild(emptyCard);
+          }
         }
 
         function navigateToPlatform(platform) {
@@ -5221,13 +5244,43 @@
               new Date().toLocaleDateString("pt-PT"),
           );
 
-          window.open(
-            "mailto:tomasbb0@gmail.com?subject=" + subject + "&body=" + body,
-            "_blank",
-          );
+          // Send email automatically via FormSubmit.co (no backend needed)
+          var techUsers = getUsers().filter(function(u) { return u.role === "tech" || u.role === "owner"; });
+          var techEmails = techUsers.map(function(u) {
+            var ud = getUserData(u.username);
+            return ud.email || u.email || "";
+          }).filter(Boolean);
+          var targetEmail = techEmails[0] || "tomas.b.batalha@gmail.com";
+
+          var emailBody = "Novo pedido de plataforma:\n\n" +
+            "Nome: " + name + "\n" +
+            "Descrição: " + description + "\n" +
+            "Funcionalidades: " + (featureNames || "Nenhuma selecionada") + "\n" +
+            "Complexidade: " + (complexityLabels[complexity.value] || complexity.value) + "\n" +
+            "Orçamento estimado: €" + budgetMin.toLocaleString("pt-PT") + " — €" + budgetMax.toLocaleString("pt-PT") + "\n" +
+            "Prazo estimado: " + timeline + "\n\n" +
+            "Pedido por: " + currentSession.name + " (" + currentSession.username + ")\n" +
+            "Data: " + new Date().toLocaleDateString("pt-PT");
+
+          fetch("https://formsubmit.co/ajax/" + targetEmail, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              _subject: "Novo Pedido de Plataforma - " + name,
+              message: emailBody,
+              name: currentSession.name,
+              _template: "box"
+            })
+          }).then(function(res) {
+            if (res.ok) {
+              showToast("Pedido enviado! Email enviado ao técnico.", "success");
+            } else {
+              showToast("Pedido guardado. Email pode precisar de confirmação.", "info");
+            }
+                                                                     o localmente.", "info");
+          });
 
           hideRequestModal();
-          showToast("Pedido enviado com sucesso!", "success");
           renderHub();
         }
 
