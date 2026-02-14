@@ -4402,14 +4402,12 @@
             var ease = 1 - Math.pow(1 - t, 0.8);
             var sw = 7 * (1 - ease);
             circles.forEach(function (c) {
-              c.setAttribute("stroke-width", sw);
-              c.style.strokeWidth = sw;
+              c.style.setProperty("stroke-width", sw, "important");
             });
             if (t < 1) requestAnimationFrame(tick);
             else {
               circles.forEach(function (c) {
-                c.setAttribute("stroke-width", "0");
-                c.style.strokeWidth = "0";
+                c.style.setProperty("stroke-width", "0", "important");
               });
             }
           }
