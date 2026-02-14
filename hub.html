@@ -1367,6 +1367,13 @@
         overflow: hidden;
       }
 
+      .platform-preview.empty-preview {
+        background: rgba(255, 255, 255, 0.015);
+        border: 1.5px dashed rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        backdrop-filter: blur(4px) saturate(108%);
+      }
+
       .platform-preview .icon {
         font-size: 3.5rem;
         line-height: 1;
@@ -4329,7 +4336,7 @@
           addCard.className = "platform-card";
           addCard.title = "Pedir nova plataforma";
           addCard.innerHTML = `
-            <div class="platform-preview" style="justify-content:center;align-items:center">
+            <div class="platform-preview empty-preview" style="justify-content:center;align-items:center">
               <span class="icon" style="font-size:2.5rem">➕</span>
             </div>
             <div class="platform-info">
@@ -5547,15 +5554,24 @@
           ball.classList.remove("clicking"),
         );
 
-        // Hide cursor when mouse leaves window
-        document.addEventListener("mouseleave", () => {
+        // Hide cursor when mouse leaves window or enters iframe
+        function hideCursor() {
           ball.style.opacity = "0";
           trails.forEach((t) => (t.style.opacity = "0"));
-        });
-        document.addEventListener("mouseenter", () => {
+        }
+        function showCursor() {
           ball.style.opacity = "1";
           trails.forEach((t) => (t.style.opacity = "1"));
-        });
+        }
+        document.addEventListener("mouseleave", hideCursor);
+        document.addEventListener("mouseenter", showCursor);
+
+        // Hide cursor when iframe captures the pointer
+        const iframeEl = document.getElementById("platform-iframe");
+        if (iframeEl) {
+          iframeEl.addEventListener("mouseenter", hideCursor);
+          iframeEl.addEventListener("mouseleave", showCursor);
+        }
 
         function animate() {
           ball.style.left = mouseX + "px";
