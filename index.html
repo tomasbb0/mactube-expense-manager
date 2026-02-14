@@ -52,7 +52,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.v14.css?v=30" />
+    <link rel="stylesheet" href="styles.v14.css?v=31" />
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -86,10 +86,12 @@
       }
 
       /* ── Transparent background when embedded ── */
+      .in-iframe {
+        font-size: 75%;
+      }
       .in-iframe body,
       .in-iframe #app-screen {
         background: transparent !important;
-        font-size: 75%;
       }
       .in-iframe .tab-content {
         padding: 0 !important;
@@ -3060,7 +3062,7 @@ Uma despesa por linha."
         pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     </script>
-    <script src="app.v14.js?v=30"></script>
+    <script src="app.v14.js?v=31"></script>
 
     <!-- Custom cursor -->
     <div class="cursor-ball" id="cursor-ball"></div>
@@ -3139,14 +3141,22 @@ Uma despesa por linha."
         pointer-events: none;
       "
     >
-      <div
+      <a
+        href="https://tomasbb0.github.io/TheBurnayLab/"
+        target="_blank"
+        rel="noopener noreferrer"
         style="
           display: inline-flex;
           align-items: center;
           gap: 5px;
           opacity: 0.35;
           pointer-events: auto;
+          text-decoration: none;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
         "
+        onmouseenter="this.style.opacity='0.7'"
+        onmouseleave="this.style.opacity='0.35'"
       >
         <span
           style="
@@ -3202,7 +3212,7 @@ Uma despesa por linha."
           "
           >The Burnay Labs</span
         >
-      </div>
+      </a>
     </div>
   </body>
 </html>

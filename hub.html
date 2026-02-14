@@ -1638,9 +1638,20 @@
 
       .access-panel {
         display: none;
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        position: absolute;
+        top: 100%;
+        right: 0;
+        z-index: 300;
+        min-width: 260px;
+        max-width: 320px;
+        padding: 14px 16px;
+        background: rgba(30, 30, 30, 0.95);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 6px;
       }
 
       .access-panel.open {
@@ -4729,12 +4740,23 @@
         function toggleAccessPanel(event, platformId) {
           event.stopPropagation();
           event.preventDefault();
+          // Close all other open panels first
+          document.querySelectorAll('.access-panel.open').forEach(p => {
+            if (p.id !== `access-panel-${platformId}`) p.classList.remove('open');
+          });
           const panel = document.getElementById(`access-panel-${platformId}`);
           if (panel) {
             panel.classList.toggle("open");
           }
         }
 
+
+        // Close access popup when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.access-panel') && !e.target.closest('.access-toggle-btn')) {
+            document.querySelectorAll('.access-panel.open').forEach(p => p.classList.remove('open'));
+          }
+        });
         function toggleAddUserForm() {
           const form = document.getElementById("add-user-form");
           form.classList.toggle("active");
@@ -5822,7 +5844,7 @@
       })();
     </script>
 
-    <!-- Powered by The Burnay Labs -->
+    <!-- Powered by The Burnay Labs (links to TheBurnayLab site) -->
     <div
       style="
         position: fixed;
@@ -5832,14 +5854,22 @@
         pointer-events: none;
       "
     >
-      <div
+      <a
+        href="https://tomasbb0.github.io/TheBurnayLab/"
+        target="_blank"
+        rel="noopener noreferrer"
         style="
           display: inline-flex;
           align-items: center;
           gap: 5px;
           opacity: 0.35;
           pointer-events: auto;
+          text-decoration: none;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
         "
+        onmouseenter="this.style.opacity='0.7'"
+        onmouseleave="this.style.opacity='0.35'"
       >
         <span
           style="
@@ -5895,7 +5925,7 @@
           "
           >The Burnay Labs</span
         >
-      </div>
+      </a>
     </div>
     <script>
       // Receive mousemove from iframe and proxy to cursor/grid effects

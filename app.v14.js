@@ -842,6 +842,9 @@ const DATA_VERSION = 17; // v17: Force full data regeneration
 
 function loadData() {
   const savedVersion = localStorage.getItem("maktub_data_version");
+  console.log(
+    `📊 loadData: savedVersion=${savedVersion}, DATA_VERSION=${DATA_VERSION}`,
+  );
 
   // Always regenerate if version mismatch — clear old data first
   if (savedVersion !== String(DATA_VERSION)) {
@@ -867,6 +870,7 @@ function loadData() {
       saveData();
     }
   }
+  console.log(`📊 loadData: ${expenses.length} expenses loaded`);
   updateDashboard();
   updateFilterDropdowns();
 }
