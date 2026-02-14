@@ -227,6 +227,86 @@
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         border: 1px solid rgba(255, 255, 255, 0.02);
       }
+
+      /* ══════════════════════════════════════════════
+         UNIVERSAL GLASS OVERRIDE — all containers
+         match the quick-action / hub glass style
+         ══════════════════════════════════════════════ */
+      .in-iframe {
+        --card-shadow:
+          0 2px 8px rgba(0, 0, 0, 0.1),
+          inset 0 0.5px 0 rgba(255, 255, 255, 0.04) !important;
+        --input-border: rgba(255, 255, 255, 0.006) !important;
+      }
+
+      /* Catch-all: every visible panel/card/section/table/row container */
+      .in-iframe .stat-card,
+      .in-iframe .chart-card,
+      .in-iframe .activity-item,
+      .in-iframe .content-header,
+      .in-iframe .dashboard-filter-bar,
+      .in-iframe .form-group,
+      .in-iframe .bulk-add-shortcut,
+      .in-iframe .summary-card,
+      .in-iframe .expense-table,
+      .in-iframe .table-container,
+      .in-iframe .filter-group,
+      .in-iframe .form-box,
+      .in-iframe .reports-export-section,
+      .in-iframe .dashboard-stats,
+      .in-iframe .chart-container,
+      .in-iframe .activity-feed,
+      .in-iframe .dashboard-charts,
+      .in-iframe .dashboard-activity,
+      .in-iframe .receipt-section,
+      .in-iframe .modal-content,
+      .in-iframe .reports-filters,
+      .in-iframe .reports-summary,
+      .in-iframe .amount-display,
+      .in-iframe .expense-card,
+      .in-iframe .dashboard-section,
+      .in-iframe .section,
+      .in-iframe .table-wrapper,
+      .in-iframe .activity-list,
+      .in-iframe .dashboard-date-range,
+      .in-iframe .reports-content,
+      .in-iframe .settlement-content,
+      .in-iframe .pivot-section {
+        background: transparent !important;
+        backdrop-filter: blur(16px) saturate(1.3) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(1.3) !important;
+        border: 1px solid rgba(255, 255, 255, 0.006) !important;
+        box-shadow:
+          0 2px 8px rgba(0, 0, 0, 0.1),
+          inset 0 0.5px 0 rgba(255, 255, 255, 0.04) !important;
+      }
+
+      /* Give bare sections proper glass padding + radius */
+      .in-iframe .section,
+      .in-iframe .table-wrapper,
+      .in-iframe .activity-list {
+        padding: 16px !important;
+        border-radius: 14px !important;
+      }
+
+      /* Quick-action buttons, type/investor selectors — same subtle glass */
+      .in-iframe .quick-action-btn,
+      .in-iframe .type-btn,
+      .in-iframe .investor-btn,
+      .in-iframe .header-btn,
+      .in-iframe .header-btn-wide {
+        border-color: rgba(255, 255, 255, 0.006) !important;
+        box-shadow:
+          0 2px 8px rgba(0, 0, 0, 0.1),
+          inset 0 0.5px 0 rgba(255, 255, 255, 0.04) !important;
+      }
+
+      /* Inputs, selects, textareas — uniform subtle border */
+      .in-iframe input,
+      .in-iframe select,
+      .in-iframe textarea {
+        border-color: rgba(255, 255, 255, 0.006) !important;
+      }
     </style>
     <!-- Auth Screen -->
     <div id="auth-screen" class="screen active">

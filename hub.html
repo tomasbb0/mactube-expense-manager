@@ -875,7 +875,7 @@
         transform: translateX(-50%);
         font-size: 0.38rem;
         padding: 1px 6px;
-        opacity: 0.5;
+        opacity: 1;
         letter-spacing: 0.3px;
         white-space: nowrap;
         z-index: 1;
@@ -1141,8 +1141,8 @@
 
       /* When iframe active, topbar is at 16px → adjust iframe top to follow */
       body.iframe-active #platform-iframe-container {
-        top: 82px;
-        height: calc(100% - 94px);
+        top: 100px;
+        height: calc(100% - 112px);
         transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                     height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
