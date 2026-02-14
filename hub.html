@@ -118,10 +118,10 @@
        ============================================ */
       :root {
         /* ── Master layout variables (controls ALL containers) ── */
-        --layout-top: 32px;          /* topbar distance from viewport top */
-        --layout-side: 48px;         /* lateral margin each side */
-        --layout-max: 1100px;        /* max width for all outermost containers */
-        --layout-content-top: 100px; /* vertical clearance below topbar */
+        --layout-top: 60px;          /* topbar distance from viewport top */
+        --layout-side: 64px;         /* lateral margin each side */
+        --layout-max: 960px;        /* max width for all outermost containers */
+        --layout-content-top: 110px; /* vertical clearance below topbar */
 
         --bg: #111111;
         --bg-secondary: #1a1a1a;
@@ -227,9 +227,7 @@
         stroke: #fff;
         stroke-width: 1;
         stroke-linecap: butt;
-        transition:
-          stroke 0.15s ease,
-          stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition: stroke 0.15s ease;
       }
       .intro-inner-circle {
         fill: none;
@@ -237,9 +235,7 @@
         stroke-width: 7;
         stroke-linecap: butt;
         opacity: 0;
-        transition:
-          stroke 0.15s ease,
-          stroke-width 0.7s cubic-bezier(0.5, 0, 1, 0.5);
+        transition: stroke 0.15s ease;
       }
 
       /* Green class toggled by JS */
@@ -432,16 +428,15 @@
       }
 
       .login-card {
-        background: transparent;
-        backdrop-filter: blur(8px) saturate(180%);
-        -webkit-backdrop-filter: blur(8px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(140%);
+        -webkit-backdrop-filter: blur(10px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.025);
         border-radius: var(--radius);
         padding: 32px 28px;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 1px rgba(255, 255, 255, 0.06),
-          inset 0 -1px 1px rgba(255, 255, 255, 0.03);
+          0 4px 16px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
         position: relative;
       }
 
@@ -615,18 +610,17 @@
       }
 
       .modal {
-        background: transparent;
-        backdrop-filter: blur(24px) saturate(180%);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(14px) saturate(140%);
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.03);
         border-radius: var(--radius);
         padding: 32px 28px;
         max-width: 420px;
         width: 100%;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.35),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+          0 4px 20px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
         animation: modalIn 0.3s ease;
         position: relative;
       }
@@ -700,15 +694,14 @@
         align-items: center;
         justify-content: space-between;
         padding: 8px 24px;
-        background: transparent;
-        backdrop-filter: blur(8px) saturate(200%);
-        -webkit-backdrop-filter: blur(8px) saturate(200%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(12px) saturate(150%);
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+        border: 1px solid rgba(255, 255, 255, 0.03);
         border-radius: 16px;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.2),
-          inset 0 1px 1px rgba(255, 255, 255, 0.06),
-          inset 0 -1px 1px rgba(255, 255, 255, 0.03);
+          0 4px 20px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
         flex-shrink: 0;
         gap: 12px;
         flex-wrap: nowrap;
@@ -730,6 +723,7 @@
         max-width: var(--layout-max);
         z-index: 200;
         margin: 0;
+        padding: 14px 24px;
       }
 
       .topbar-brand {
@@ -1155,16 +1149,16 @@
 
       .platform-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
         width: 100%;
       }
 
       .platform-card {
-        background: transparent;
-        backdrop-filter: blur(8px) saturate(200%);
-        -webkit-backdrop-filter: blur(8px) saturate(200%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(140%);
+        -webkit-backdrop-filter: blur(10px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.025);
         border-radius: var(--radius);
         overflow: hidden;
         cursor: pointer;
@@ -1174,9 +1168,8 @@
         display: flex;
         flex-direction: column;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+          0 4px 16px rgba(0, 0, 0, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.04);
         position: relative;
       }
 
@@ -1205,13 +1198,12 @@
 
       .platform-card:hover:not(.locked):not(.disabled) {
         transform: translateY(-4px);
-        background: transparent;
+        background: rgba(255, 255, 255, 0.025);
         border-color: rgba(255, 255, 255, 0.04);
         box-shadow:
-          0 12px 40px rgba(0, 0, 0, 0.3),
-          0 0 20px rgba(51, 233, 51, 0.06),
-          0 0 40px rgba(51, 233, 51, 0.03),
-          inset 0 1px 1px rgba(255, 255, 255, 0.15),
+          0 8px 28px rgba(0, 0, 0, 0.18),
+          0 0 16px rgba(51, 233, 51, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
           inset 0 -1px 1px rgba(0, 0, 0, 0.15);
       }
 
@@ -1644,16 +1636,15 @@
       }
 
       .user-table-container {
-        background: transparent;
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(140%);
+        -webkit-backdrop-filter: blur(10px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.025);
         border-radius: var(--radius);
         overflow-x: auto;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+          0 4px 16px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
       }
 
       .user-table {
@@ -1736,18 +1727,17 @@
 
       /* Add user form */
       .add-user-form {
-        background: transparent;
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(140%);
+        -webkit-backdrop-filter: blur(10px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.025);
         border-radius: var(--radius);
         padding: 24px;
         margin-top: 24px;
         display: none;
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+          0 4px 16px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
       }
 
       .add-user-form.active {
@@ -1818,16 +1808,16 @@
 
       .toast {
         padding: 12px 20px;
-        background: transparent;
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(12px) saturate(140%);
+        -webkit-backdrop-filter: blur(12px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.025);
         border-radius: var(--radius-sm);
         font-size: 0.9rem;
         color: var(--text);
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1);
+          0 4px 16px rgba(0, 0, 0, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
         animation:
           toastIn 0.3s ease,
           toastOut 0.3s ease 2.7s forwards;
@@ -2135,15 +2125,14 @@
       }
 
       .project-card {
-        background: transparent;
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(140%);
+        -webkit-backdrop-filter: blur(10px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.025);
         border-radius: var(--radius);
         box-shadow:
-          0 8px 32px rgba(0, 0, 0, 0.25),
-          inset 0 1px 1px rgba(255, 255, 255, 0.1),
-          inset 0 -1px 1px rgba(0, 0, 0, 0.12);
+          0 4px 16px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
         margin-bottom: 16px;
         overflow: hidden;
       }
@@ -4164,13 +4153,13 @@
         function animateStrokeThinning(svgEl) {
           if (!svgEl) return;
           var circles = svgEl.querySelectorAll("circle");
-          var dur = 2000;
+          var dur = 600;
           var start = performance.now();
           function tick(now) {
             var t = Math.min((now - start) / dur, 1);
-            // Exponential ease-in: slow start, rapid thin at end
-            var ease = t * t * t;
-            var sw = 7 * (1 - ease) + 0.05 * ease;
+            // Aggressive quintic ease-in: stays thick briefly then snaps thin fast
+            var ease = t * t * t * t * t;
+            var sw = 7 * (1 - ease) + 0.005 * ease;
             circles.forEach(function (c) {
               c.style.strokeWidth = sw;
             });
@@ -5451,8 +5440,8 @@
             const dy = event.clientY - cy;
             const distance = Math.sqrt(dx * dx + dy * dy);
             const maxDist = 400;
-            const minBlur = 16;
-            const maxBlur = 40;
+            const minBlur = 10;
+            const maxBlur = 24;
             const blur =
               distance < maxDist
                 ? minBlur +
