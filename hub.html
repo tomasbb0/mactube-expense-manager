@@ -4394,7 +4394,7 @@
           if (!svgEl) return;
           var circles = svgEl.querySelectorAll("circle");
           if (!circles.length) return;
-          var dur = 700;
+          var dur = 2000;
           var start = performance.now();
           function tick(now) {
             var t = Math.min((now - start) / dur, 1);
