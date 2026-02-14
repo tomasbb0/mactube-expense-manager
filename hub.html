@@ -4636,18 +4636,17 @@
             const isAdminUser = user.role === "owner" || user.role === "tech";
             const platformPerms = PLATFORMS.map((p) => {
               if (isAdminUser) {
-                return `<span style="font-size:0.8rem;color:var(--accent)">Edição (admin)</span>`;
+                return `<span style="font-size:0.7rem;color:var(--accent)">Edição</span>`;
               }
               const perm = getUserPermission(user.username, p.id);
               return `
-              <select class="access-select" data-username="${user.username}" data-platform="${p.id}" onchange="window._hub.changePermission(this)">
+              <select class="access-select" style="font-size:0.7rem;max-width:100%;padding:2px 4px;" data-username="${user.username}" data-platform="${p.id}" onchange="window._hub.changePermission(this)">
                 <option value="none" ${perm === "none" ? "selected" : ""}>Sem acesso</option>
-                <option value="view" ${perm === "view" ? "selected" : ""}>Visualização</option>
+                <option value="view" ${perm === "view" ? "selected" : ""}>Ver</option>
                 <option value="edit" ${perm === "edit" ? "selected" : ""}>Edição</option>
               </select>
-              <span style="font-size:0.7rem;margin-left:4px;color:var(--text-muted)">${p.name}</span>
             `;
-            }).join("<br>");
+            }).join("");
             const canDelete =
               user.username !== currentSession.username &&
               user.username !== "owner";

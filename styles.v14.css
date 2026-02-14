@@ -505,8 +505,8 @@ body {
 .stat-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 10px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.002);
   backdrop-filter: blur(6px) saturate(115%);
   -webkit-backdrop-filter: blur(6px) saturate(115%);
@@ -524,8 +524,8 @@ body {
 }
 
 .stat-icon {
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -533,8 +533,8 @@ body {
 }
 
 .stat-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
 }
 
 .icon-total {
@@ -563,13 +563,13 @@ body {
 }
 
 .stat-value {
-  font-size: 1.25rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
