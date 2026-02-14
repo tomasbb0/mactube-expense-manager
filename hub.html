@@ -703,7 +703,7 @@
         position: sticky;
         top: 20px;
         z-index: 100;
-        max-width: 1200px;
+        max-width: 900px;
         margin: 12px auto 0;
         width: calc(100% - 48px);
       }
@@ -4102,6 +4102,24 @@
           const dd = document.getElementById("profile-dropdown");
           if (dd && trigger && !trigger.contains(e.target)) {
             dd.classList.remove("open");
+          }
+        });
+
+        // Close dropdown on ESC key
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") {
+            const dd = document.getElementById("profile-dropdown");
+            if (dd) dd.classList.remove("open");
+            // Also close account modal if open
+            const modal = document.getElementById("account-modal-overlay");
+            if (modal && modal.style.display !== "none") {
+              modal.style.display = "none";
+            }
+            // Also close iframe if active
+            const container = document.getElementById("platform-iframe-container");
+            if (container && container.classList.contains("active")) {
+              closePlatformIframe();
+            }
           }
         });
 
