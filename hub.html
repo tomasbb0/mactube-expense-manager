@@ -687,12 +687,12 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 14px 24px;
+        padding: 12px 28px;
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(24px) saturate(200%);
         -webkit-backdrop-filter: blur(24px) saturate(200%);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 16px;
+        border-radius: 999px;
         box-shadow:
           0 8px 32px rgba(0, 0, 0, 0.25),
           0 0 0 0.5px rgba(255, 255, 255, 0.04),
@@ -700,11 +700,13 @@
           inset 0 -1px 0 rgba(0, 0, 0, 0.1);
         flex-shrink: 0;
         gap: 12px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         position: sticky;
         top: 12px;
         z-index: 100;
-        margin: 12px 16px 0;
+        max-width: 1200px;
+        margin: 12px auto 0;
+        width: calc(100% - 48px);
       }
 
       .topbar-brand {
@@ -2752,12 +2754,24 @@
         </div>
       </div>
 
+
+
+      <div class="hub-content">
+        <div class="hub-inner">
+          <div class="hub-section-title">Plataformas</div>
+          <div class="platform-grid" id="platform-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </div>
+
       <!-- Iframe container for embedded platforms -->
       <div id="platform-iframe-container">
         <iframe id="platform-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups"></iframe>
       </div>
 
-      <!-- Account Details Modal -->
+          <!-- Account Details Modal -->
       <div class="account-modal-overlay" id="account-modal-overlay" onclick="window._hub.closeAccountModal()">
         <div class="account-modal" onclick="event.stopPropagation()">
           <div class="account-modal-header">
@@ -2793,17 +2807,7 @@
         </div>
       </div>
 
-      <div class="hub-content">
-        <div class="hub-inner">
-          <div class="hub-section-title">Plataformas</div>
-          <div class="platform-grid" id="platform-grid">
-            <!-- Dynamically populated -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ==========================================
+        <!-- ==========================================
        USER MANAGEMENT SCREEN
        ========================================== -->
     <div id="management-screen" class="screen">
@@ -4028,7 +4032,6 @@
           if (container && iframe) {
             iframe.src = platform.url;
             container.classList.add("active");
-            document.getElementById("hub-screen").style.display = "none";
           } else {
             // Fallback: direct navigation
             sessionStorage.setItem("maktub_internal_nav", "true");
@@ -4042,7 +4045,6 @@
           const iframe = document.getElementById("platform-iframe");
           if (container) {
             container.classList.remove("active");
-            document.getElementById("hub-screen").style.display = "";
           }
           if (iframe) iframe.src = "";
         }
@@ -4368,9 +4370,8 @@
               if (e.key === "Enter")
                 document.getElementById("login-password").focus();
             });
-          document
-            .getElementById("logout-btn")
-            .addEventListener("click", handleLogout);
+          const logoutBtn = document.getElementById("logout-btn");
+          if (logoutBtn) logoutBtn.addEventListener("click", handleLogout);
           document
             .getElementById("email-save-btn")
             .addEventListener("click", handleEmailSave);
