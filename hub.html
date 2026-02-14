@@ -4394,12 +4394,12 @@
           if (!svgEl) return;
           var circles = svgEl.querySelectorAll("circle");
           if (!circles.length) return;
-          var dur = 400;
+          var dur = 700;
           var start = performance.now();
           function tick(now) {
             var t = Math.min((now - start) / dur, 1);
             // Very aggressive ease-out: thins instantly from the start
-            var ease = 1 - Math.pow(1 - t, 0.8);
+            var ease = t * t * (3 - 2 * t);
             var sw = 7 * (1 - ease);
             circles.forEach(function (c) {
               c.style.setProperty("stroke-width", sw, "important");
