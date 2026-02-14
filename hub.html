@@ -121,7 +121,7 @@
         --layout-top: 60px;          /* topbar distance from viewport top */
         --layout-side: 64px;         /* lateral margin each side */
         --layout-max: 960px;        /* max width for all outermost containers */
-        --layout-content-top: 110px; /* vertical clearance below topbar */
+        --layout-content-top: 148px; /* vertical clearance below topbar */
 
         --bg: #111111;
         --bg-secondary: #1a1a1a;
@@ -850,6 +850,18 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+      }
+      .profile-avatar-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+      #hub-role-badge {
+        font-size: 0.4rem;
+        padding: 1px 5px;
+        opacity: 0.45;
+        letter-spacing: 0.3px;
       }
       .profile-dropdown {
         position: absolute;
@@ -2752,9 +2764,11 @@
           >
             <div class="user-info">
               <span id="hub-greeting"></span>
+            </div>
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="profile-avatar"></div>
               <span class="role-badge" id="hub-role-badge"></span>
             </div>
-            <div class="profile-avatar" id="profile-avatar"></div>
             <div class="profile-dropdown" id="profile-dropdown">
               <div class="dd-header">
                 <div class="dd-avatar" id="dd-avatar"></div>
