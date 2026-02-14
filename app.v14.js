@@ -152,7 +152,7 @@ function handleLogout() {
   localStorage.removeItem("maktub_hub_session");
   // If inside iframe, tell parent to close iframe and go back to hub
   if (window.self !== window.top) {
-    window.parent.postMessage({ type: 'closePlatform' }, '*');
+    window.parent.postMessage({ type: "closePlatform" }, "*");
     return;
   }
   // Mark as internal navigation so hub.html skips the intro animation

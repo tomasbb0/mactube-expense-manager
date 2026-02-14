@@ -52,14 +52,20 @@
     <script>
       // When loaded inside an iframe (hub.html), hide the app header
       if (window.self !== window.top) {
-        document.documentElement.classList.add('in-iframe');
+        document.documentElement.classList.add("in-iframe");
       }
     </script>
     <style>
-      .in-iframe .app-header { display: none !important; }
-      .in-iframe #app-screen { padding-top: 0 !important; }
+      .in-iframe .app-header {
+        display: none !important;
+      }
+      .in-iframe #app-screen {
+        padding-top: 0 !important;
+      }
       /* Hide auth flash when in iframe (user already authenticated via hub) */
-      .in-iframe #auth-screen.active { opacity: 0; }
+      .in-iframe #auth-screen.active {
+        opacity: 0;
+      }
     </style>
     <!-- Auth Screen -->
     <div id="auth-screen" class="screen active">
