@@ -45,7 +45,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.v14.css?v=26" />
+    <link rel="stylesheet" href="styles.v14.css?v=27" />
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -53,6 +53,17 @@
       // When loaded inside an iframe (hub.html), hide the app header
       if (window.self !== window.top) {
         document.documentElement.classList.add("in-iframe");
+        // Forward mousemove to parent for cursor/grid effects
+        document.addEventListener("mousemove", function (e) {
+          window.parent.postMessage(
+            {
+              type: "iframe-mousemove",
+              clientX: e.clientX,
+              clientY: e.clientY,
+            },
+            "*",
+          );
+        });
       }
     </script>
     <style>
@@ -76,13 +87,13 @@
         padding: 0 !important;
       }
       .in-iframe .tabs {
-        background: transparent !important;
-        backdrop-filter: blur(20px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-        border: 1px solid rgba(255, 255, 255, 0.02) !important;
+        background: rgba(255, 255, 255, 0.005) !important;
+        backdrop-filter: blur(4px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(4px) saturate(200%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.015) !important;
         border-radius: 14px !important;
         margin: 16px 0 12px !important;
-        box-shadow: none !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03) !important;
       }
       /* Remove form wrapper background — fields float loose */
       .in-iframe .form-box {

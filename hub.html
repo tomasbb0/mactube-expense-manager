@@ -121,7 +121,7 @@
         --layout-top: 60px;          /* topbar distance from viewport top */
         --layout-side: 64px;         /* lateral margin each side */
         --layout-max: 960px;        /* max width for all outermost containers */
-        --layout-content-top: 148px; /* vertical clearance below topbar */
+        --layout-content-top: 160px; /* vertical clearance below topbar */
 
         --bg: #111111;
         --bg-secondary: #1a1a1a;
@@ -162,6 +162,11 @@
       #intro-screen.fade-out {
         opacity: 0;
         pointer-events: none;
+      }
+      /* Gradually reveal grid bg behind intro */
+      #intro-screen.bg-reveal {
+        background: transparent !important;
+        transition: background 1.2s ease !important;
       }
 
       #intro-screen.hidden {
@@ -855,13 +860,19 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 2px;
+        position: relative;
       }
       #hub-role-badge {
-        font-size: 0.4rem;
-        padding: 1px 5px;
-        opacity: 0.45;
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.38rem;
+        padding: 1px 6px;
+        opacity: 0.5;
         letter-spacing: 0.3px;
+        white-space: nowrap;
+        z-index: 1;
       }
       .profile-dropdown {
         position: absolute;
@@ -3474,6 +3485,8 @@
             // Fade in the grid background with the green
             const gridCanvas = document.getElementById("grid-canvas");
             if (gridCanvas) gridCanvas.classList.add("visible");
+            // Start fading intro bg so grid shows through
+            introScreen.classList.add("bg-reveal");
           }, 1100);
 
           // Phase 2: Fly to destination at 2600ms
@@ -5564,5 +5577,24 @@
         >
       </div>
     </div>
+    <script>
+      // Receive mousemove from iframe and proxy to cursor/grid effects
+      window.addEventListener("message", function(e) {
+        if (e.data && e.data.type === "iframe-mousemove") {
+          var iframeEl = document.querySelector("#platform-iframe-container iframe");
+          if (!iframeEl) return;
+          var rect = iframeEl.getBoundingClientRect();
+          var pageX = rect.left + e.data.clientX;
+          var pageY = rect.top + e.data.clientY;
+          // Dispatch synthetic mousemove on document
+          var synth = new MouseEvent("mousemove", {
+            clientX: pageX,
+            clientY: pageY,
+            bubbles: true
+          });
+          document.dispatchEvent(synth);
+        }
+      });
+    </script>
   </body>
 </html>
