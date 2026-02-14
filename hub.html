@@ -118,10 +118,10 @@
        ============================================ */
       :root {
         /* ── Master layout variables (controls ALL containers) ── */
-        --layout-top: 80px;          /* topbar distance from viewport top */
+        --layout-top: 48px;          /* topbar distance from viewport top */
         --layout-side: 64px;         /* lateral margin each side */
         --layout-max: 880px;        /* max width for all outermost containers */
-        --layout-content-top: 180px; /* vertical clearance below topbar */
+        --layout-content-top: 140px; /* vertical clearance below topbar */
 
         --bg: #111111;
         --bg-secondary: #1a1a1a;
@@ -702,7 +702,7 @@
         background: rgba(255, 255, 255, 0.02);
         backdrop-filter: blur(12px) saturate(150%);
         -webkit-backdrop-filter: blur(12px) saturate(150%);
-        border: 1px solid rgba(255, 255, 255, 0.03);
+        border: none;
         border-radius: 16px;
         box-shadow:
           0 4px 20px rgba(0, 0, 0, 0.1),
@@ -716,6 +716,30 @@
         max-width: var(--layout-max);
         margin: var(--layout-top) auto 0;
         width: calc(100% - var(--layout-side) * 2);
+      }
+
+      /* ── Liquid glass gradient border (10% intensity) ── */
+      .topbar::before,
+      .platform-card::after,
+      .profile-dropdown::before,
+      .modal-box::before,
+      .hub-section-title::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.075),
+          rgba(255, 255, 255, 0.025)
+        );
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: 0;
       }
 
       /* Hub topbar: fixed to persist above iframe */
@@ -879,6 +903,19 @@
         letter-spacing: 0.3px;
         white-space: nowrap;
         z-index: 1;
+        background: rgba(28, 28, 28, 0.95);
+      }
+      #hub-role-badge.owner {
+        background: rgba(40, 30, 0, 0.95);
+        color: #ffb400;
+      }
+      #hub-role-badge.tech {
+        background: rgba(0, 20, 45, 0.95);
+        color: #0096ff;
+      }
+      #hub-role-badge.user {
+        background: rgba(10, 35, 10, 0.95);
+        color: #33e933;
       }
       .profile-dropdown {
         position: absolute;
@@ -896,7 +933,7 @@
         visibility: hidden;
         transform: translateY(-8px) scale(0.96);
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 200;
+        z-index: 9999;
       }
       .profile-dropdown.open {
         opacity: 1;
@@ -1134,6 +1171,8 @@
         overflow: hidden;
         border: none;
         box-shadow: none;
+        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                    height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
       #platform-iframe-container.active {
         display: block;
@@ -5611,6 +5650,48 @@
           document.dispatchEvent(synth);
         }
       });
+    </script>
+
+    <!-- Dynamic topbar ↔ content spacing -->
+    <script>
+      (function () {
+        var GAP = 20; // fixed pixel gap between topbar bottom and first container
+        var topbar = document.getElementById("hub-topbar");
+        if (!topbar) return;
+
+        function sync() {
+          var h = topbar.getBoundingClientRect();
+          var newTop = h.bottom + GAP;
+          document.documentElement.style.setProperty(
+            "--layout-content-top",
+            newTop + "px",
+          );
+        }
+        // Initial sync + on resize
+        sync();
+        window.addEventListener("resize", sync);
+
+        // Re-sync when iframe toggled (topbar slides, wait for transition)
+        var obs = new MutationObserver(function () {
+          // Transition is 0.4s
+          requestAnimationFrame(function () {
+            setTimeout(sync, 420);
+          });
+        });
+        obs.observe(document.body, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+
+        // Re-sync on hub-screen visibility
+        var hub = document.getElementById("hub-screen");
+        if (hub) {
+          obs.observe(hub, {
+            attributes: true,
+            attributeFilter: ["class"],
+          });
+        }
+      })();
     </script>
   </body>
 </html>

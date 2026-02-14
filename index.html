@@ -307,6 +307,68 @@
       .in-iframe textarea {
         border-color: rgba(255, 255, 255, 0.006) !important;
       }
+
+      /* ══════════════════════════════════════════════
+         LIQUID GLASS GRADIENT BORDER (10% intensity)
+         Applied to all containers via ::before
+         ══════════════════════════════════════════════ */
+      .in-iframe .stat-card,
+      .in-iframe .chart-card,
+      .in-iframe .activity-item,
+      .in-iframe .content-header,
+      .in-iframe .dashboard-filter-bar,
+      .in-iframe .dashboard-quick-actions,
+      .in-iframe .form-group,
+      .in-iframe .bulk-add-shortcut,
+      .in-iframe .summary-card,
+      .in-iframe .table-wrapper,
+      .in-iframe .section,
+      .in-iframe .activity-list,
+      .in-iframe .tabs,
+      .in-iframe .quick-action-btn,
+      .in-iframe .type-btn,
+      .in-iframe .investor-btn {
+        position: relative !important;
+        border: none !important;
+      }
+
+      .in-iframe .stat-card::before,
+      .in-iframe .chart-card::before,
+      .in-iframe .activity-item::before,
+      .in-iframe .content-header::before,
+      .in-iframe .dashboard-filter-bar::before,
+      .in-iframe .dashboard-quick-actions::before,
+      .in-iframe .form-group::before,
+      .in-iframe .bulk-add-shortcut::before,
+      .in-iframe .summary-card::before,
+      .in-iframe .table-wrapper::before,
+      .in-iframe .section::before,
+      .in-iframe .activity-list::before,
+      .in-iframe .tabs::before,
+      .in-iframe .quick-action-btn::before,
+      .in-iframe .type-btn::before,
+      .in-iframe .investor-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.075),
+          rgba(255, 255, 255, 0.025)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: 0;
+      }
     </style>
     <!-- Auth Screen -->
     <div id="auth-screen" class="screen active">
