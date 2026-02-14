@@ -65,6 +65,25 @@
       // When loaded inside an iframe (hub.html), hide the app header
       if (window.self !== window.top) {
         document.documentElement.classList.add("in-iframe");
+        // Auto-set user if not already set (hub should have set it, but just in case)
+        if (!localStorage.getItem("maktub_user")) {
+          var hubSession = localStorage.getItem("maktub_hub_session");
+          if (hubSession) {
+            try {
+              var sess = JSON.parse(hubSession);
+              localStorage.setItem("maktub_user", JSON.stringify({
+                email: sess.username + "@maktub.pt",
+                name: sess.name || sess.username
+              }));
+            } catch(e) {}
+          } else {
+            // Final fallback: create default user so app shows data
+            localStorage.setItem("maktub_user", JSON.stringify({
+              email: "user@maktub.pt",
+              name: "Utilizador"
+            }));
+          }
+        }
         // Forward mousemove to parent for cursor/grid effects
         document.addEventListener("mousemove", function (e) {
           window.parent.postMessage(
@@ -86,8 +105,14 @@
         padding-top: 0 !important;
       }
       /* Hide auth flash when in iframe (user already authenticated via hub) */
-      .in-iframe #auth-screen.active {
-        opacity: 0;
+      .in-iframe #auth-screen {
+        display: none !important;
+      }
+      .in-iframe #app-screen {
+        display: block !important;
+      }
+      .in-iframe #app-screen.hidden {
+        display: block !important;
       }
 
       /* ── Transparent background when embedded ── */
@@ -3194,88 +3219,5 @@ Uma despesa por linha."
       })();
     </script>
 
-    <!-- Powered by The Burnay Labs -->
-    <div
-      style="
-        position: fixed;
-        bottom: 10px;
-        right: 14px;
-        z-index: 9;
-        pointer-events: none;
-      "
-    >
-      <a
-        href="https://tomasbb0.github.io/TheBurnayLabs/"
-        target="_blank"
-        rel="noopener noreferrer"
-        style="
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          opacity: 0.35;
-          pointer-events: auto;
-          text-decoration: none;
-          cursor: pointer;
-          transition: opacity 0.2s ease;
-        "
-        onmouseenter="this.style.opacity = '0.7'"
-        onmouseleave="this.style.opacity = '0.35'"
-      >
-        <span
-          style="
-            font-family: Arial, sans-serif;
-            font-size: 10px;
-            font-weight: 400;
-            color: #fafafa;
-            letter-spacing: 0.5px;
-          "
-          >Powered by</span
-        >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="-2 -2 100 114"
-          width="13"
-          height="15"
-          style="flex-shrink: 0"
-        >
-          <path
-            d="M10,6 L48,6 L58,16 L58,38 L48,48 L58,58 L58,84 L48,96 L10,96 Z"
-            stroke="#fafafa"
-            stroke-width="2.5"
-            fill="none"
-            stroke-linejoin="miter"
-            stroke-linecap="butt"
-          />
-          <line
-            x1="10"
-            y1="48"
-            x2="48"
-            y2="48"
-            stroke="#fafafa"
-            stroke-width="2.5"
-          />
-          <polyline
-            points="70,4 70,70 48,96 92,96"
-            stroke="#fafafa"
-            stroke-width="2.5"
-            fill="none"
-            stroke-linejoin="miter"
-            stroke-linecap="butt"
-          />
-        </svg>
-        <span
-          style="
-            font-family:
-              &quot;Avenir Next&quot;, &quot;Avenir&quot;,
-              &quot;Helvetica Neue&quot;, sans-serif;
-            font-size: 10px;
-            font-weight: 300;
-            color: #fafafa;
-            letter-spacing: 0.5px;
-          "
-          >The Burnay Labs</span
-        >
-      </a>
-    </div>
   </body>
 </html>
