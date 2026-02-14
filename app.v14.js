@@ -1,21 +1,10 @@
 // Maktub Art Group - Expense Manager App
 // ==========================================
 
-// Self-healing: if this version of app.js is newer than what's stored, clear stale data immediately
+// Self-healing: clear any stale localStorage data
 (function selfHeal() {
-  var REQUIRED_VERSION = 15;
-  var v = localStorage.getItem("maktub_data_version");
-  if (v && parseInt(v) < REQUIRED_VERSION) {
-    localStorage.removeItem("maktub_expenses");
-    localStorage.removeItem("maktub_data_version");
-    console.log(
-      "🔄 Self-heal: cleared stale data (v" +
-        v +
-        " → v" +
-        REQUIRED_VERSION +
-        ")",
-    );
-  }
+  localStorage.removeItem("maktub_expenses");
+  localStorage.removeItem("maktub_data_version");
 })();
 
 // Google Sheets Integration
@@ -838,45 +827,19 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 17; // v17: Force full data regeneration
+const DATA_VERSION = 18; // v18: Always load fresh data — bypass all caching
 
 function loadData() {
-  const savedVersion = localStorage.getItem("maktub_data_version");
-  console.log(
-    `📊 loadData: savedVersion=${savedVersion}, DATA_VERSION=${DATA_VERSION}`,
-  );
-
-  // Always regenerate if version mismatch — clear old data first
-  if (savedVersion !== String(DATA_VERSION)) {
-    console.log(
-      `🔄 Data version mismatch (saved: ${savedVersion}, current: ${DATA_VERSION}). Regenerating...`,
-    );
-    localStorage.removeItem("maktub_expenses");
-    localStorage.removeItem("maktub_data_version");
-    expenses = generateDemoData(300);
-    saveData();
-    localStorage.setItem("maktub_data_version", String(DATA_VERSION));
-  } else {
-    const saved = localStorage.getItem("maktub_expenses");
-    if (saved) {
-      expenses = JSON.parse(saved);
-      if (!Array.isArray(expenses) || expenses.length === 0) {
-        console.log("⚠️ Saved data was empty, regenerating...");
-        expenses = generateDemoData(300);
-        saveData();
-      }
-    } else {
-      expenses = generateDemoData(300);
-      saveData();
-    }
-  }
+  // Always generate fresh data from hardcoded source — no localStorage dependency
+  console.log("📊 loadData: generating fresh data from getAllDemoData()");
+  expenses = generateDemoData(300);
   console.log(`📊 loadData: ${expenses.length} expenses loaded`);
   updateDashboard();
   updateFilterDropdowns();
 }
 
 function saveData() {
-  localStorage.setItem("maktub_expenses", JSON.stringify(expenses));
+  // No-op: data is always freshly generated
 }
 
 // Deduplicate expenses - removes duplicates by ID (the simplest approach!)
