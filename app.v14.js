@@ -111,11 +111,7 @@ function initApp() {
     } catch (e) {}
   }
 }
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initApp);
-} else {
-  initApp();
-}
+// initApp() moved to end of file (after all const declarations)
 
 // ==========================================
 // AUTH
@@ -248,7 +244,8 @@ function showApp() {
   authScreen.classList.add("hidden");
   authScreen.classList.remove("active");
   appScreen.classList.remove("hidden");
-  document.getElementById("user-greeting").textContent = currentUser.name;
+  var greet = document.getElementById("user-greeting");
+  if (greet) greet.textContent = currentUser.name;
   updateDashboard();
   updateFilterDropdowns();
 }
@@ -5630,3 +5627,13 @@ window.startTutorial = startTutorial;
 window.nextTutorialStep = nextTutorialStep;
 window.prevTutorialStep = prevTutorialStep;
 window.endTutorial = endTutorial;
+
+
+// ==========================================
+// BOOTSTRAP — must be after all const/let declarations
+// ==========================================
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
