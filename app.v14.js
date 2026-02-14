@@ -81,6 +81,14 @@ const toast = document.getElementById("toast");
 
 // Initialize App
 function initApp() {
+  // Load data FIRST - this must happen regardless of other init
+  try {
+    loadData();
+    console.log(`✅ Data loaded: ${expenses.length} expenses`);
+  } catch (dataErr) {
+    console.error("❌ loadData error:", dataErr);
+  }
+
   try {
     initTabs();
     initCustomShortcuts();
@@ -90,12 +98,17 @@ function initApp() {
     initAuth();
     initGoogleSheetsSync();
     setDefaultDate();
-    loadData();
+    updateDashboard();
+    updateFilterDropdowns();
     console.log(`✅ App initialized. ${expenses.length} expenses loaded.`);
     document.title = `Despesas (${expenses.length} registos)`;
   } catch (err) {
     console.error("❌ initApp error:", err);
     document.title = `ERROR: ${err.message}`;
+    // Even if init fails, try to show dashboard with data
+    try {
+      updateDashboard();
+    } catch (e) {}
   }
 }
 if (document.readyState === "loading") {

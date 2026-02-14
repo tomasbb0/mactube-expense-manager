@@ -39,8 +39,8 @@
 
       .cursor-ball {
         position: fixed;
-        width: 12px;
-        height: 12px;
+        width: 13px;
+        height: 13px;
         background: transparent;
         border: 1.5px solid rgba(255, 255, 255, 0.85);
         border-radius: 50%;
@@ -51,25 +51,34 @@
         transition:
           width 0.15s,
           height 0.15s,
-          box-shadow 0.15s;
+          box-shadow 0.15s,
+          border-color 0.15s,
+          background 0.15s;
       }
 
       .cursor-ball.clicking {
-        width: 8px;
-        height: 8px;
+        width: 9px;
+        height: 9px;
         box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.12);
+      }
+
+      .cursor-ball.cursor-hover {
+        border-color: #33e933;
+        background: rgba(51, 233, 51, 0.15);
+        box-shadow: 0 0 6px 2px rgba(51, 233, 51, 0.18);
       }
 
       .cursor-trail {
         position: fixed;
-        width: 6px;
-        height: 6px;
+        width: 13px;
+        height: 13px;
         background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         border-radius: 50%;
         pointer-events: none;
         z-index: 99998;
         transform: translate(-50%, -50%);
+        transition: border-color 0.15s;
       }
 
       /* ============================================
@@ -127,7 +136,7 @@
         /* ── Master layout variables (controls ALL containers) ── */
         --layout-top: 80px;         /* topbar distance from viewport top */
         --layout-side: 88px;         /* lateral margin each side */
-        --layout-max: 800px;        /* max width for all outermost containers */
+        --layout-max: 1200px;        /* max width for all outermost containers */
         --layout-content-top: 160px; /* vertical clearance below topbar */
 
         --bg: #111111;
@@ -724,7 +733,6 @@
       }
 
       /* ── Liquid glass gradient border (10% intensity) ── */
-      .topbar::before,
       .platform-card::after,
       .profile-dropdown::before,
       .account-modal::before {
@@ -758,6 +766,15 @@
         margin: 0;
         padding: 14px 24px;
         transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border-radius: 0 !important;
+      }
+      #hub-topbar::before {
+        display: none !important;
       }
 
       /* When iframe is open, topbar slides up to maximize content area */
@@ -3719,13 +3736,7 @@
               introScreen.classList.add("zoom-through-bg");
 
               // Zoom! Logo scales up massively — circles rush past the camera
-              // non-scaling-stroke keeps strokes at fixed pixel size as circles scale up
-              if (svg)
-                svg
-                  .querySelectorAll("circle")
-                  .forEach((c) =>
-                    c.setAttribute("vector-effect", "non-scaling-stroke"),
-                  );
+              // Let natural scaling thin the strokes as the logo expands
               container.classList.add("zoom-through");
               void container.offsetWidth; // force reflow
               container.style.transform = "scale(200)";
@@ -3796,14 +3807,8 @@
           if (loginLogo) loginLogo.style.visibility = "";
 
           // Zoom through! Logo scales up from login center position
-          // non-scaling-stroke keeps strokes at fixed pixel size during zoom
+          // Let natural scaling thin the strokes as the logo expands
           const svg = container.querySelector("svg");
-          if (svg)
-            svg
-              .querySelectorAll("circle")
-              .forEach((c) =>
-                c.setAttribute("vector-effect", "non-scaling-stroke"),
-              );
           container.classList.add("zoom-through");
           void container.offsetWidth;
           container.style.transform = "scale(200)";
@@ -4352,7 +4357,11 @@
           );
           const iframe = document.getElementById("platform-iframe");
           if (container && iframe) {
-            iframe.src = platform.url + "?nocache=" + Date.now();
+            // Force full reload: clear iframe first, then set new src with cache-bust
+            iframe.src = "about:blank";
+            setTimeout(() => {
+              iframe.src = platform.url + "?nocache=" + Date.now() + "&v=50";
+            }, 50);
             container.classList.add("active");
             document.body.classList.add("iframe-active");
           } else {
@@ -4384,17 +4393,25 @@
         function animateStrokeThinning(svgEl) {
           if (!svgEl) return;
           var circles = svgEl.querySelectorAll("circle");
-          var dur = 600;
+          if (!circles.length) return;
+          var dur = 400;
           var start = performance.now();
           function tick(now) {
             var t = Math.min((now - start) / dur, 1);
-            // Aggressive quintic ease-in: stays thick briefly then snaps thin fast
-            var ease = t * t * t * t * t;
-            var sw = 7 * (1 - ease) + 0.005 * ease;
+            // Very aggressive ease-out: thins instantly from the start
+            var ease = 1 - Math.pow(1 - t, 0.8);
+            var sw = 7 * (1 - ease);
             circles.forEach(function (c) {
+              c.setAttribute("stroke-width", sw);
               c.style.strokeWidth = sw;
             });
             if (t < 1) requestAnimationFrame(tick);
+            else {
+              circles.forEach(function (c) {
+                c.setAttribute("stroke-width", "0");
+                c.style.strokeWidth = "0";
+              });
+            }
           }
           requestAnimationFrame(tick);
         }
@@ -5506,9 +5523,23 @@
         let mouseX = -100,
           mouseY = -100;
 
+        let isHovering = false;
+
+        const clickableSelector =
+          'a, button, select, input, textarea, [onclick], [role="button"], .platform-card, .tab, .btn, .profile-avatar-btn, .dd-item, .modal-close, label, summary, .topbar-logo, .topbar-brand';
+
         document.addEventListener("mousemove", (e) => {
           mouseX = e.clientX;
           mouseY = e.clientY;
+          // Detect hover over clickable elements
+          const el = document.elementFromPoint(e.clientX, e.clientY);
+          if (el && el.closest(clickableSelector)) {
+            ball.classList.add("cursor-hover");
+            isHovering = true;
+          } else {
+            ball.classList.remove("cursor-hover");
+            isHovering = false;
+          }
         });
 
         document.addEventListener("mousedown", () =>
@@ -5532,21 +5563,29 @@
           ball.style.left = mouseX + "px";
           ball.style.top = mouseY + "px";
 
+          const greenColor = "rgba(51, 233, 51, ";
+          const whiteColor = "rgba(255, 255, 255, ";
+
           let prevX = mouseX,
             prevY = mouseY;
           for (let i = 0; i < trailCount; i++) {
             const pos = positions[i];
             // Ease toward previous position
-            pos.x += (prevX - pos.x) * 0.35;
-            pos.y += (prevY - pos.y) * 0.35;
+            pos.x += (prevX - pos.x) * 0.55;
+            pos.y += (prevY - pos.y) * 0.55;
             trails[i].style.left = pos.x + "px";
             trails[i].style.top = pos.y + "px";
             // Fade out further trail dots
             const opacity = 0.3 * (1 - i / trailCount);
-            const size = 6 * (1 - i / (trailCount * 1.5));
             trails[i].style.opacity = opacity;
-            trails[i].style.width = size + "px";
-            trails[i].style.height = size + "px";
+            trails[i].style.width = "13px";
+            trails[i].style.height = "13px";
+            // Color trails to match cursor hover state
+            const baseColor = isHovering ? greenColor : whiteColor;
+            const borderAlpha = isHovering
+              ? 0.35 * (1 - i / trailCount)
+              : 0.25 * (1 - i / trailCount);
+            trails[i].style.borderColor = baseColor + borderAlpha + ")";
             prevX = pos.x;
             prevY = pos.y;
           }

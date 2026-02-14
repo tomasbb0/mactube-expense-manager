@@ -52,7 +52,12 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.v14.css?v=32" />
+    <link rel="stylesheet" href="styles.v14.css?v=50&t=20260122" />
+    <script>
+      // Force-bust CSS cache too
+      document.querySelector('link[href*="styles.v14.css"]').href =
+        "styles.v14.css?_=" + Date.now() + Math.random();
+    </script>
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
   <body>
@@ -87,7 +92,7 @@
 
       /* ── Transparent background when embedded ── */
       .in-iframe {
-        font-size: 75%;
+        font-size: 82%;
       }
       .in-iframe body,
       .in-iframe #app-screen {
@@ -3062,7 +3067,45 @@ Uma despesa por linha."
         pdfjsLib.GlobalWorkerOptions.workerSrc =
           "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     </script>
-    <script src="app.v14.js?v=32"></script>
+    <script>
+      // 100% cache bypass: dynamically inject script with unique timestamp
+      (function () {
+        var s = document.createElement("script");
+        s.src = "app.v14.js?_=" + Date.now() + Math.random();
+        s.onload = function () {
+          console.log("✅ app.v14.js loaded fresh (no cache)");
+        };
+        s.onerror = function () {
+          console.error("❌ Failed to load app.v14.js");
+          document.title = "ERROR: script load failed";
+        };
+        document.body.appendChild(s);
+      })();
+
+      // FAILSAFE: If after 4 seconds the app hasn't loaded data, force-load it
+      setTimeout(function () {
+        if (typeof expenses !== 'undefined' && expenses.length === 0 && typeof loadData === 'function') {
+          console.warn('⚠️ Failsafe: forcing loadData()');
+          try { loadData(); } catch(e) { console.error('Failsafe loadData error:', e); }
+        }
+        if (typeof expenses !== 'undefined' && typeof updateDashboard === 'function') {
+          try { updateDashboard(); } catch(e) { console.error('Failsafe updateDashboard error:', e); }
+        }
+        // Force show app screen regardless
+        var appScr = document.getElementById('app-screen');
+        var authScr = document.getElementById('auth-screen');
+        if (appScr && authScr && appScr.classList.contains('hidden')) {
+          console.warn('⚠️ Failsafe: forcing app screen visible');
+          authScr.classList.add('hidden');
+          authScr.classList.remove('active');
+          appScr.classList.remove('hidden');
+        }
+      }, 4000);
+    </script>
+        };
+        document.body.appendChild(s);
+      })();
+    </script>
 
     <!-- Custom cursor -->
     <div class="cursor-ball" id="cursor-ball"></div>
@@ -3084,9 +3127,22 @@ Uma despesa por linha."
         let mouseX = -100,
           mouseY = -100;
 
+        let isHovering = false;
+
+        const clickableSelector =
+          'a, button, select, input, textarea, [onclick], [role="button"], .tab, .btn, .modal-close, label, summary, .filter-btn, .stat-card';
+
         document.addEventListener("mousemove", (e) => {
           mouseX = e.clientX;
           mouseY = e.clientY;
+          const el = document.elementFromPoint(e.clientX, e.clientY);
+          if (el && el.closest(clickableSelector)) {
+            ball.classList.add("cursor-hover");
+            isHovering = true;
+          } else {
+            ball.classList.remove("cursor-hover");
+            isHovering = false;
+          }
         });
 
         document.addEventListener("mousedown", () =>
@@ -3109,19 +3165,26 @@ Uma despesa por linha."
           ball.style.left = mouseX + "px";
           ball.style.top = mouseY + "px";
 
+          const greenColor = "rgba(51, 233, 51, ";
+          const whiteColor = "rgba(255, 255, 255, ";
+
           let prevX = mouseX,
             prevY = mouseY;
           for (let i = 0; i < trailCount; i++) {
             const pos = positions[i];
-            pos.x += (prevX - pos.x) * 0.35;
-            pos.y += (prevY - pos.y) * 0.35;
+            pos.x += (prevX - pos.x) * 0.55;
+            pos.y += (prevY - pos.y) * 0.55;
             trails[i].style.left = pos.x + "px";
             trails[i].style.top = pos.y + "px";
             const opacity = 0.3 * (1 - i / trailCount);
-            const size = 6 * (1 - i / (trailCount * 1.5));
             trails[i].style.opacity = opacity;
-            trails[i].style.width = size + "px";
-            trails[i].style.height = size + "px";
+            trails[i].style.width = "13px";
+            trails[i].style.height = "13px";
+            const baseColor = isHovering ? greenColor : whiteColor;
+            const borderAlpha = isHovering
+              ? 0.35 * (1 - i / trailCount)
+              : 0.25 * (1 - i / trailCount);
+            trails[i].style.borderColor = baseColor + borderAlpha + ")";
             prevX = pos.x;
             prevY = pos.y;
           }
@@ -3155,8 +3218,8 @@ Uma despesa por linha."
           cursor: pointer;
           transition: opacity 0.2s ease;
         "
-        onmouseenter="this.style.opacity='0.7'"
-        onmouseleave="this.style.opacity='0.35'"
+        onmouseenter="this.style.opacity = '0.7'"
+        onmouseleave="this.style.opacity = '0.35'"
       >
         <span
           style="

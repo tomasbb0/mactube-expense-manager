@@ -12,8 +12,8 @@
 
 .cursor-ball {
   position: fixed;
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   background: transparent;
   border: 1.5px solid rgba(255, 255, 255, 0.85);
   border-radius: 50%;
@@ -24,25 +24,34 @@
   transition:
     width 0.15s,
     height 0.15s,
-    box-shadow 0.15s;
+    box-shadow 0.15s,
+    border-color 0.15s,
+    background 0.15s;
 }
 
 .cursor-ball.clicking {
-  width: 8px;
-  height: 8px;
+  width: 9px;
+  height: 9px;
   box-shadow: 0 0 4px 1px rgba(255, 255, 255, 0.12);
+}
+
+.cursor-ball.cursor-hover {
+  border-color: #33e933;
+  background: rgba(51, 233, 51, 0.15);
+  box-shadow: 0 0 6px 2px rgba(51, 233, 51, 0.18);
 }
 
 .cursor-trail {
   position: fixed;
-  width: 6px;
-  height: 6px;
+  width: 13px;
+  height: 13px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.001);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 50%;
   pointer-events: none;
   z-index: 99998;
   transform: translate(-50%, -50%);
+  transition: border-color 0.15s;
 }
 
 :root {
@@ -260,7 +269,7 @@ body {
 }
 
 .header-brand h1 {
-  font-size: 0.81rem;
+  font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
@@ -569,7 +578,7 @@ body {
 }
 
 .stat-label {
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -773,7 +782,7 @@ body {
 }
 
 .activity-meta {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
 }
 
@@ -895,7 +904,7 @@ body {
 }
 
 .type-btn span {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -948,7 +957,7 @@ body {
 }
 
 .investor-desc {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
 }
 
@@ -1154,7 +1163,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: 10px;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1265,7 +1274,7 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-primary);
   min-width: 140px;
   flex: 1;
@@ -1290,7 +1299,7 @@ body {
   background: var(--bg-card);
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-primary);
   color-scheme: dark;
 }
@@ -1302,7 +1311,7 @@ body {
 
 .date-separator {
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
 }
 
 .date-filters-row {
@@ -1381,7 +1390,7 @@ body {
 
 .summary-label {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   margin-bottom: 4px;
   text-transform: uppercase;
@@ -1428,7 +1437,7 @@ th {
   color: var(--text-secondary);
   font-weight: 500;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   letter-spacing: 0.5px;
 }
 
@@ -1445,7 +1454,7 @@ tr:hover td {
   display: inline-block;
   padding: 4px 10px;
   border-radius: 100px;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
@@ -1547,7 +1556,7 @@ tr:hover td {
 }
 
 .settlement-label {
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1715,7 +1724,7 @@ tr:hover td {
   font-weight: 600;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .breakdown-positive {
@@ -1743,7 +1752,7 @@ tr:hover td {
   align-items: center;
   gap: 16px;
   padding: 10px 14px;
-  font-size: 0.825rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   border-radius: 8px;
   background: transparent;
@@ -1772,7 +1781,7 @@ tr:hover td {
 }
 
 .breakdown-project-row .breakdown-net {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .breakdown-grand-total {
@@ -1956,7 +1965,7 @@ tr:hover td {
 
   .quick-action-btn {
     padding: 6px 10px;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
   }
 
   .quick-action-btn svg {
@@ -2228,7 +2237,7 @@ tr:hover td {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-secondary);
 }
 
@@ -2646,7 +2655,7 @@ tr:hover td {
 }
 
 .step-note {
-  font-size: 0.8rem !important;
+  font-size: 0.875rem !important;
   color: var(--warning) !important;
   background: rgba(255, 187, 51, 0.1);
   padding: 8px 10px;
@@ -2699,7 +2708,7 @@ tr:hover td {
   padding: 12px;
   border-radius: var(--radius-md);
   font-family: "SF Mono", Monaco, monospace;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: var(--text-primary);
   overflow-x: auto;
   white-space: pre-wrap;
@@ -3325,7 +3334,7 @@ tr:hover td {
   gap: 2px;
   background: var(--green-primary);
   color: #111;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 20px;
@@ -3578,7 +3587,7 @@ tr:hover td {
 }
 
 .bulk-add-shortcut-divider span {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   white-space: nowrap;
   text-transform: uppercase;
@@ -3638,7 +3647,7 @@ tr:hover td {
   padding: 2px 6px;
   background: rgba(255, 159, 10, 0.15);
   color: #ff9f0a;
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   font-weight: 700;
   border-radius: 4px;
   letter-spacing: 0.5px;
@@ -3653,7 +3662,7 @@ tr:hover td {
   padding: 4px 10px;
   background: rgba(255, 159, 10, 0.12);
   color: #ff9f0a;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 600;
   border-radius: 6px;
   border: 1px solid rgba(255, 159, 10, 0.25);
@@ -3689,7 +3698,7 @@ tr:hover td {
 .csv-preview-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
 }
 
 .csv-preview-table th {
@@ -3701,7 +3710,7 @@ tr:hover td {
   position: sticky;
   top: 0;
   z-index: 1;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
@@ -3727,7 +3736,7 @@ tr:hover td {
 
 .csv-status-err {
   color: var(--danger);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
 }
 
 .csv-status-warn {
@@ -3802,7 +3811,7 @@ tr:hover td {
   opacity: 0.6;
   transition: all 0.2s ease;
   min-width: auto;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
 }
 
 .add-shortcut-btn:hover {
@@ -3847,7 +3856,7 @@ tr:hover td {
 }
 
 .shortcut-dropdown-title {
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
