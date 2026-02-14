@@ -106,12 +106,23 @@
         height: 100%;
         pointer-events: none;
         z-index: 0;
+        opacity: 0;
+        transition: opacity 1.5s ease;
+      }
+      .grid-canvas.visible {
+        opacity: 1;
       }
 
       /* ============================================
        CSS VARIABLES
        ============================================ */
       :root {
+        /* ── Master layout variables (controls ALL containers) ── */
+        --layout-top: 32px;          /* topbar distance from viewport top */
+        --layout-side: 48px;         /* lateral margin each side */
+        --layout-max: 1100px;        /* max width for all outermost containers */
+        --layout-content-top: 100px; /* vertical clearance below topbar */
+
         --bg: #111111;
         --bg-secondary: #1a1a1a;
         --card: #1c1c1c;
@@ -181,11 +192,11 @@
       #intro-screen.zoom-through-bg {
         background: transparent !important;
         pointer-events: none;
-        transition: background 0.35s ease-in !important;
+        transition: background 0.5s ease-in !important;
       }
 
       .intro-logo-container.zoom-through {
-        transition: transform 0.35s cubic-bezier(0.7, 0, 1, 0.3) !important;
+        transition: transform 2s cubic-bezier(0.2, 0, 1, 0.15) !important;
         transform-origin: center center;
       }
 
@@ -681,7 +692,7 @@
        ============================================ */
       #hub-screen {
         flex-direction: column;
-        padding-top: 80px;
+        padding-top: var(--layout-content-top);
       }
 
       .topbar {
@@ -704,17 +715,19 @@
         position: sticky;
         top: 20px;
         z-index: 100;
-        max-width: 1200px;
-        margin: 12px auto 0;
-        width: calc(100% - 48px);
+        max-width: var(--layout-max);
+        margin: var(--layout-top) auto 0;
+        width: calc(100% - var(--layout-side) * 2);
       }
 
       /* Hub topbar: fixed to persist above iframe */
       #hub-topbar {
         position: fixed;
-        top: max(20px, env(safe-area-inset-top, 20px));
+        top: max(var(--layout-top), env(safe-area-inset-top, var(--layout-top)));
         left: 50%;
         transform: translateX(-50%);
+        width: calc(100% - var(--layout-side) * 2);
+        max-width: var(--layout-max);
         z-index: 200;
         margin: 0;
       }
@@ -1086,12 +1099,12 @@
       #platform-iframe-container {
         display: none;
         position: fixed;
-        top: 80px;
+        top: var(--layout-content-top);
         left: 50%;
         transform: translateX(-50%);
-        max-width: 1200px;
-        width: calc(100% - 48px);
-        height: calc(100% - 92px);
+        max-width: var(--layout-max);
+        width: calc(100% - var(--layout-side) * 2);
+        height: calc(100% - var(--layout-content-top) - 12px);
         z-index: 50;
         background: transparent;
         border-radius: 20px;
@@ -1114,13 +1127,12 @@
         display: none;
       }
 
-
       /* ============================================
        HUB CONTENT & PLATFORM GRID
        ============================================ */
       .hub-content {
         flex: 1;
-        padding: 40px 24px;
+        padding: 40px var(--layout-side);
         overflow-y: auto;
         display: flex;
         flex-direction: column;
@@ -1129,7 +1141,7 @@
 
       .hub-inner {
         width: 100%;
-        max-width: 1200px;
+        max-width: var(--layout-max);
       }
 
       .hub-section-title {
@@ -2104,7 +2116,7 @@
 
       .projects-inner {
         width: 100%;
-        max-width: 900px;
+        max-width: var(--layout-max);
       }
 
       .projects-header {
@@ -2744,7 +2756,11 @@
           <span class="topbar-title">Maktub Art Group</span>
         </div>
         <div class="topbar-right">
-          <div class="profile-trigger" id="profile-trigger" onclick="window._hub.toggleProfileDropdown()">
+          <div
+            class="profile-trigger"
+            id="profile-trigger"
+            onclick="window._hub.toggleProfileDropdown()"
+          >
             <div class="user-info">
               <span id="hub-greeting"></span>
               <span class="role-badge" id="hub-role-badge"></span>
@@ -2759,24 +2775,47 @@
                 </div>
               </div>
               <button class="dd-item" onclick="window._hub.showAccountModal()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
                 Detalhes da conta
               </button>
               <button class="dd-item" onclick="window._hub.handleChangePhoto()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><circle cx="12" cy="13" r="3"/></svg>
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                  />
+                  <circle cx="12" cy="13" r="3" />
+                </svg>
                 Alterar foto
               </button>
               <div class="dd-divider"></div>
-              <button class="dd-item danger" onclick="window._hub.logoutFromHub()">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              <button
+                class="dd-item danger"
+                onclick="window._hub.logoutFromHub()"
+              >
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
                 Terminar sessão
               </button>
             </div>
           </div>
         </div>
       </div>
-
-
 
       <div class="hub-content">
         <div class="hub-inner">
@@ -2788,48 +2827,82 @@
       </div>
     </div>
 
-      <!-- Iframe container for embedded platforms -->
-      <div id="platform-iframe-container">
-        <iframe id="platform-iframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups" allowtransparency="true" style="background:transparent"></iframe>
-      </div>
+    <!-- Iframe container for embedded platforms -->
+    <div id="platform-iframe-container">
+      <iframe
+        id="platform-iframe"
+        sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
+        allowtransparency="true"
+        style="background: transparent"
+      ></iframe>
+    </div>
 
-          <!-- Account Details Modal -->
-      <div class="account-modal-overlay" id="account-modal-overlay" onclick="window._hub.closeAccountModal()">
-        <div class="account-modal" onclick="event.stopPropagation()">
-          <div class="account-modal-header">
-            <h3>Detalhes da Conta</h3>
-            <button class="account-modal-close" onclick="window._hub.closeAccountModal()">&times;</button>
+    <!-- Account Details Modal -->
+    <div
+      class="account-modal-overlay"
+      id="account-modal-overlay"
+      onclick="window._hub.closeAccountModal()"
+    >
+      <div class="account-modal" onclick="event.stopPropagation()">
+        <div class="account-modal-header">
+          <h3>Detalhes da Conta</h3>
+          <button
+            class="account-modal-close"
+            onclick="window._hub.closeAccountModal()"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="account-modal-body">
+          <div class="account-photo-section">
+            <div class="account-photo-preview" id="account-photo-preview"></div>
+            <button
+              class="account-photo-btn"
+              onclick="window._hub.handleAccountPhotoUpload()"
+            >
+              Alterar foto
+            </button>
           </div>
-          <div class="account-modal-body">
-            <div class="account-photo-section">
-              <div class="account-photo-preview" id="account-photo-preview"></div>
-              <button class="account-photo-btn" onclick="window._hub.handleAccountPhotoUpload()">Alterar foto</button>
-            </div>
-            <div class="account-field">
-              <label>Nome de utilizador</label>
-              <input type="text" id="account-username" disabled />
-            </div>
-            <div class="account-field">
-              <label>Nome</label>
-              <input type="text" id="account-name" disabled />
-            </div>
-            <div class="account-field">
-              <label>Email</label>
-              <input type="email" id="account-email" placeholder="nome@maktub.pt" />
-            </div>
-            <div class="account-field">
-              <label>Nova password (deixar vazio para manter)</label>
-              <input type="password" id="account-password" placeholder="••••••••" />
-            </div>
-            <div class="account-actions">
-              <button class="btn" onclick="window._hub.closeAccountModal()">Cancelar</button>
-              <button class="btn btn-primary" onclick="window._hub.saveAccountDetails()">Guardar</button>
-            </div>
+          <div class="account-field">
+            <label>Nome de utilizador</label>
+            <input type="text" id="account-username" disabled />
+          </div>
+          <div class="account-field">
+            <label>Nome</label>
+            <input type="text" id="account-name" disabled />
+          </div>
+          <div class="account-field">
+            <label>Email</label>
+            <input
+              type="email"
+              id="account-email"
+              placeholder="nome@maktub.pt"
+            />
+          </div>
+          <div class="account-field">
+            <label>Nova password (deixar vazio para manter)</label>
+            <input
+              type="password"
+              id="account-password"
+              placeholder="••••••••"
+            />
+          </div>
+          <div class="account-actions">
+            <button class="btn" onclick="window._hub.closeAccountModal()">
+              Cancelar
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="window._hub.saveAccountDetails()"
+            >
+              Guardar
+            </button>
           </div>
         </div>
       </div>
+    </div>
 
-        <!-- ==========================================
+    <!-- ==========================================
        USER MANAGEMENT SCREEN
        ========================================== -->
     <div id="management-screen" class="screen">
@@ -3395,6 +3468,9 @@
               if (svg)
                 svg.style.filter = "drop-shadow(0 0 12px rgba(51,233,51,0.3))";
             }, 450);
+            // Fade in the grid background with the green
+            const gridCanvas = document.getElementById("grid-canvas");
+            if (gridCanvas) gridCanvas.classList.add("visible");
           }, 1100);
 
           // Phase 2: Fly to destination at 2600ms
@@ -3432,13 +3508,13 @@
                   );
               container.classList.add("zoom-through");
               void container.offsetWidth; // force reflow
-              container.style.transform = "scale(8)";
+              container.style.transform = "scale(200)";
               animateStrokeThinning(svg);
 
               // After zoom completes, hide intro
               setTimeout(() => {
                 introScreen.classList.add("hidden");
-              }, 800);
+              }, 2200);
             } else {
               // ═══ NEEDS LOGIN: FLY TO LOGIN CENTER ═══
               showLogin();
@@ -3510,7 +3586,7 @@
               );
           container.classList.add("zoom-through");
           void container.offsetWidth;
-          container.style.transform = "scale(8)";
+          container.style.transform = "scale(200)";
           animateStrokeThinning(svg);
 
           // BG already transparent from bg-fade, reinforce with zoom-through-bg
@@ -3519,7 +3595,7 @@
           // After zoom, hide intro — hub topbar inline SVG takes over
           setTimeout(() => {
             introScreen.classList.add("hidden");
-          }, 800);
+          }, 2200);
         }
 
         function onIntroComplete() {
@@ -3628,7 +3704,9 @@
           showToast("Sessão terminada.", "success");
         }
 
-        function logoutFromHub() { handleLogout(); }
+        function logoutFromHub() {
+          handleLogout();
+        }
 
         function showEmailModal() {
           document.getElementById("email-modal").classList.add("active");
@@ -4049,7 +4127,9 @@
           }
 
           // Load platform in iframe to preserve hub topbar
-          const container = document.getElementById("platform-iframe-container");
+          const container = document.getElementById(
+            "platform-iframe-container",
+          );
           const iframe = document.getElementById("platform-iframe");
           if (container && iframe) {
             iframe.src = platform.url;
@@ -4062,9 +4142,10 @@
           }
         }
 
-
         function closePlatformIframe() {
-          const container = document.getElementById("platform-iframe-container");
+          const container = document.getElementById(
+            "platform-iframe-container",
+          );
           const iframe = document.getElementById("platform-iframe");
           if (container) {
             container.classList.remove("active");
@@ -4082,13 +4163,20 @@
 
         function animateStrokeThinning(svgEl) {
           if (!svgEl) return;
-          const circles = svgEl.querySelectorAll("circle");
-          circles.forEach(function (c) {
-            c.animate(
-              [{ strokeWidth: "7" }, { strokeWidth: "0.3" }],
-              { duration: 700, fill: "forwards", easing: "ease-in" }
-            );
-          });
+          var circles = svgEl.querySelectorAll("circle");
+          var dur = 2000;
+          var start = performance.now();
+          function tick(now) {
+            var t = Math.min((now - start) / dur, 1);
+            // Exponential ease-in: slow start, rapid thin at end
+            var ease = t * t * t;
+            var sw = 7 * (1 - ease) + 0.05 * ease;
+            circles.forEach(function (c) {
+              c.style.strokeWidth = sw;
+            });
+            if (t < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
         }
 
         // ═══ PROFILE FUNCTIONS ═══
@@ -4117,7 +4205,9 @@
               modal.style.display = "none";
             }
             // Also close iframe if active
-            const container = document.getElementById("platform-iframe-container");
+            const container = document.getElementById(
+              "platform-iframe-container",
+            );
             if (container && container.classList.contains("active")) {
               closePlatformIframe();
             }
@@ -4141,9 +4231,12 @@
           const ddRole = document.getElementById("dd-role");
 
           if (avatar) avatar.innerHTML = getAvatarHTML(currentSession.username);
-          if (ddAvatar) ddAvatar.innerHTML = getAvatarHTML(currentSession.username);
+          if (ddAvatar)
+            ddAvatar.innerHTML = getAvatarHTML(currentSession.username);
           if (ddName) ddName.textContent = currentSession.name;
-          if (ddRole) ddRole.textContent = ROLE_LABELS[currentSession.role] || currentSession.role;
+          if (ddRole)
+            ddRole.textContent =
+              ROLE_LABELS[currentSession.role] || currentSession.role;
         }
 
         function handleChangePhoto() {
@@ -4185,14 +4278,16 @@
           if (dd) dd.classList.remove("open");
 
           const userData = getUserData(currentSession.username);
-          document.getElementById("account-username").value = currentSession.username;
+          document.getElementById("account-username").value =
+            currentSession.username;
           document.getElementById("account-name").value = currentSession.name;
           document.getElementById("account-email").value = userData.email || "";
           document.getElementById("account-password").value = "";
 
           // Photo preview
           const preview = document.getElementById("account-photo-preview");
-          if (preview) preview.innerHTML = getAvatarHTML(currentSession.username);
+          if (preview)
+            preview.innerHTML = getAvatarHTML(currentSession.username);
 
           overlay.classList.add("open");
         }
@@ -4207,7 +4302,8 @@
           // Update modal preview after a short delay
           setTimeout(function () {
             const preview = document.getElementById("account-photo-preview");
-            if (preview) preview.innerHTML = getAvatarHTML(currentSession.username);
+            if (preview)
+              preview.innerHTML = getAvatarHTML(currentSession.username);
           }, 500);
         }
 
@@ -4223,7 +4319,9 @@
           // Update password if provided
           if (password && password.length >= 4) {
             const users = getUsers();
-            const user = users.find(function (u) { return u.username === currentSession.username; });
+            const user = users.find(function (u) {
+              return u.username === currentSession.username;
+            });
             if (user) {
               user.password = password;
               user.passwordChanged = true;
@@ -4990,7 +5088,6 @@
           }
         }
 
-
         // Topbar brand click: close iframe and go back to hub
         document.addEventListener("DOMContentLoaded", function () {
           const hubTopbar = document.querySelector("#hub-screen .topbar-brand");
@@ -5018,7 +5115,7 @@
           handleAccountPhotoUpload: handleAccountPhotoUpload,
           saveAccountDetails: saveAccountDetails,
           logoutFromHub: logoutFromHub,
-          closePlatformIframe: closePlatformIframe
+          closePlatformIframe: closePlatformIframe,
         };
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -5410,10 +5507,6 @@
       >
         <span
           style="
-            font-family:
-              &quot;Avenir Next&quot;, &quot;Avenir&quot;,
-              &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
-            font-size: 10px;
             font-family: Arial, sans-serif;
             font-size: 10px;
             font-weight: 400;
@@ -5458,7 +5551,7 @@
           style="
             font-family:
               &quot;Avenir Next&quot;, &quot;Avenir&quot;,
-              &quot;Montserrat&quot;, &quot;Helvetica Neue&quot;, sans-serif;
+              &quot;Helvetica Neue&quot;, sans-serif;
             font-size: 10px;
             font-weight: 300;
             color: #fafafa;
