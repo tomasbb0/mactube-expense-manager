@@ -100,10 +100,6 @@ The green glow on hover:
 
 ## Layer-by-Layer Cross-Section
 
-Every card is a stack of exactly **3 visual layers** (from bottom to top). But the **content** of Layer 2 is what makes "full" and "empty" cards look completely different:
-
-## Layer-by-Layer Cross-Section
-
 Every card is a stack of exactly **3 visual layers** (from bottom to top). But the **content** of Layer 2 splits them into **3 distinct types**:
 
 | Type                 | Cards                                                    | Preview Content                             |
@@ -121,7 +117,15 @@ Every card is a stack of exactly **3 visual layers** (from bottom to top). But t
 ╔═════════════════════════════╗    ╔═════════════════════════════╗    ╔═════════════════════════════╗
 ║                             ║    ║                             ║    ║                             ║
 ║ L3: ::before (shine sweep)  ║    ║ L3: ::before (shine sweep)  ║    ║ L3: ::before (shine sweep)  ║
-║     IDENTICAL on all 3      ║    ║     IDENTICAL on all 3      ║    ║     IDENTICAL on all 3      ║
+║                             ║    ║                             ║    ║                             ║
+║ ⚡ CSS is IDENTICAL on all  ║    ║ ⚡ CSS is IDENTICAL on all  ║    ║ ⚡ CSS is IDENTICAL on all  ║
+║    3 types, BUT...          ║    ║    3 types, BUT...          ║    ║    3 types, BUT...          ║
+║                             ║    ║                             ║    ║                             ║
+║ 👁️ VISIBLE — the sweep     ║    ║ 👻 NEARLY INVISIBLE —      ║    ║ 👻 NEARLY INVISIBLE —      ║
+║   passes over sub-elements  ║    ║   8% white over flat dark   ║    ║   8% white over flat dark   ║
+║   (headers, stats, rows)    ║    ║   #111 background is        ║    ║   #111 background is        ║
+║   that create contrast,     ║    ║   practically undetectable  ║    ║   practically undetectable  ║
+║   making the shine catch    ║    ║   to the human eye          ║    ║   to the human eye          ║
 ║                             ║    ║                             ║    ║                             ║
 ╠═════════════════════════════╣    ╠═════════════════════════════╣    ╠═════════════════════════════╣
 ║                             ║    ║                             ║    ║                             ║
@@ -195,9 +199,28 @@ TYPE 1 (Full Preview):           TYPE 2 (Pedir):                TYPE 3 (Empty Pr
 ✦ Purpose: SHOW data            ✦ Purpose: REQUEST action       ✦ Purpose: LAUNCH external
 ```
 
-### Important: What L1 and L3 Mean
+### ⚠️ The Shine Sweep Perception Problem
 
-**L1 (glass shell)** and **L3 (shine sweep)** are **byte-for-byte identical** across all 3 types. If you only looked at the card container and its pseudo-elements, you could not tell which type it is. The entire visual identity comes from **L2 — what's inside the card**.
+**L3 (the `::before` shine sweep)** has **identical CSS** on all 3 types — the same gradient, same transition, same z-index. But **you can't actually see it** on Type 2 (Pedir) and Type 3 (Empty) cards.
+
+Why? The shine is `rgba(255, 255, 255, 0.08)` — just **8% white opacity** sweeping over the card in **0.5 seconds**. On Type 1 (Full Preview), the sub-elements inside (headers, stat chips, rows, badges) create tiny contrast differences that let you **perceive** the light passing over texture. On Type 2 and 3, the preview is mostly flat `#111111` dark space — 8% white over pure dark is effectively invisible to the human eye.
+
+```
+TYPE 1 (Full Preview):          TYPE 2/3 (Pedir / Empty):
+
+┌──────────────────────┐        ┌──────────────────────┐
+│ ░░▓▓░░▓▓░░▓▓░░      │        │                      │
+│ ▓header▓ ▓stat▓     │        │                      │
+│ ░░▓▓░░▓▓░░▓▓░░      │        │        ➕ / 🧪        │
+│ ▓▓ row ▓▓ row ▓▓    │        │                      │
+│ ░░▓▓░░▓▓░░▓▓░░      │        │                      │
+└──────────────────────┘        └──────────────────────┘
+  ↑ Texture = shine is           ↑ Flat dark = shine
+    perceptible as it              passes unnoticed
+    catches on edges               (8% white on #111)
+```
+
+**So the document is correct:** the code is identical, but the visual experience is different. L1 and L3 are technically the same, but L3 is **only perceptible on Full Preview cards** due to the textural contrast.
 
 ### The Opaque Preview Problem
 
@@ -412,7 +435,7 @@ Any entry in the `PLATFORMS` array that doesn't have a custom mini-dashboard get
 
 | Element         | Visual Effect                                             |
 | --------------- | --------------------------------------------------------- |
-| `.icon`         | `font-size: 3.5rem` (desktop) / `2.5rem` (≤600px)        |
+| `.icon`         | `font-size: 3.5rem` (desktop) / `2.5rem` (≤600px)         |
 | `.preview-name` | `font-size: 0.8rem`, `color: var(--text-muted)`, centered |
 
 **What you see:** A centered icon and text on the dark `#111` preview background. Most of the preview area is empty dark space.
