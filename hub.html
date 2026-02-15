@@ -1372,6 +1372,24 @@
         overflow: hidden;
       }
 
+      /* Glass overlay on real card previews (screenshots behind glass) */
+      .platform-preview::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.5),
+          inset 0 -1px 1px rgba(255, 255, 255, 0.12),
+          inset 0 0 24px rgba(255, 255, 255, 0.03);
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .platform-preview.empty-preview::after {
+        display: none;
+      }
+
       .platform-preview.empty-preview {
         background: transparent;
         border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1382,6 +1400,24 @@
           inset 0 1px 1px rgba(255, 255, 255, 0.6),
           inset 0 -1px 1px rgba(255, 255, 255, 0.15),
           0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Pedir Plataforma card — match empty card opacity but keep clickable */
+      .platform-card.pedir-card {
+        opacity: 0.35;
+      }
+      .platform-card.pedir-card:hover {
+        opacity: 0.55;
+      }
+      .platform-card.pedir-card::before {
+        display: none;
+      }
+
+      .pedir-plus {
+        font-size: 2.5rem;
+        font-weight: 200;
+        color: rgba(255, 255, 255, 0.3);
+        line-height: 1;
       }
 
       .platform-card.empty-card {
@@ -4360,10 +4396,11 @@
 
           // Add platform card (all users)
           const addCard = document.createElement("div");
-          addCard.className = "platform-card";
+          addCard.className = "platform-card pedir-card";
           addCard.title = "Pedir nova plataforma";
           addCard.innerHTML = `
             <div class="platform-preview empty-preview" style="justify-content:center;align-items:center">
+              <span class="pedir-plus">+</span>
             </div>
             <div class="platform-info">
               <div class="platform-name">Pedir Plataforma</div>
@@ -4813,8 +4850,8 @@
               // Position the fixed panel near the toggle button
               const btn = event.currentTarget;
               const rect = btn.getBoundingClientRect();
-              panel.style.top = (rect.bottom + 6) + "px";
-              panel.style.right = (window.innerWidth - rect.right) + "px";
+              panel.style.top = rect.bottom + 6 + "px";
+              panel.style.right = window.innerWidth - rect.right + "px";
             }
           }
         }
