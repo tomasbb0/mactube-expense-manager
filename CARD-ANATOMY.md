@@ -76,7 +76,7 @@ Every card in the hub falls into one of **3 visual types**, determined by what's
   transition: left 0.8s ease
 ```
 
-**This applies to ALL 5 cards identically.** When you hover any card, you get the same glass shine sweep.
+**This applies to ALL cards identically.** When you hover any card, you get the same glass shine sweep — though on Pedir/Empty cards it's nearly invisible due to the flat dark background (see [Shine Sweep Perception Problem](#-the-shine-sweep-perception-problem) below).
 
 ### `.platform-card` on Hover
 
@@ -137,7 +137,7 @@ Every card is a stack of exactly **3 visual layers** (from bottom to top). But t
 ║ │                     │    ║    ║ │                     │    ║    ║ │                     │    ║
 ║ │ ┌─────────────────┐│    ║    ║ │                     │    ║    ║ │                     │    ║
 ║ │ │ .mini-dashboard ││    ║    ║ │                     │    ║    ║ │                     │    ║
-║ │ │ or .mini-users  ││    ║    ║ │                     │    ║    ║ │      🧪 / 🎵 / ...  │    ║
+║ │ │ or .mini-users  ││    ║    ║ │                     │    ║    ║ │      📎 / 🎵 / ...  │    ║
 ║ │ │ or .mini-project││    ║    ║ │        ➕           │    ║    ║ │    (centered icon)   │    ║
 ║ │ │                 ││    ║    ║ │   (centered icon)   │    ║    ║ │   "Platform Name"    │    ║
 ║ │ │ FILLS 100%      ││    ║    ║ │   font: 2.5rem     │    ║    ║ │   (optional text)    │    ║
@@ -211,7 +211,7 @@ TYPE 1 (Full Preview):          TYPE 2/3 (Pedir / Empty):
 ┌──────────────────────┐        ┌──────────────────────┐
 │ ░░▓▓░░▓▓░░▓▓░░      │        │                      │
 │ ▓header▓ ▓stat▓     │        │                      │
-│ ░░▓▓░░▓▓░░▓▓░░      │        │        ➕ / 🧪        │
+│ ░░▓▓░░▓▓░░▓▓░░      │        │        ➕ / 📎        │
 │ ▓▓ row ▓▓ row ▓▓    │        │                      │
 │ ░░▓▓░░▓▓░░▓▓░░      │        │                      │
 └──────────────────────┘        └──────────────────────┘
@@ -419,13 +419,13 @@ Any entry in the `PLATFORMS` array that doesn't have a custom mini-dashboard get
 ```
 .platform-card  (or .platform-card.locked)
  ├─ .platform-preview
- │   ├─ span.icon → "🧪" / "🎵" / etc.
+ │   ├─ span.icon → "📎" / "🎵" / etc.
  │   ├─ span.preview-name → "Platform Name" (optional)
  │   └─ .lock-overlay (only if locked — shows 🔒)
  └─ .platform-info
      └─ .platform-info-row
          ├─ .platform-info-text
-         │   ├─ .platform-name → "🧪 Platform Name"
+         │   ├─ .platform-name → "📎 Platform Name"
          │   └─ .platform-desc → "Description text"
          └─ .access-toggle-btn (admin only) → "▾"
      └─ .access-panel (admin only, hidden by default)
@@ -448,17 +448,17 @@ Any entry in the `PLATFORMS` array that doesn't have a custom mini-dashboard get
 
 ### Card-Level Properties (ALL IDENTICAL)
 
-| Property          | Value                               | Notes                       |
-| ----------------- | ----------------------------------- | --------------------------- |
-| `background`      | `rgba(255,255,255, 0.015)`          | Almost invisible white tint |
-| `backdrop-filter` | `blur(10px) saturate(180%)`         | Glass frosting effect       |
-| `border`          | `1px solid rgba(255,255,255, 0.06)` | Faint white border          |
-| `border-radius`   | `12px`                              | Rounded corners             |
-| `box-shadow`      | outer shadow + 2 inset edges        | Depth + edge highlights     |
-| `overflow`        | `hidden`                            | Clips to border-radius      |
-| `::before`        | Shine sweep gradient                | Same on all 5               |
-| `::after`         | ❌ Does not exist                   | No gradient border          |
-| Hover behavior    | float + brighten + green glow       | Same on all 5               |
+| Property          | Value                               | Notes                                        |
+| ----------------- | ----------------------------------- | -------------------------------------------- |
+| `background`      | `rgba(255,255,255, 0.015)`          | Almost invisible white tint                  |
+| `backdrop-filter` | `blur(10px) saturate(180%)`         | Glass frosting effect                        |
+| `border`          | `1px solid rgba(255,255,255, 0.06)` | Faint white border                           |
+| `border-radius`   | `12px`                              | Rounded corners                              |
+| `box-shadow`      | outer shadow + 2 inset edges        | Depth + edge highlights                      |
+| `overflow`        | `hidden`                            | Clips to border-radius                       |
+| `::before`        | Shine sweep gradient                | Same CSS — but barely visible on empty cards |
+| `::after`         | ❌ Does not exist                   | No gradient border                           |
+| Hover behavior    | float + brighten + green glow       | Same on all cards                            |
 
 ### Preview-Level Properties (ALL IDENTICAL)
 
@@ -562,7 +562,7 @@ Any entry in the `PLATFORMS` array that doesn't have a custom mini-dashboard get
 │                     Simplest possible content                    │
 │                                                                  │
 │     TYPE 3 (Empty): Icon + optional text centered on bare #111   │
-│                     e.g. 🧪 + "The Burnay Labs"                  │
+│                     Icon + optional text on bare #111            │
 │                                                                  │
 │  2. INFO STRUCTURE (what's inside .platform-info)                │
 │     • PLATFORMS cards: .info-row > .info-text + access controls  │
@@ -584,7 +584,7 @@ Any entry in the `PLATFORMS` array that doesn't have a custom mini-dashboard get
 ```
 TYPE 1 (Full)   =  SAME SHELL  +  📊 complex mini-UI  +  (source determines access/lock)
 TYPE 2 (Pedir)  =  SAME SHELL  +  ➕ icon only         +  no access, no lock
-TYPE 3 (Empty)  =  SAME SHELL  +  🧪 icon + text       +  (source determines access/lock)
+TYPE 3 (Empty)  =  SAME SHELL  +  icon + text           +  (source determines access/lock)
 ```
 
 ---
