@@ -1082,9 +1082,11 @@ body {
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--bg-card);
-  border: none;
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
+  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
   border-radius: var(--radius-md);
   margin-bottom: 16px;
 }
@@ -1122,13 +1124,15 @@ body {
   flex: 1;
   min-width: 150px;
   padding: 12px 40px 12px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--input-border);
+  background: transparent;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
   border-radius: var(--radius-sm);
   font-size: 0.875rem;
   color: var(--text-primary);
   cursor: pointer;
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -1382,9 +1386,11 @@ body {
   flex: 1;
   min-width: 120px;
   padding: 16px;
-  background: var(--bg-card);
-  border: none;
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
+  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
   border-radius: var(--radius-sm);
   text-align: center;
 }
@@ -1414,9 +1420,13 @@ body {
 /* Table */
 .table-wrapper {
   overflow-x: auto;
+  max-width: 100%;
   margin-bottom: 16px;
-  border: none;
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
+  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
   border-radius: var(--radius-md);
 }
 
@@ -1434,7 +1444,7 @@ td {
 }
 
 th {
-  background: var(--bg-tertiary);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-secondary);
   font-weight: 500;
   text-transform: uppercase;
@@ -1443,12 +1453,12 @@ th {
 }
 
 td {
-  background: var(--bg-card);
+  background: transparent;
   border-top: 1px solid rgba(255, 255, 255, 0.015);
 }
 
 tr:hover td {
-  background: var(--bg-hover);
+  background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
 }
 
@@ -1516,7 +1526,7 @@ tr td {
 
 /* Table Total Row */
 .table-total-row {
-  background: var(--bg-tertiary);
+  background: rgba(255, 255, 255, 0.02);
   box-shadow: inset 0 2px 0 var(--green-primary);
 }
 
@@ -2267,9 +2277,11 @@ tr td {
 .pivot-section {
   margin-bottom: 16px;
   padding: 20px;
-  background: var(--bg-card);
-  border: none;
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  backdrop-filter: blur(4px) saturate(108%);
+  -webkit-backdrop-filter: blur(4px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.001);
+  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
   border-radius: var(--radius-md);
 }
 
@@ -2317,16 +2329,18 @@ tr td {
 }
 
 .pivot-table {
-  background: var(--bg-secondary);
-  border: none;
-  box-shadow: var(--card-shadow);
+  background: transparent;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border: 1px solid rgba(255, 255, 255, 0.001);
+  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
 .pivot-table h4 {
   padding: 12px 16px;
-  background: var(--bg-tertiary);
+  background: rgba(255, 255, 255, 0.02);
   font-size: 0.875rem;
   font-weight: 600;
   border-bottom: none;

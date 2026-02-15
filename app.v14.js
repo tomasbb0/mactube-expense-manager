@@ -3530,14 +3530,14 @@ function handleEdit(e) {
 
 function handleRowClick(event, id) {
   // Don't trigger if clicking action buttons
-  if (event.target.closest('.table-actions')) return;
+  if (event.target.closest(".table-actions")) return;
   openEditModal(id);
 }
 
 function openDeleteModal(id) {
   document.getElementById("delete-id").value = id;
   // Show contextual info about the expense being deleted
-  const exp = expenses.find(e => e.id === id);
+  const exp = expenses.find((e) => e.id === id);
   const contextEl = document.getElementById("delete-context");
   if (contextEl && exp) {
     contextEl.innerHTML = `<strong>${formatDate(exp.date)}</strong> — ${exp.artist} — ${getTypeName(exp.type)} — <strong>${formatCurrency(exp.amount)}</strong>`;
