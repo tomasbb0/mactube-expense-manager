@@ -94,50 +94,95 @@ The green glow on hover:
 
 ## Layer-by-Layer Cross-Section
 
-Every card is a stack of exactly **3 visual layers** (from bottom to top):
+Every card is a stack of exactly **3 visual layers** (from bottom to top). But the **content** of Layer 2 is what makes "full" and "empty" cards look completely different:
+
+### Side-by-Side: Full Preview Card vs Empty Preview Card
+
+**"Full" cards** (Despesas, Users, Projects) fill the preview with a mini-UI.  
+**"Empty" cards** (Labs, Pedir) just have centered icon/text on bare `#111`.
 
 ```
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║  LAYER 3: .platform-card::before (shine sweep)              ║
-║           z-index: 1 — floats above everything              ║
-║           Only visible during hover animation                ║
-║                                                              ║
-╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  LAYER 2: Card Content                                       ║
-║                                                              ║
-║  ┌─────────────────────────────────────────────────────┐    ║
-║  │  .platform-preview                                   │    ║
-║  │  background: #111111 (OPAQUE)                        │    ║
-║  │  aspect-ratio: 4/3                                   │    ║
-║  │                                                      │    ║
-║  │  Contains: mini-dashboard / icon+text / mini-users  │    ║
-║  │            mini-projects / icon only                  │    ║
-║  │                                                      │    ║
-║  │  ⚠️  This is OPAQUE — nothing behind it shows thru   │    ║
-║  └─────────────────────────────────────────────────────┘    ║
-║                                                              ║
-║  ┌─────────────────────────────────────────────────────┐    ║
-║  │  .platform-info                                      │    ║
-║  │  padding: 14px 16px                                  │    ║
-║  │  background: transparent                             │    ║
-║  │                                                      │    ║
-║  │  Contains: platform-name + platform-desc             │    ║
-║  │            (+ access controls for PLATFORMS cards)   │    ║
-║  └─────────────────────────────────────────────────────┘    ║
-║                                                              ║
-╠══════════════════════════════════════════════════════════════╣
-║                                                              ║
-║  LAYER 1: .platform-card (glass shell)                      ║
-║           background: rgba(255,255,255, 0.015)              ║
-║           backdrop-filter: blur(10px) saturate(180%)        ║
-║           border + box-shadow                                ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
+         FULL PREVIEW CARD                         EMPTY PREVIEW CARD
+      (Despesas / Users / Projects)               (Labs / Pedir Plataforma)
+
+╔═══════════════════════════════════╗    ╔═══════════════════════════════════╗
+║                                   ║    ║                                   ║
+║  L3: ::before  (shine sweep)      ║    ║  L3: ::before  (shine sweep)      ║
+║      IDENTICAL                    ║    ║      IDENTICAL                    ║
+║                                   ║    ║                                   ║
+╠═══════════════════════════════════╣    ╠═══════════════════════════════════╣
+║                                   ║    ║                                   ║
+║  L2: Content                      ║    ║  L2: Content                      ║
+║                                   ║    ║                                   ║
+║  ┌───────────────────────────┐   ║    ║  ┌───────────────────────────┐   ║
+║  │ .platform-preview         │   ║    ║  │ .platform-preview         │   ║
+║  │ bg: #111111 (OPAQUE)      │   ║    ║  │ bg: #111111 (OPAQUE)      │   ║
+║  │                           │   ║    ║  │                           │   ║
+║  │ ┌─────────────────────┐  │   ║    ║  │                           │   ║
+║  │ │ .mini-dashboard     │  │   ║    ║  │                           │   ║
+║  │ │ or .mini-users      │  │   ║    ║  │         🧪 / ➕           │   ║
+║  │ │ or .mini-projects   │  │   ║    ║  │      (centered icon)      │   ║
+║  │ │                     │  │   ║    ║  │    "The Burnay Labs"       │   ║
+║  │ │ width: 100%         │  │   ║    ║  │    (optional text)        │   ║
+║  │ │ height: 100%        │  │   ║    ║  │                           │   ║
+║  │ │ FILLS ENTIRE AREA   │  │   ║    ║  │   MOSTLY EMPTY #111       │   ║
+║  │ │ Has its own          │  │   ║    ║  │   bg visible around      │   ║
+║  │ │ sub-elements:       │  │   ║    ║  │   the icon/text           │   ║
+║  │ │  • headers          │  │   ║    ║  │                           │   ║
+║  │ │  • stat chips       │  │   ║    ║  │   NO sub-components       │   ║
+║  │ │  • data rows        │  │   ║    ║  │   NO glass sub-layers     │   ║
+║  │ │  • toggles/dots     │  │   ║    ║  │   NO blur effects         │   ║
+║  │ │  • badges           │  │   ║    ║  │                           │   ║
+║  │ │                     │  │   ║    ║  │                           │   ║
+║  │ │ Each sub-element    │  │   ║    ║  │                           │   ║
+║  │ │ has:                │  │   ║    ║  │                           │   ║
+║  │ │  bg: rgba(w,0.015)  │  │   ║    ║  │                           │   ║
+║  │ │  blur(6px) sat(160%)│  │   ║    ║  │                           │   ║
+║  │ │  (⚠️ blur is wasted │  │   ║    ║  │                           │   ║
+║  │ │   on opaque bg)     │  │   ║    ║  │                           │   ║
+║  │ └─────────────────────┘  │   ║    ║  │                           │   ║
+║  └───────────────────────────┘   ║    ║  └───────────────────────────┘   ║
+║                                   ║    ║                                   ║
+║  ┌───────────────────────────┐   ║    ║  ┌───────────────────────────┐   ║
+║  │ .platform-info            │   ║    ║  │ .platform-info            │   ║
+║  │ bg: transparent           │   ║    ║  │ bg: transparent           │   ║
+║  │                           │   ║    ║  │                           │   ║
+║  │ ┌───────────────────┐    │   ║    ║  │ .platform-name            │   ║
+║  │ │ .platform-info-row│    │   ║    ║  │ .platform-desc            │   ║
+║  │ │  ├─ .info-text    │    │   ║    ║  │                           │   ║
+║  │ │  │  ├─ .name      │    │   ║    ║  │ ⚠️ NO .info-row wrapper   │   ║
+║  │ │  │  └─ .desc      │    │   ║    ║  │ ⚠️ NO access controls     │   ║
+║  │ │  └─ access-toggle │    │   ║    ║  │                           │   ║
+║  │ └───────────────────┘    │   ║    ║  │                           │   ║
+║  │ .access-panel (hidden)   │   ║    ║  │                           │   ║
+║  └───────────────────────────┘   ║    ║  └───────────────────────────┘   ║
+║                                   ║    ║                                   ║
+╠═══════════════════════════════════╣    ╠═══════════════════════════════════╣
+║                                   ║    ║                                   ║
+║  L1: .platform-card (glass shell) ║    ║  L1: .platform-card (glass shell) ║
+║      bg: rgba(255,255,255,0.015)  ║    ║      bg: rgba(255,255,255,0.015)  ║
+║      blur(10px) sat(180%)         ║    ║      blur(10px) sat(180%)         ║
+║      border + box-shadow          ║    ║      border + box-shadow          ║
+║      IDENTICAL                    ║    ║      IDENTICAL                    ║
+║                                   ║    ║                                   ║
+╚═══════════════════════════════════╝    ╚═══════════════════════════════════╝
+
+    What's different:                        What's different:
+    ✦ Preview filled 100%                    ✦ Preview mostly empty
+    ✦ Many sub-elements with                 ✦ Just 1-2 simple elements
+      their own glass styling                  (icon, maybe text)
+    ✦ Complex HTML tree                      ✦ Minimal HTML tree
+    ✦ Colors (green/red/orange/blue)         ✦ Monochrome (gray text)
+    ✦ .info-row + access controls            ✦ Flat info, no controls
+    ✦ Can be locked (PLATFORMS cards)        ✦ Card 2 (Labs): lockable
+      or never locked (manual cards)           Card 5 (Pedir): never locked
 ```
 
-### Important: The Opaque Preview Problem
+### Important note about "Full" vs "Empty"
+
+**"Full" and "Empty" are purely about preview content** — the card shell (L1) and shine sweep (L3) are byte-for-byte identical. A "full" card just means its `.platform-preview` contains a complex mini-UI that covers the entire `#111` background, while an "empty" card leaves most of that dark background visible.
+
+### The Opaque Preview Problem
 
 `.platform-preview` has `background: #111111` — this is **fully opaque**. This means:
 - The card's `backdrop-filter: blur(10px)` **only affects the `.platform-info` area** at the bottom
