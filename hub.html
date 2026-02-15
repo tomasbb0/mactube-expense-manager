@@ -1688,7 +1688,7 @@
         justify-content: center;
       }
 
-      
+
 
       .platform-info-row {
         display: flex;
@@ -2927,7 +2927,7 @@
        ========================================== -->
     <div class="modal-overlay" id="email-modal">
       <div class="modal">
-        <h3>📧 Email da empresa</h3>
+        <h3>Email da empresa</h3>
         <p>
           Para continuar, insere o teu email de trabalho. Será usado para
           integração com as plataformas.
@@ -2949,7 +2949,7 @@
        ========================================== -->
     <div class="modal-overlay" id="password-change-modal">
       <div class="modal">
-        <h3>🔒 Criar nova palavra-passe</h3>
+        <h3>Criar nova palavra-passe</h3>
         <p>
           Como é o teu primeiro acesso, cria uma nova palavra-passe
           personalizada para proteger a tua conta.
@@ -3565,7 +3565,7 @@
       <div class="projects-content">
         <div class="projects-inner">
           <div class="projects-header">
-            <h2>📋 Projetos &amp; Pedidos</h2>
+            <h2>Projetos &amp; Pedidos</h2>
             <button class="btn btn-primary btn-sm" id="projects-add-btn">
               + Pedir Nova Plataforma
             </button>
@@ -3604,7 +3604,7 @@
           {
             id: "expense-manager",
             name: "Gestão de Despesas",
-            icon: "💰",
+            icon: "",
             url: "index.html",
             description: "Gestão de despesas dos artistas",
           },
@@ -3707,6 +3707,7 @@
 
         function saveUsers(users) {
           localStorage.setItem("maktub_hub_users", JSON.stringify(users));
+          scheduleUserDataSync();
         }
 
         function getAccessMap() {
@@ -3736,6 +3737,7 @@
 
         function saveAccessMap(access) {
           localStorage.setItem("maktub_hub_access", JSON.stringify(access));
+          scheduleUserDataSync();
         }
 
         function getUserData(username) {
@@ -3749,6 +3751,107 @@
           const existing = getUserData(username);
           const merged = Object.assign({}, existing, data);
           localStorage.setItem(key, JSON.stringify(merged));
+          // Schedule background sync to Google Sheets
+          scheduleUserDataSync();
+        }
+
+        // ==========================================
+        // USER DATA GOOGLE SHEETS SYNC
+        // ==========================================
+        const HUB_GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDZ5FINtZU0s9-T4ULaY9TIgAgXo2wv26Oi2KQKOZR9IFIjPcuyyR9g7azk9fls8HY/exec";
+        let _userDataSyncTimer = null;
+
+        function scheduleUserDataSync() {
+          if (_userDataSyncTimer) clearTimeout(_userDataSyncTimer);
+          _userDataSyncTimer = setTimeout(syncUserDataToSheets, 5000);
+        }
+
+        async function syncUserDataToSheets() {
+          try {
+            const users = getUsers();
+            const access = getAccessMap();
+            // Collect all per-user data
+            const userData = {};
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (key && key.startsWith("maktub_hub_userdata_")) {
+                const username = key.replace("maktub_hub_userdata_", "");
+                try { userData[username] = JSON.parse(localStorage.getItem(key)); } catch(e) {}
+              }
+            }
+            console.log("Syncing user data to Sheets...", Object.keys(userData).length, "users");
+            const resp = await fetch(HUB_GOOGLE_SCRIPT_URL, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain" },
+              body: JSON.stringify({
+                action: "syncUserData",
+                users: users,
+                access: access,
+                userData: userData
+              })
+            });
+            const result = await resp.json();
+            if (result.success) {
+              console.log("User data synced to Sheets successfully");
+            } else {
+              console.warn("User data sync failed:", result.error);
+            }
+          } catch (err) {
+            console.warn("User data sync error:", err);
+          }
+        }
+
+        async function loadUserDataFromSheets() {
+          try {
+            console.log("Loading user data from Sheets...");
+            const resp = await fetch(HUB_GOOGLE_SCRIPT_URL, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain" },
+              body: JSON.stringify({ action: "getUserData" })
+            });
+            const result = await resp.json();
+            if (!result.success) {
+              console.warn("Failed to load user data from Sheets:", result.error);
+              return;
+            }
+
+            // Merge users list (Sheets overrides local for existing users)
+            if (result.users && result.users.length > 0) {
+              const localUsers = getUsers();
+              const mergedUsers = [...result.users];
+              // Add any local-only users
+              localUsers.forEach(lu => {
+                if (!mergedUsers.find(u => u.username === lu.username)) {
+                  mergedUsers.push(lu);
+                }
+              });
+              saveUsers(mergedUsers);
+            }
+
+            // Merge access map
+            if (result.access && Object.keys(result.access).length > 0) {
+              const localAccess = getAccessMap();
+              const mergedAccess = Object.assign({}, localAccess, result.access);
+              saveAccessMap(mergedAccess);
+            }
+
+            // Merge per-user data (photos, bio, etc.)
+            if (result.userData) {
+              Object.keys(result.userData).forEach(username => {
+                const sheetsData = result.userData[username];
+                const localData = getUserData(username);
+                // Sheets data wins (most recent upload wins)
+                const merged = Object.assign({}, localData, sheetsData);
+                const key = `maktub_hub_userdata_${username}`;
+                localStorage.setItem(key, JSON.stringify(merged));
+              });
+              console.log("User data loaded from Sheets:", Object.keys(result.userData).length, "users");
+              // Refresh UI with new photos
+              updateProfileUI();
+            }
+          } catch (err) {
+            console.warn("Failed to load user data from Sheets:", err);
+          }
         }
 
         function getSession() {
@@ -3960,6 +4063,8 @@
           hideAllScreens();
           document.getElementById("hub-screen").classList.add("active");
           renderHub();
+          // Load latest user data (photos, etc.) from Google Sheets in background
+          loadUserDataFromSheets();
         }
 
         function showManagement() {
@@ -4221,14 +4326,14 @@
                     </div>
                   </div>
                 </div>
-                ${!hasAccess ? '<div class="lock-overlay">🔒</div>' : ""}
+                ${!hasAccess ? '<div class="lock-overlay">Locked</div>' : ""}
               </div>`;
             } else {
               previewHTML = `
               <div class="platform-preview">
                 <span class="icon">${platform.icon}</span>
                 <span class="preview-name">${platform.name}</span>
-                ${!hasAccess ? '<div class="lock-overlay">🔒</div>' : ""}
+                ${!hasAccess ? '<div class="lock-overlay">Locked</div>' : ""}
               </div>`;
             }
 
@@ -5409,7 +5514,7 @@
           if (filtered.length === 0) {
             container.innerHTML =
               '<div style="text-align:center;padding:40px 20px;color:var(--text-muted)">' +
-              '<div style="font-size:2rem;margin-bottom:12px">📋</div>' +
+              '<div style="font-size:2rem;margin-bottom:12px"></div>' +
               '<div style="font-size:0.95rem;font-weight:600;margin-bottom:6px;color:var(--text-secondary)">Sem pedidos</div>' +
               '<div style="font-size:0.85rem">Ainda não existem pedidos de plataformas.</div>' +
               "</div>";

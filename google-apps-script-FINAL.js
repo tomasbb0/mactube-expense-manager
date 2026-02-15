@@ -113,6 +113,12 @@ function doPost(e) {
       case 'syncToWebsite':
         result = { success: true, expenses: getAllExpenses() };
         break;
+      case 'syncUserData':
+        result = syncUserData(data.users || [], data.access || {}, data.userData || {});
+        break;
+      case 'getUserData':
+        result = getUserDataFromSheets();
+        break;
       default:
         result = { success: false, error: 'Unknown action: ' + action };
     }
@@ -869,6 +875,109 @@ function createSummary() {
   dataRange.setNumberFormat('#,##0.00 €');
   
   SpreadsheetApp.getUi().alert('✅ Resumo criado na folha "RESUMO"');
+}
+
+// ============================================
+// USER DATA SYNC (photos, settings, access)
+// ============================================
+
+function getOrCreateSheet(ss, name) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) {
+    sheet = ss.insertSheet(name);
+  }
+  return sheet;
+}
+
+/**
+ * Sync user data TO Google Sheets.
+ * Stores: users list, access map, per-user data (including photos).
+ * Each is stored as JSON in a single cell for simplicity.
+ */
+function syncUserData(users, access, userData) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    const sheet = getOrCreateSheet(ss, 'HubUserData');
+
+    // Clear and write fresh data
+    sheet.clear();
+    sheet.getRange('A1').setValue('KEY');
+    sheet.getRange('B1').setValue('VALUE');
+    sheet.getRange('C1').setValue('UPDATED');
+
+    const now = new Date().toISOString();
+
+    // Row 2: users array
+    sheet.getRange('A2').setValue('users');
+    sheet.getRange('B2').setValue(JSON.stringify(users));
+    sheet.getRange('C2').setValue(now);
+
+    // Row 3: access map
+    sheet.getRange('A3').setValue('access');
+    sheet.getRange('B3').setValue(JSON.stringify(access));
+    sheet.getRange('C3').setValue(now);
+
+    // Row 4+: per-user data (photos, bio, etc.) — one row per user
+    let row = 4;
+    const usernames = Object.keys(userData);
+    for (let i = 0; i < usernames.length; i++) {
+      const username = usernames[i];
+      sheet.getRange('A' + row).setValue('userdata_' + username);
+      sheet.getRange('B' + row).setValue(JSON.stringify(userData[username]));
+      sheet.getRange('C' + row).setValue(now);
+      row++;
+    }
+
+    Logger.log('syncUserData: synced ' + users.length + ' users, ' + usernames.length + ' user data records');
+    return { success: true, message: 'User data synced to Sheets' };
+  } catch (error) {
+    Logger.log('Error in syncUserData: ' + error.toString());
+    return { success: false, error: error.toString() };
+  }
+}
+
+/**
+ * Get all user data FROM Google Sheets.
+ * Returns: { users, access, userData: { username: {...}, ... } }
+ */
+function getUserDataFromSheets() {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_IDS.main);
+    const sheet = ss.getSheetByName('HubUserData');
+
+    if (!sheet || sheet.getLastRow() < 2) {
+      return { success: true, users: [], access: {}, userData: {} };
+    }
+
+    const data = sheet.getDataRange().getValues();
+    let users = [];
+    let access = {};
+    const userData = {};
+
+    for (let i = 1; i < data.length; i++) {
+      const key = data[i][0];
+      const value = data[i][1];
+      if (!key || !value) continue;
+
+      try {
+        if (key === 'users') {
+          users = JSON.parse(value);
+        } else if (key === 'access') {
+          access = JSON.parse(value);
+        } else if (key.startsWith('userdata_')) {
+          const username = key.replace('userdata_', '');
+          userData[username] = JSON.parse(value);
+        }
+      } catch (parseErr) {
+        Logger.log('Parse error for key ' + key + ': ' + parseErr.toString());
+      }
+    }
+
+    return { success: true, users: users, access: access, userData: userData };
+  } catch (error) {
+    Logger.log('Error in getUserDataFromSheets: ' + error.toString());
+    return { success: false, error: error.toString() };
+  }
 }
 
 // ============================================

@@ -1086,7 +1086,9 @@ body {
   backdrop-filter: blur(4px) saturate(108%);
   -webkit-backdrop-filter: blur(4px) saturate(108%);
   border: 1px solid rgba(255, 255, 255, 0.001);
-  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-md);
   margin-bottom: 16px;
 }
@@ -1132,7 +1134,9 @@ body {
   font-size: 0.875rem;
   color: var(--text-primary);
   cursor: pointer;
-  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -1390,7 +1394,9 @@ body {
   backdrop-filter: blur(4px) saturate(108%);
   -webkit-backdrop-filter: blur(4px) saturate(108%);
   border: 1px solid rgba(255, 255, 255, 0.001);
-  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-sm);
   text-align: center;
 }
@@ -1426,7 +1432,9 @@ body {
   backdrop-filter: blur(4px) saturate(108%);
   -webkit-backdrop-filter: blur(4px) saturate(108%);
   border: 1px solid rgba(255, 255, 255, 0.001);
-  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-md);
 }
 
@@ -2281,7 +2289,9 @@ tr td {
   backdrop-filter: blur(4px) saturate(108%);
   -webkit-backdrop-filter: blur(4px) saturate(108%);
   border: 1px solid rgba(255, 255, 255, 0.001);
-  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-md);
 }
 
@@ -2333,7 +2343,9 @@ tr td {
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   border: 1px solid rgba(255, 255, 255, 0.001);
-  box-shadow: 0 0 4px rgba(0,0,0,0.015), inset 0 0 0 transparent;
+  box-shadow:
+    0 0 4px rgba(0, 0, 0, 0.015),
+    inset 0 0 0 transparent;
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
