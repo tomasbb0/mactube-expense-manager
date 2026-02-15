@@ -1402,11 +1402,11 @@
           0 4px 16px rgba(0, 0, 0, 0.12);
       }
 
-      /* Pedir Plataforma card — match empty card opacity but keep clickable */
-      .platform-card.pedir-card {
+      /* Pedir Plataforma card — match empty card look but keep clickable */
+      .platform-card.pedir-card .platform-preview {
         opacity: 0.35;
       }
-      .platform-card.pedir-card:hover {
+      .platform-card.pedir-card:hover .platform-preview {
         opacity: 0.55;
       }
       .platform-card.pedir-card::before {
@@ -1679,6 +1679,32 @@
       .platform-info {
         padding: 14px 16px;
         position: relative;
+      }
+
+      /* Uniform placeholder bar underlays for all card info sections */
+      .platform-info::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        height: 0.55rem;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 4px;
+        pointer-events: none;
+      }
+      .platform-info::after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 36px;
+        left: 16px;
+        width: 65%;
+        height: 0.4rem;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 3px;
+        pointer-events: none;
       }
 
       .platform-info-row {
