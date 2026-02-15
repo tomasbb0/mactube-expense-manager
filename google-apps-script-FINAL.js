@@ -439,18 +439,58 @@ function backupAndSync(expenses) {
 
       Logger.log("Backup created: " + backupName);
 
-      // Clean old backups - keep only the last 10
+      // Cleanup policy: keep min 3 always, delete >30 days old beyond that, cap at 20
       const allSheets = ss.getSheets();
       const backupSheets = allSheets
         .filter((s) => s.getName().startsWith("Backup_"))
-        .sort((a, b) => a.getName().localeCompare(b.getName()));
+        .sort((a, b) => a.getName().localeCompare(b.getName())); // oldest first
 
-      if (backupSheets.length > 10) {
-        const toDelete = backupSheets.slice(0, backupSheets.length - 10);
-        toDelete.forEach((s) => {
-          Logger.log("Deleting old backup: " + s.getName());
-          ss.deleteSheet(s);
+      const MIN_KEEP = 3;
+      const MAX_KEEP = 20;
+      const MAX_AGE_DAYS = 30;
+      const cutoffDate = new Date(
+        now.getTime() - MAX_AGE_DAYS * 24 * 60 * 60 * 1000,
+      );
+
+      if (backupSheets.length > MIN_KEEP) {
+        // Parse date from backup name: Backup_YYYY-MM-DD_HHhMM
+        const parseBackupDate = (name) => {
+          const match = name.match(
+            /Backup_(\d{4})-(\d{2})-(\d{2})_(\d{2})h(\d{2})/,
+          );
+          if (!match) return null;
+          return new Date(match[1], match[2] - 1, match[3], match[4], match[5]);
+        };
+
+        // Always protect the newest MIN_KEEP
+        const protectedCount = Math.min(MIN_KEEP, backupSheets.length);
+        const candidates = backupSheets.slice(
+          0,
+          backupSheets.length - protectedCount,
+        );
+
+        // Delete candidates older than 30 days
+        candidates.forEach((s) => {
+          const bDate = parseBackupDate(s.getName());
+          if (bDate && bDate < cutoffDate) {
+            Logger.log("Deleting old backup (>30d): " + s.getName());
+            ss.deleteSheet(s);
+          }
         });
+
+        // Hard cap: if still >20, trim oldest
+        const remaining = ss
+          .getSheets()
+          .filter((s) => s.getName().startsWith("Backup_"))
+          .sort((a, b) => a.getName().localeCompare(b.getName()));
+
+        if (remaining.length > MAX_KEEP) {
+          const excess = remaining.slice(0, remaining.length - MAX_KEEP);
+          excess.forEach((s) => {
+            Logger.log("Deleting excess backup (>20 cap): " + s.getName());
+            ss.deleteSheet(s);
+          });
+        }
       }
     } else {
       Logger.log("No existing Despesas data to backup");
