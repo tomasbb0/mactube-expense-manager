@@ -1679,7 +1679,6 @@
       /* Platform info with access controls */
       .platform-info {
         padding: 14px 16px;
-        padding-top: 26px;
         position: relative;
         background: rgba(255, 255, 255, 0.015);
         backdrop-filter: blur(10px) saturate(180%);
@@ -1688,28 +1687,27 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
-        margin-top: -12px;
       }
 
-      /* Inverse rounded corners — concave mold to fit screenshot's rounded bottom */
+      /* Inverse rounded corners — concave mold ears that extend UP into the gap */
       .platform-info::before {
         content: '';
         position: absolute;
-        top: 0;
+        bottom: 100%;
         left: 0;
         width: 12px;
         height: 12px;
-        background: radial-gradient(circle at 0 0, transparent 12px, rgba(255, 255, 255, 0.015) 12px);
+        background: radial-gradient(circle at 0 100%, transparent 12px, rgba(255, 255, 255, 0.015) 12px);
         pointer-events: none;
       }
       .platform-info::after {
         content: '';
         position: absolute;
-        top: 0;
+        bottom: 100%;
         right: 0;
         width: 12px;
         height: 12px;
-        background: radial-gradient(circle at 100% 0, transparent 12px, rgba(255, 255, 255, 0.015) 12px);
+        background: radial-gradient(circle at 100% 100%, transparent 12px, rgba(255, 255, 255, 0.015) 12px);
         pointer-events: none;
       }
 
