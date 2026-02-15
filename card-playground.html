@@ -1,0 +1,1657 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Card Layers - Playground</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: #111;
+        color: #eee;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        padding: 30px;
+        min-height: 100vh;
+      }
+      h1 {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+        color: #33e933;
+      }
+      .subtitle {
+        color: #888;
+        font-size: 0.85rem;
+        margin-bottom: 30px;
+      }
+      h2 {
+        font-size: 1rem;
+        margin-bottom: 16px;
+      }
+      code {
+        font-family: "SF Mono", "Fira Code", monospace;
+        font-size: 0.63rem;
+        color: #999;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 1px 5px;
+        border-radius: 3px;
+      }
+
+      /* ========== LAYER REF ========== */
+      .stack-diagram {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 520px;
+        margin-bottom: 30px;
+      }
+      .stack-diagram h3 {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }
+      .stack-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 5px 0;
+        font-size: 0.75rem;
+      }
+      .stack-num {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.7rem;
+        flex-shrink: 0;
+      }
+      .stack-name {
+        font-weight: 600;
+        min-width: 130px;
+      }
+      .stack-css {
+        font-family: monospace;
+        font-size: 0.65rem;
+        color: #777;
+      }
+      .n1 {
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff6b6b;
+      }
+      .n2 {
+        background: rgba(255, 217, 61, 0.2);
+        color: #ffd93d;
+      }
+      .n3 {
+        background: rgba(107, 203, 255, 0.2);
+        color: #6bcbff;
+      }
+      .n4 {
+        background: rgba(192, 132, 252, 0.2);
+        color: #c084fc;
+      }
+      .n5 {
+        background: rgba(51, 233, 51, 0.2);
+        color: #33e933;
+      }
+
+      /* ========== HORIZONTAL LAYOUT ========== */
+      .card-types-row {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 30px;
+      }
+
+      /* ========== CARD TYPE SECTIONS ========== */
+      .card-type-section {
+        background: rgba(255, 255, 255, 0.015);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 16px;
+        flex: 1;
+        min-width: 0;
+      }
+      .card-type-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .badge-real {
+        background: rgba(107, 203, 255, 0.15);
+        color: #6bcbff;
+      }
+      .badge-pedir {
+        background: rgba(255, 217, 61, 0.15);
+        color: #ffd93d;
+      }
+      .badge-empty {
+        background: rgba(255, 255, 255, 0.08);
+        color: #888;
+      }
+
+      .card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+      }
+
+      /* ========== BACKDROP with lines/shapes ========== */
+      .card-backdrop {
+        width: 220px;
+        padding: 12px;
+        border-radius: 14px;
+        position: relative;
+        overflow: hidden;
+        flex-shrink: 0;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 11px,
+            rgba(255, 255, 255, 0.05) 11px,
+            rgba(255, 255, 255, 0.05) 12px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 11px,
+            rgba(255, 255, 255, 0.05) 11px,
+            rgba(255, 255, 255, 0.05) 12px
+          );
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .card-backdrop::before {
+        content: "";
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        width: 70px;
+        height: 25px;
+        background: rgba(255, 100, 100, 0.35);
+        border-radius: 5px;
+        z-index: 0;
+      }
+      .card-backdrop::after {
+        content: "";
+        position: absolute;
+        bottom: 25px;
+        right: 16px;
+        width: 50px;
+        height: 50px;
+        background: rgba(100, 200, 255, 0.25);
+        border-radius: 50%;
+        z-index: 0;
+      }
+      .bg-bar {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 110px;
+        height: 16px;
+        background: rgba(51, 233, 51, 0.2);
+        border-radius: 3px;
+        z-index: 0;
+      }
+      .bg-txt {
+        position: absolute;
+        font-size: 0.55rem;
+        color: rgba(255, 255, 255, 0.12);
+        font-weight: 700;
+        z-index: 0;
+        letter-spacing: 2px;
+      }
+      .bg-t1 {
+        top: 45px;
+        left: 16px;
+      }
+      .bg-t2 {
+        top: 95px;
+        right: 12px;
+      }
+      .bg-t3 {
+        bottom: 45px;
+        left: 20px;
+      }
+      .card-backdrop-label {
+        text-align: center;
+        font-size: 0.65rem;
+        color: #666;
+        margin-top: 10px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ========== EXPLODED LAYERS ========== */
+      .exploded-layers {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+      }
+      .exploded-layers h4 {
+        font-size: 0.8rem;
+        color: #ccc;
+        margin-bottom: 4px;
+      }
+
+      .elayer {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      .elayer:last-child {
+        border-bottom: none;
+      }
+
+      /* Each isolated layer visual — 0.5x scale, 100% accurate CSS */
+      .layer-visual {
+        width: 196px;
+        flex-shrink: 0;
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        zoom: 0.5;
+      }
+      .layer-visual-inner {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        padding: 8px;
+        background:
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 9px,
+            rgba(255, 255, 255, 0.06) 9px,
+            rgba(255, 255, 255, 0.06) 10px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 9px,
+            rgba(255, 255, 255, 0.06) 9px,
+            rgba(255, 255, 255, 0.06) 10px
+          );
+      }
+      .layer-visual-inner::before {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 50px;
+        height: 16px;
+        background: rgba(255, 100, 100, 0.3);
+        border-radius: 3px;
+        z-index: 0;
+      }
+      .layer-visual-inner::after {
+        content: "";
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        background: rgba(100, 200, 255, 0.2);
+        border-radius: 50%;
+        z-index: 0;
+      }
+
+      .elayer-info {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        flex-wrap: wrap;
+      }
+      .elayer-name {
+        font-weight: 700;
+        font-size: 0.68rem;
+        margin-bottom: 2px;
+      }
+      .elayer-css {
+        font-family: monospace;
+        font-size: 0.55rem;
+        color: #777;
+      }
+      .elayer-status {
+        font-size: 0.6rem;
+        margin-top: 3px;
+      }
+      .on {
+        color: #33e933;
+      }
+      .off {
+        color: #ff6b6b;
+      }
+      .diff {
+        color: #ffd93d;
+      }
+
+      /* ========== ACTUAL CARD ELEMENTS ========== */
+      /* Base card */
+      .iso-card {
+        width: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Layer 1: THE BOX */
+      .iso-box {
+        width: 100%;
+        height: 140px;
+        position: relative;
+        z-index: 1;
+        background: transparent;
+        backdrop-filter: blur(4px) saturate(108%);
+        border: 1px solid rgba(255, 255, 255, 0.001);
+        border-radius: 12px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.015);
+      }
+      .iso-box-active {
+        border-color: rgba(255, 255, 255, 0.03);
+      }
+
+      /* Layer 2: SHINE SWEEP */
+      .iso-shine {
+        width: 100%;
+        height: 140px;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        border-radius: 12px;
+        background: transparent;
+      }
+      .iso-shine-bar {
+        position: absolute;
+        top: 0;
+        left: 25%;
+        width: 40%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.12),
+          transparent
+        );
+      }
+
+      /* Layer 3: SCREENSHOT AREA */
+      .iso-screenshot {
+        width: 100%;
+        aspect-ratio: 4/3;
+        background: rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.55rem;
+        color: #555;
+        border-radius: 12px;
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+      }
+      .iso-screenshot.glass-style {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.6),
+          inset 0 -1px 1px rgba(255, 255, 255, 0.15),
+          0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Layer 4: GLASS LAYER */
+      .iso-glass {
+        width: 100%;
+        aspect-ratio: 4/3;
+        position: relative;
+        z-index: 1;
+        border-radius: 12px;
+        box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.25),
+          inset 0 -1px 1px rgba(255, 255, 255, 0.06),
+          inset 0 0 24px rgba(255, 255, 255, 0.015);
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* Layer 5: INFO BAR */
+      .iso-info {
+        width: 100%;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(180%);
+        position: relative;
+        z-index: 1;
+        border-radius: 0 0 12px 12px;
+        min-height: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .iso-info::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        background: radial-gradient(
+          circle at 100% 0,
+          transparent 12px,
+          rgba(255, 255, 255, 0.015) 12px
+        );
+      }
+      .iso-info::after {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background: radial-gradient(
+          circle at 0 0,
+          transparent 12px,
+          rgba(255, 255, 255, 0.015) 12px
+        );
+      }
+      .iso-info .n {
+        font-size: 0.6rem;
+        font-weight: 600;
+        color: #eee;
+      }
+      .iso-info .d {
+        font-size: 0.5rem;
+        color: #888;
+        margin-top: 1px;
+      }
+      .iso-info .placeholder {
+        display: inline-block;
+        border-radius: 3px;
+      }
+
+      /* Dimmed layer */
+      .layer-off {
+        opacity: 0.15;
+        filter: grayscale(1);
+      }
+      .layer-off-label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #ff6b6b;
+        z-index: 5;
+        text-shadow: 0 0 6px rgba(0, 0, 0, 0.8);
+      }
+
+      /* Full assembled card styles */
+      .demo-card {
+        width: 196px;
+        background: transparent;
+        backdrop-filter: blur(4px) saturate(108%);
+        border: 1px solid rgba(255, 255, 255, 0.001);
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s;
+        z-index: 1;
+      }
+      .demo-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.08),
+          transparent
+        );
+        transition: 0.5s;
+        z-index: 1;
+        pointer-events: none;
+      }
+      .demo-card:hover::before {
+        left: 100%;
+      }
+      .demo-card:hover {
+        transform: translateY(-4px);
+        background: rgba(255, 255, 255, 0.025);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+      }
+      .demo-preview {
+        width: 100%;
+        aspect-ratio: 4/3;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .demo-preview::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 12px;
+        box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.25),
+          inset 0 -1px 1px rgba(255, 255, 255, 0.06),
+          inset 0 0 24px rgba(255, 255, 255, 0.015);
+        pointer-events: none;
+        z-index: 2;
+      }
+      .demo-info {
+        padding: 12px 14px;
+        background: rgba(255, 255, 255, 0.015);
+        backdrop-filter: blur(10px) saturate(180%);
+        min-height: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+      }
+      .demo-info::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        background: radial-gradient(
+          circle at 100% 0,
+          transparent 12px,
+          rgba(255, 255, 255, 0.015) 12px
+        );
+      }
+      .demo-info::after {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background: radial-gradient(
+          circle at 0 0,
+          transparent 12px,
+          rgba(255, 255, 255, 0.015) 12px
+        );
+      }
+      .demo-info .name {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: #eee;
+      }
+      .demo-info .desc {
+        font-size: 0.58rem;
+        color: #888;
+        margin-top: 2px;
+      }
+
+      /* Pedir overrides */
+      .demo-card.pedir .demo-preview {
+        opacity: 0.35;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.6),
+          inset 0 -1px 1px rgba(255, 255, 255, 0.15),
+          0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+      .demo-card.pedir:hover .demo-preview {
+        opacity: 0.55;
+      }
+      .demo-card.pedir .demo-preview::after {
+        display: none;
+      }
+      .demo-card.pedir::before {
+        display: none;
+      }
+      .demo-card.pedir .pedir-plus {
+        font-size: 2rem;
+        font-weight: 200;
+        color: rgba(255, 255, 255, 0.3);
+      }
+
+      /* Empty overrides */
+      .demo-card.empty {
+        pointer-events: none;
+        opacity: 0.35;
+      }
+      .demo-card.empty::before {
+        display: none;
+      }
+      .demo-card.empty .demo-preview {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        box-shadow:
+          inset 0 1px 1px rgba(255, 255, 255, 0.6),
+          inset 0 -1px 1px rgba(255, 255, 255, 0.15),
+          0 4px 16px rgba(0, 0, 0, 0.12);
+      }
+      .demo-card.empty .demo-preview::after {
+        display: none;
+      }
+
+      /* Comparison table */
+      .compare {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 20px;
+        max-width: 800px;
+      }
+      .compare h3 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+      .compare table {
+        width: 100%;
+        font-size: 0.72rem;
+        border-collapse: collapse;
+      }
+      .compare th {
+        text-align: left;
+        padding: 6px 8px;
+        color: #888;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .compare td {
+        padding: 6px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      }
+      .compare .center {
+        text-align: center;
+      }
+
+      /* How to tell */
+      .howto {
+        max-width: 800px;
+        background: rgba(51, 233, 51, 0.05);
+        border: 1px solid rgba(51, 233, 51, 0.15);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+      .howto h3 {
+        font-size: 0.95rem;
+        color: #33e933;
+        margin-bottom: 10px;
+      }
+      .howto p {
+        font-size: 0.78rem;
+        color: #ccc;
+        line-height: 1.6;
+      }
+
+      /* Clickable layers */
+      .elayer {
+        cursor: pointer;
+        border-radius: 8px;
+        padding: 8px;
+        transition: background 0.15s;
+      }
+      .elayer:hover {
+        background: rgba(255, 255, 255, 0.04);
+      }
+      .elayer.selected {
+        background: rgba(51, 233, 51, 0.08);
+        outline: 1px solid rgba(51, 233, 51, 0.25);
+      }
+
+      /* Prompt Builder */
+      .prompt-builder {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(20, 20, 20, 0.97);
+        backdrop-filter: blur(20px);
+        border-top: 2px solid rgba(51, 233, 51, 0.25);
+        padding: 16px 30px;
+        z-index: 100;
+        margin: 40px -30px 0 -30px;
+      }
+      .pb-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .pb-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #33e933;
+      }
+      .pb-hint {
+        font-size: 0.68rem;
+        color: #777;
+        max-width: 320px;
+        text-align: right;
+      }
+      .pb-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .pb-btn {
+        font-size: 0.7rem;
+        padding: 5px 14px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.15s;
+      }
+      .pb-copy {
+        background: rgba(51, 233, 51, 0.15);
+        color: #33e933;
+      }
+      .pb-copy:hover {
+        background: rgba(51, 233, 51, 0.25);
+      }
+      .pb-clear {
+        background: rgba(255, 107, 107, 0.12);
+        color: #ff6b6b;
+      }
+      .pb-clear:hover {
+        background: rgba(255, 107, 107, 0.22);
+      }
+
+      /* Sentences list */
+      .pb-sentences {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 10px;
+        min-height: 0;
+      }
+      .pb-sentence {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.75rem;
+        animation: slideIn 0.2s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .pb-sentence .prefix {
+        color: #6bcbff;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .pb-sentence .change-text {
+        color: #eee;
+        flex: 1;
+      }
+      .pb-sentence .remove-btn {
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 107, 107, 0.12);
+        color: #ff6b6b;
+        border-radius: 50%;
+        border: none;
+        font-size: 0.7rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 0.15s;
+      }
+      .pb-sentence .remove-btn:hover {
+        background: rgba(255, 107, 107, 0.3);
+      }
+      .pb-empty {
+        font-size: 0.72rem;
+        color: #555;
+        text-align: center;
+        padding: 12px 0;
+      }
+
+      /* Input area */
+      .pb-input-area {
+        display: none;
+        gap: 8px;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(51, 233, 51, 0.2);
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-top: 8px;
+      }
+      .pb-input-area.active {
+        display: flex;
+      }
+      .pb-input-prefix {
+        color: #6bcbff;
+        font-weight: 600;
+        font-size: 0.75rem;
+        white-space: nowrap;
+      }
+      .pb-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #eee;
+        font-size: 0.78rem;
+        font-family: inherit;
+        outline: none;
+      }
+      .pb-input::placeholder {
+        color: #555;
+      }
+      .pb-input-add {
+        background: rgba(51, 233, 51, 0.15);
+        color: #33e933;
+        border: none;
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .pb-input-add:hover {
+        background: rgba(51, 233, 51, 0.25);
+      }
+      .pb-input-cancel {
+        background: transparent;
+        color: #888;
+        border: none;
+        font-size: 0.7rem;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .pb-input-cancel:hover {
+        color: #ccc;
+      }
+
+      /* Toast */
+      .pb-toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(51, 233, 51, 0.15);
+        border: 1px solid rgba(51, 233, 51, 0.3);
+        color: #33e933;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        z-index: 999;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s;
+        pointer-events: none;
+      }
+      .pb-toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Card Layers Playground</h1>
+    <p class="subtitle">
+      Each card has 5 layers. See them assembled + each layer isolated at real
+      size. Background shapes test transparency.
+    </p>
+
+    <div class="stack-diagram">
+      <h3>The 5 Layers (bottom to top)</h3>
+      <div class="stack-row">
+        <div class="stack-num n1">1</div>
+        <div class="stack-name" style="color: #ff6b6b">THE BOX</div>
+        <div class="stack-css">.platform-card</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num n2">2</div>
+        <div class="stack-name" style="color: #ffd93d">SHINE SWEEP</div>
+        <div class="stack-css">.platform-card::before</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num n3">3</div>
+        <div class="stack-name" style="color: #6bcbff">SCREENSHOT AREA</div>
+        <div class="stack-css">.platform-preview</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num n4">4</div>
+        <div class="stack-name" style="color: #c084fc">GLASS LAYER</div>
+        <div class="stack-css">.platform-preview::after</div>
+      </div>
+      <div class="stack-row">
+        <div class="stack-num n5">5</div>
+        <div class="stack-name" style="color: #33e933">INFO BAR</div>
+        <div class="stack-css">.platform-info</div>
+      </div>
+    </div>
+
+    <div class="card-types-row">
+      <!-- ==================== TYPE 1: REAL CARD ==================== -->
+      <div class="card-type-section">
+        <div class="card-type-header">
+          <span class="badge badge-real">Real Card</span>
+        </div>
+        <div class="card-body">
+          <!-- Assembled card -->
+          <div>
+            <div class="card-backdrop">
+              <div class="bg-bar"></div>
+              <span class="bg-txt bg-t1">BEHIND</span>
+              <span class="bg-txt bg-t2">TEXT</span>
+              <span class="bg-txt bg-t3">VISIBLE?</span>
+              <div class="demo-card">
+                <div class="demo-preview">
+                  <span style="font-size: 0.8rem; color: #555"
+                    >mini-dashboard</span
+                  >
+                </div>
+                <div class="demo-info">
+                  <div class="name">Gestao de Despesas</div>
+                  <div class="desc">Gerir todas as despesas</div>
+                </div>
+              </div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 0.65rem;
+                color: #666;
+                margin-top: 8px;
+              "
+            >
+              Assembled (hover me)
+            </div>
+          </div>
+
+          <!-- Exploded layers -->
+          <div class="exploded-layers">
+            <h4>Each layer isolated:</h4>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #ff6b6b">
+                  <div class="iso-box iso-box-active"></div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #ff6b6b">1. THE BOX</div>
+                <div class="elayer-css">.platform-card</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; transparent + blur, 12px
+                  radius, overflow hidden
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #ffd93d">
+                  <div class="iso-shine"><div class="iso-shine-bar"></div></div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #ffd93d">
+                  2. SHINE SWEEP
+                </div>
+                <div class="elayer-css">.platform-card::before</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; white gradient slides on
+                  hover
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #6bcbff">
+                  <div class="iso-screenshot">dark bg</div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #6bcbff">
+                  3. SCREENSHOT AREA
+                </div>
+                <div class="elayer-css">.platform-preview</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; dark bg rgba(0,0,0,0.3),
+                  <span class="on">top 12px (parent clips)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #c084fc">
+                  <div class="iso-glass"></div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #c084fc">
+                  4. GLASS LAYER
+                </div>
+                <div class="elayer-css">.platform-preview::after</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; inset highlights, top 12px
+                  (parent clips)
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #33e933">
+                  <div class="iso-info">
+                    <div class="n">Platform Name</div>
+                    <div class="d">Description text</div>
+                  </div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #33e933">
+                  5. INFO BAR
+                </div>
+                <div class="elayer-css">.platform-info</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; name + desc + access btn,
+                  own blur(10px)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TYPE 2: PEDIR CARD ==================== -->
+      <div class="card-type-section">
+        <div class="card-type-header">
+          <span class="badge badge-pedir">Pedir Card</span>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-backdrop">
+              <div class="bg-bar"></div>
+              <span class="bg-txt bg-t1">BEHIND</span>
+              <span class="bg-txt bg-t2">TEXT</span>
+              <span class="bg-txt bg-t3">VISIBLE?</span>
+              <div class="demo-card pedir">
+                <div class="demo-preview">
+                  <span class="pedir-plus">+</span>
+                </div>
+                <div class="demo-info">
+                  <div class="name">Pedir Plataforma</div>
+                  <div class="desc">Solicitar nova plataforma</div>
+                </div>
+              </div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 0.65rem;
+                color: #666;
+                margin-top: 8px;
+              "
+            >
+              Assembled (hover me)
+            </div>
+          </div>
+
+          <div class="exploded-layers">
+            <h4>Each layer isolated:</h4>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #ff6b6b">
+                  <div class="iso-box iso-box-active"></div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #ff6b6b">1. THE BOX</div>
+                <div class="elayer-css">.platform-card.pedir-card</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; same as real card
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual" style="position: relative">
+                <div class="layer-visual-inner" style="border-color: #ffd93d">
+                  <div class="iso-shine layer-off"></div>
+                </div>
+                <span class="layer-off-label">OFF</span>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #ffd93d">
+                  2. SHINE SWEEP
+                </div>
+                <div class="elayer-css">.pedir-card::before</div>
+                <div class="elayer-status">
+                  <span class="off">OFF</span> &mdash; display: none
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #6bcbff">
+                  <div class="iso-screenshot glass-style" style="opacity: 0.35">
+                    +
+                  </div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #6bcbff">
+                  3. SCREENSHOT AREA
+                </div>
+                <div class="elayer-css">.platform-preview.empty-preview</div>
+                <div class="elayer-status">
+                  <span class="diff">DIFFERENT</span> &mdash; transparent bg,
+                  white border, own 12px radius,
+                  <span class="diff">opacity 0.35</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual" style="position: relative">
+                <div class="layer-visual-inner" style="border-color: #c084fc">
+                  <div class="iso-glass layer-off"></div>
+                </div>
+                <span class="layer-off-label">OFF</span>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #c084fc">
+                  4. GLASS LAYER
+                </div>
+                <div class="elayer-css">.empty-preview::after</div>
+                <div class="elayer-status">
+                  <span class="off">OFF</span> &mdash; display: none
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #33e933">
+                  <div class="iso-info">
+                    <div class="n">Pedir Plataforma</div>
+                    <div class="d">Solicitar nova</div>
+                  </div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #33e933">
+                  5. INFO BAR
+                </div>
+                <div class="elayer-css">.platform-info</div>
+                <div class="elayer-status">
+                  <span class="on">ON</span> &mdash; normal text, normal opacity
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== TYPE 3: EMPTY CARD ==================== -->
+      <div class="card-type-section">
+        <div class="card-type-header">
+          <span class="badge badge-empty">Empty Card</span>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="card-backdrop">
+              <div class="bg-bar"></div>
+              <span class="bg-txt bg-t1">BEHIND</span>
+              <span class="bg-txt bg-t2">TEXT</span>
+              <span class="bg-txt bg-t3">VISIBLE?</span>
+              <div class="demo-card empty">
+                <div class="demo-preview"></div>
+                <div class="demo-info">
+                  <div class="name">
+                    <span
+                      style="
+                        display: inline-block;
+                        width: 60%;
+                        height: 8px;
+                        background: rgba(255, 255, 255, 0.08);
+                        border-radius: 4px;
+                      "
+                    ></span>
+                  </div>
+                  <div class="desc">
+                    <span
+                      style="
+                        display: inline-block;
+                        width: 80%;
+                        height: 6px;
+                        background: rgba(255, 255, 255, 0.04);
+                        border-radius: 3px;
+                      "
+                    ></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              style="
+                text-align: center;
+                font-size: 0.65rem;
+                color: #666;
+                margin-top: 8px;
+              "
+            >
+              Assembled
+            </div>
+          </div>
+
+          <div class="exploded-layers">
+            <h4>Each layer isolated:</h4>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #ff6b6b">
+                  <div
+                    class="iso-box iso-box-active"
+                    style="opacity: 0.35"
+                  ></div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #ff6b6b">1. THE BOX</div>
+                <div class="elayer-css">.platform-card.empty-card</div>
+                <div class="elayer-status">
+                  <span class="diff">DIFFERENT</span> &mdash;
+                  <span class="diff">opacity 0.35</span>, pointer-events none
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual" style="position: relative">
+                <div class="layer-visual-inner" style="border-color: #ffd93d">
+                  <div class="iso-shine layer-off"></div>
+                </div>
+                <span class="layer-off-label">OFF</span>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #ffd93d">
+                  2. SHINE SWEEP
+                </div>
+                <div class="elayer-css">.empty-card::before</div>
+                <div class="elayer-status">
+                  <span class="off">OFF</span> &mdash; display: none
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #6bcbff">
+                  <div class="iso-screenshot glass-style"></div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #6bcbff">
+                  3. SCREENSHOT AREA
+                </div>
+                <div class="elayer-css">.platform-preview.empty-preview</div>
+                <div class="elayer-status">
+                  <span class="diff">DIFFERENT</span> &mdash; transparent, white
+                  border, own 12px radius, empty inside
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual" style="position: relative">
+                <div class="layer-visual-inner" style="border-color: #c084fc">
+                  <div class="iso-glass layer-off"></div>
+                </div>
+                <span class="layer-off-label">OFF</span>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #c084fc">
+                  4. GLASS LAYER
+                </div>
+                <div class="elayer-css">.empty-preview::after</div>
+                <div class="elayer-status">
+                  <span class="off">OFF</span> &mdash; display: none
+                </div>
+              </div>
+            </div>
+
+            <div class="elayer">
+              <div class="layer-visual">
+                <div class="layer-visual-inner" style="border-color: #33e933">
+                  <div class="iso-info">
+                    <div class="n">
+                      <span
+                        class="placeholder"
+                        style="
+                          width: 60%;
+                          height: 7px;
+                          background: rgba(255, 255, 255, 0.08);
+                        "
+                      ></span>
+                    </div>
+                    <div class="d">
+                      <span
+                        class="placeholder"
+                        style="
+                          width: 80%;
+                          height: 5px;
+                          background: rgba(255, 255, 255, 0.04);
+                        "
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="elayer-info">
+                <div class="elayer-name" style="color: #33e933">
+                  5. INFO BAR
+                </div>
+                <div class="elayer-css">.platform-info</div>
+                <div class="elayer-status">
+                  <span class="diff">DIFFERENT</span> &mdash; gray placeholder
+                  bars instead of text
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end card-types-row -->
+
+    <!-- COMPARISON TABLE -->
+    <div class="compare">
+      <h3>Quick Comparison</h3>
+      <table>
+        <tr>
+          <th>Layer</th>
+          <th class="center" style="color: #6bcbff">Real Card</th>
+          <th class="center" style="color: #ffd93d">Pedir Card</th>
+          <th class="center" style="color: #888">Empty Card</th>
+        </tr>
+        <tr>
+          <td style="color: #ff6b6b; font-weight: 600">THE BOX</td>
+          <td class="center on">normal</td>
+          <td class="center on">normal</td>
+          <td class="center diff">opacity 0.35</td>
+        </tr>
+        <tr>
+          <td style="color: #ffd93d; font-weight: 600">SHINE SWEEP</td>
+          <td class="center on">on hover</td>
+          <td class="center off">OFF</td>
+          <td class="center off">OFF</td>
+        </tr>
+        <tr>
+          <td style="color: #6bcbff; font-weight: 600">SCREENSHOT AREA</td>
+          <td class="center on">dark bg</td>
+          <td class="center diff">glass border</td>
+          <td class="center diff">glass border</td>
+        </tr>
+        <tr>
+          <td style="color: #c084fc; font-weight: 600">GLASS LAYER</td>
+          <td class="center on">highlights</td>
+          <td class="center off">OFF</td>
+          <td class="center off">OFF</td>
+        </tr>
+        <tr>
+          <td style="color: #33e933; font-weight: 600">INFO BAR</td>
+          <td class="center on">real text</td>
+          <td class="center on">real text</td>
+          <td class="center diff">placeholders</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- PROMPT BUILDER (sticky bottom) -->
+    <div class="prompt-builder" id="promptBuilder">
+      <div class="pb-header">
+        <div>
+          <div class="pb-title">Prompt Builder</div>
+          <div class="pb-hint">
+            Click any layer above to start building your request
+          </div>
+        </div>
+        <div class="pb-actions">
+          <button
+            class="pb-btn pb-copy"
+            onclick="copyPrompt()"
+            id="copyBtn"
+            style="display: none"
+          >
+            Copy Prompt
+          </button>
+          <button
+            class="pb-btn pb-clear"
+            onclick="clearPrompt()"
+            id="clearBtn"
+            style="display: none"
+          >
+            Clear All
+          </button>
+        </div>
+      </div>
+      <div class="pb-sentences" id="sentences">
+        <div class="pb-empty" id="emptyMsg">
+          Click any layer from the card sections above to add instructions
+        </div>
+      </div>
+      <div class="pb-input-area" id="inputArea">
+        <span class="pb-input-prefix" id="inputPrefix"></span>
+        <input
+          class="pb-input"
+          id="inputField"
+          placeholder="describe what to change..."
+        />
+        <button class="pb-input-add" onclick="addSentence()">+ Add</button>
+        <button class="pb-input-cancel" onclick="cancelInput()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="pb-toast" id="toast">Copied to clipboard!</div>
+
+    <script>
+      const sentences = [];
+      let currentPrefix = "";
+
+      // Detect card type from section ancestor
+      function getCardType(el) {
+        const section = el.closest(".card-type-section");
+        if (!section) return "ALL cards";
+        const badge = section.querySelector(".badge");
+        if (!badge) return "ALL cards";
+        const text = badge.textContent.trim();
+        if (text.includes("Real")) return "Real Card";
+        if (text.includes("Pedir")) return "Pedir Card";
+        if (text.includes("Empty")) return "Empty Card";
+        return "ALL cards";
+      }
+
+      // Detect layer name from the elayer-name element
+      function getLayerName(el) {
+        const nameEl = el.querySelector(".elayer-name");
+        if (!nameEl) return "UNKNOWN";
+        const text = nameEl.textContent.trim();
+        // Extract just the layer name (after "1. ", "2. ", etc.)
+        const match = text.match(/\d+\.\s+(.*)/);
+        return match ? match[1] : text;
+      }
+
+      // Click handler for all elayer elements
+      document.addEventListener("click", function (e) {
+        const elayer = e.target.closest(".elayer");
+        if (!elayer) return;
+
+        const cardType = getCardType(elayer);
+        const layerName = getLayerName(elayer);
+        currentPrefix = `On ${cardType}, change ${layerName}: `;
+
+        // Highlight selected
+        document
+          .querySelectorAll(".elayer.selected")
+          .forEach((el) => el.classList.remove("selected"));
+        elayer.classList.add("selected");
+
+        // Show input area
+        const inputArea = document.getElementById("inputArea");
+        const inputPrefix = document.getElementById("inputPrefix");
+        const inputField = document.getElementById("inputField");
+
+        inputPrefix.textContent = currentPrefix;
+        inputArea.classList.add("active");
+        inputField.value = "";
+        inputField.focus();
+
+        // Scroll prompt builder into view
+        document
+          .getElementById("promptBuilder")
+          .scrollIntoView({ behavior: "smooth", block: "end" });
+      });
+
+      // Enter key to add sentence
+      document
+        .getElementById("inputField")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter" && this.value.trim()) {
+            addSentence();
+          } else if (e.key === "Escape") {
+            cancelInput();
+          }
+        });
+
+      function addSentence() {
+        const inputField = document.getElementById("inputField");
+        const text = inputField.value.trim();
+        if (!text) return;
+
+        sentences.push({ prefix: currentPrefix, text: text });
+        renderSentences();
+        cancelInput();
+      }
+
+      function cancelInput() {
+        document.getElementById("inputArea").classList.remove("active");
+        document
+          .querySelectorAll(".elayer.selected")
+          .forEach((el) => el.classList.remove("selected"));
+        currentPrefix = "";
+      }
+
+      function removeSentence(index) {
+        sentences.splice(index, 1);
+        renderSentences();
+      }
+
+      function renderSentences() {
+        const container = document.getElementById("sentences");
+        const emptyMsg = document.getElementById("emptyMsg");
+        const copyBtn = document.getElementById("copyBtn");
+        const clearBtn = document.getElementById("clearBtn");
+
+        if (sentences.length === 0) {
+          container.innerHTML =
+            '<div class="pb-empty" id="emptyMsg">Click any layer from the card sections above to add instructions</div>';
+          copyBtn.style.display = "none";
+          clearBtn.style.display = "none";
+          return;
+        }
+
+        copyBtn.style.display = "";
+        clearBtn.style.display = "";
+
+        container.innerHTML = sentences
+          .map(
+            (s, i) => `
+          <div class="pb-sentence">
+            <span class="prefix">${s.prefix}</span>
+            <span class="change-text">${s.text}</span>
+            <button class="remove-btn" onclick="removeSentence(${i})" title="Remove">&times;</button>
+          </div>
+        `,
+          )
+          .join("");
+      }
+
+      function copyPrompt() {
+        if (sentences.length === 0) return;
+        const text = sentences.map((s) => s.prefix + s.text).join("\n");
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            showToast("Copied to clipboard!");
+          })
+          .catch(() => {
+            // Fallback
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand("copy");
+            document.body.removeChild(ta);
+            showToast("Copied to clipboard!");
+          });
+      }
+
+      function clearPrompt() {
+        sentences.length = 0;
+        renderSentences();
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2000);
+      }
+    </script>
+  </body>
+</html>

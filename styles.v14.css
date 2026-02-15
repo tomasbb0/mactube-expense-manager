@@ -869,6 +869,12 @@ body {
   padding-right: 44px;
 }
 
+.form-group select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  color: var(--text-muted);
+}
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -997,6 +1003,15 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.btn-primary.btn-active {
+  opacity: 1;
+  pointer-events: auto;
+  background: var(--green-primary);
+  box-shadow: 0 0 20px rgba(51, 233, 51, 0.3);
 }
 
 .btn-primary svg {

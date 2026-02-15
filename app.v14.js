@@ -707,6 +707,17 @@ function filterProjectsByArtist() {
   // Clear and rebuild options
   projectSelect.innerHTML = '<option value="">Selecionar...</option>';
 
+  // If no artist selected, keep project disabled
+  if (!selectedArtist) {
+    projectSelect.disabled = true;
+    projectSelect.innerHTML =
+      '<option value="">Selecionar artista primeiro...</option>';
+    return;
+  }
+
+  // Enable project select when artist is chosen
+  projectSelect.disabled = false;
+
   // Get projects for this artist (or all if not mapped)
   const allowedProjects =
     artistProjects[selectedArtist] || allProjects.map((p) => p.value);
@@ -743,6 +754,22 @@ window.filterProjectsByArtist = filterProjectsByArtist;
 // EXPENSE FORM
 // ==========================================
 
+function updateSubmitButtonState() {
+  const artist = document.getElementById("artist").value;
+  const project = document.getElementById("project").value;
+  const type = document.getElementById("expense-type").value;
+  const amount = document.getElementById("amount").value;
+  const date = document.getElementById("expense-date").value;
+  const submitBtn = document.querySelector("#expense-form .btn-primary");
+  if (!submitBtn) return;
+
+  if (artist && project && type && parseFloat(amount) > 0 && date) {
+    submitBtn.classList.add("btn-active");
+  } else {
+    submitBtn.classList.remove("btn-active");
+  }
+}
+
 function initForm() {
   const form = document.getElementById("expense-form");
   const typeButtons = document.querySelectorAll(".type-btn");
@@ -754,6 +781,7 @@ function initForm() {
       btn.classList.add("selected");
       document.getElementById("expense-type").value =
         btn.getAttribute("data-type");
+      updateSubmitButtonState();
     });
   });
 
@@ -771,7 +799,27 @@ function initForm() {
 
   // Add artist change listener to filter projects
   const artistSelect = document.getElementById("artist");
-  artistSelect.addEventListener("change", filterProjectsByArtist);
+  artistSelect.addEventListener("change", () => {
+    filterProjectsByArtist();
+    updateSubmitButtonState();
+  });
+
+  // Monitor all mandatory fields for submit button state
+  document
+    .getElementById("project")
+    .addEventListener("change", updateSubmitButtonState);
+  document
+    .getElementById("amount")
+    .addEventListener("input", updateSubmitButtonState);
+  document
+    .getElementById("expense-date")
+    .addEventListener("change", updateSubmitButtonState);
+
+  // Filter projects on initial load (artist may be pre-selected)
+  filterProjectsByArtist();
+
+  // Set initial button state
+  updateSubmitButtonState();
 }
 
 function setDefaultDate() {
@@ -830,7 +878,14 @@ function resetForm() {
     .forEach((b) => b.classList.remove("selected"));
   document.querySelector('[data-investor="maktub"]').classList.add("selected");
   document.getElementById("investor").value = "maktub";
+  // Re-disable project select until artist is chosen again
+  const projectSelect = document.getElementById("project");
+  projectSelect.disabled = true;
+  projectSelect.innerHTML =
+    '<option value="">Selecionar artista primeiro...</option>';
   setDefaultDate();
+  // Reset submit button state
+  updateSubmitButtonState();
 }
 
 // ==========================================
