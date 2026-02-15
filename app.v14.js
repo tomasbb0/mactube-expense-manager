@@ -1,11 +1,8 @@
 // Maktub Art Group - Expense Manager App
 // ==========================================
 
-// Self-healing: clear any stale localStorage data
-(function selfHeal() {
-  localStorage.removeItem("maktub_expenses");
-  localStorage.removeItem("maktub_data_version");
-})();
+// Data persistence: localStorage is the primary local store,
+// Google Sheets is the cross-device source of truth.
 
 // Google Sheets Integration
 // IMPORTANT: Replace this URL with your deployed Google Apps Script Web App URL
@@ -121,6 +118,7 @@ function initAuth() {
   loginBtn.addEventListener("click", handleLogin);
   logoutBtn.addEventListener("click", handleLogout);
   refreshBtn.addEventListener("click", () => {
+    // Re-read from localStorage and sync from Sheets
     loadData();
     showToast("Dados atualizados", "success");
   });
@@ -194,7 +192,9 @@ function clearAppCache() {
       key &&
       (key.startsWith("maktub_pwd_changed_") ||
         key.startsWith("maktub_hub_userdata_") ||
-        key.startsWith("maktub_custom_shortcuts"))
+        key.startsWith("maktub_custom_shortcuts") ||
+        key === "maktub_expenses" ||
+        key === "maktub_data_version")
     ) {
       preserveKeys.push({ key, value: localStorage.getItem(key) });
     }
@@ -837,19 +837,158 @@ function resetForm() {
 // DATA MANAGEMENT
 // ==========================================
 
-const DATA_VERSION = 18; // v18: Always load fresh data — bypass all caching
+const DATA_VERSION = 19; // v19: Restore localStorage persistence + background Sheets sync
+let _autoSyncTimer = null;
+let _syncingFromSheets = false;
 
 function loadData() {
-  // Always generate fresh data from hardcoded source — no localStorage dependency
-  console.log("📊 loadData: generating fresh data from getAllDemoData()");
+  // 1. Try localStorage first (fast, works offline)
+  try {
+    const saved = localStorage.getItem("maktub_expenses");
+    const savedVersion = parseInt(
+      localStorage.getItem("maktub_data_version") || "0",
+    );
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        expenses = parsed;
+        console.log(
+          `📊 loadData: ${expenses.length} expenses loaded from localStorage`,
+        );
+        updateDashboard();
+        updateFilterDropdowns();
+        // Fetch latest from Google Sheets in background (for multi-device sync)
+        backgroundSyncFromSheets();
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn("⚠️ Could not load from localStorage:", e);
+  }
+
+  // 2. No saved data — seed with demo data (first-time user)
+  console.log("📊 loadData: no saved data found, seeding with demo data");
   expenses = generateDemoData(300);
-  console.log(`📊 loadData: ${expenses.length} expenses loaded`);
+  console.log(`📊 loadData: ${expenses.length} demo expenses loaded`);
+  saveData(); // Persist the seed so it survives reload
   updateDashboard();
   updateFilterDropdowns();
+  // Also check Google Sheets (another device may already have real data)
+  backgroundSyncFromSheets();
 }
 
 function saveData() {
-  // No-op: data is always freshly generated
+  try {
+    localStorage.setItem("maktub_expenses", JSON.stringify(expenses));
+    localStorage.setItem("maktub_data_version", String(DATA_VERSION));
+    console.log(
+      `💾 saveData: ${expenses.length} expenses saved to localStorage`,
+    );
+  } catch (e) {
+    console.error("❌ saveData: localStorage write failed", e);
+    showToast("Erro ao guardar dados localmente", "error");
+  }
+  // Schedule quiet auto-sync to Google Sheets (debounced)
+  // Skip if this save was triggered by an incoming Sheets sync to avoid loops
+  if (!_syncingFromSheets) {
+    scheduleAutoSyncToSheets();
+  }
+}
+
+// Debounced auto-sync: pushes to Google Sheets 10s after last change
+function scheduleAutoSyncToSheets() {
+  if (_autoSyncTimer) clearTimeout(_autoSyncTimer);
+  _autoSyncTimer = setTimeout(async () => {
+    if (!GOOGLE_SCRIPT_URL || isSyncing) return;
+    try {
+      console.log("🔄 Auto-sync: pushing to Google Sheets...");
+      const payload = {
+        action: "syncFromWebsite",
+        expenses: expenses,
+        timestamp: new Date().toISOString(),
+      };
+      await sendToGoogleSheets(payload);
+      localStorage.setItem("lastSyncToSheets", new Date().toISOString());
+      console.log("✅ Auto-sync to Google Sheets complete");
+    } catch (e) {
+      console.warn(
+        "⚠️ Auto-sync to Sheets failed (will retry on next save):",
+        e.message,
+      );
+    }
+  }, 10000);
+}
+
+// Background sync FROM Google Sheets (runs on page load for multi-device sync)
+async function backgroundSyncFromSheets() {
+  if (!GOOGLE_SCRIPT_URL) return;
+  try {
+    console.log("🔄 Background sync: fetching from Google Sheets...");
+    const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getAllExpenses`, {
+      method: "GET",
+    });
+    const data = await response.json();
+
+    if (data.success && data.expenses && data.expenses.length > 0) {
+      const localMap = new Map(expenses.map((e) => [e.id, e]));
+      const sheetExpenses = data.expenses;
+      let addedCount = 0;
+      let updatedCount = 0;
+
+      sheetExpenses.forEach((sheetExp) => {
+        if (!sheetExp.id) sheetExp.id = generateId();
+        if (localMap.has(sheetExp.id)) {
+          // Both local and sheet have this expense — newer updatedAt wins
+          const local = localMap.get(sheetExp.id);
+          const localTime = local.updatedAt
+            ? new Date(local.updatedAt)
+            : new Date(0);
+          const sheetTime = sheetExp.updatedAt
+            ? new Date(sheetExp.updatedAt)
+            : new Date(0);
+          if (sheetTime > localTime) {
+            const idx = expenses.findIndex((e) => e.id === sheetExp.id);
+            if (idx !== -1) {
+              expenses[idx] = { ...expenses[idx], ...sheetExp };
+              updatedCount++;
+            }
+          }
+        } else {
+          // New expense from Sheets (added on another device)
+          expenses.push(sheetExp);
+          addedCount++;
+        }
+      });
+
+      if (addedCount > 0 || updatedCount > 0) {
+        _syncingFromSheets = true;
+        saveData();
+        _syncingFromSheets = false;
+        updateDashboard();
+        updateFilterDropdowns();
+        try {
+          renderTable();
+        } catch (e) {}
+        try {
+          renderPivotTables();
+        } catch (e) {}
+        console.log(
+          `✅ Background sync: +${addedCount} new, ~${updatedCount} updated from Sheets`,
+        );
+        if (addedCount > 0) {
+          showToast(
+            `${addedCount} novas despesas sincronizadas do Google Sheets`,
+            "success",
+          );
+        }
+      } else {
+        console.log("✅ Background sync: local data is up to date");
+      }
+      localStorage.setItem("lastSyncFromSheets", new Date().toISOString());
+    }
+  } catch (e) {
+    console.warn("⚠️ Background sync from Sheets failed:", e.message);
+  }
 }
 
 // Deduplicate expenses - removes duplicates by ID (the simplest approach!)
@@ -2622,7 +2761,7 @@ function renderTable() {
   tbody.innerHTML = sorted
     .map(
       (e) => `
-        <tr>
+        <tr data-expense-id="${e.id}" onclick="handleRowClick(event, '${e.id}')">
             <td>${formatDate(e.date)}</td>
             <td>${e.artist}</td>
             <td>${e.project}</td>
@@ -2632,10 +2771,10 @@ function renderTable() {
             <td>${formatCurrency(e.amount)}</td>
             <td>
                 <div class="table-actions">
-                    <button onclick="openEditModal('${e.id}')" title="Editar">
+                    <button onclick="event.stopPropagation(); openEditModal('${e.id}')" title="Editar">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
-                    <button class="delete-btn" onclick="openDeleteModal('${e.id}')" title="Eliminar">
+                    <button class="delete-btn" onclick="event.stopPropagation(); openDeleteModal('${e.id}')" title="Eliminar">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                 </div>
@@ -3389,8 +3528,21 @@ function handleEdit(e) {
   showToast("Despesa atualizada!", "success");
 }
 
+function handleRowClick(event, id) {
+  // Don't trigger if clicking action buttons
+  if (event.target.closest('.table-actions')) return;
+  openEditModal(id);
+}
+
 function openDeleteModal(id) {
   document.getElementById("delete-id").value = id;
+  // Show contextual info about the expense being deleted
+  const exp = expenses.find(e => e.id === id);
+  const contextEl = document.getElementById("delete-context");
+  if (contextEl && exp) {
+    contextEl.innerHTML = `<strong>${formatDate(exp.date)}</strong> — ${exp.artist} — ${getTypeName(exp.type)} — <strong>${formatCurrency(exp.amount)}</strong>`;
+    contextEl.style.display = "block";
+  }
   document.getElementById("delete-modal").classList.remove("hidden");
 }
 
@@ -5627,7 +5779,6 @@ window.startTutorial = startTutorial;
 window.nextTutorialStep = nextTutorialStep;
 window.prevTutorialStep = prevTutorialStep;
 window.endTutorial = endTutorial;
-
 
 // ==========================================
 // BOOTSTRAP — must be after all const/let declarations

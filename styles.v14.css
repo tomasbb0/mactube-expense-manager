@@ -1367,6 +1367,7 @@ body {
   padding: 24px 24px 20px 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.015);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  overflow-x: clip;
 }
 
 /* Summary Row */
@@ -1448,6 +1449,12 @@ td {
 
 tr:hover td {
   background: var(--bg-hover);
+  cursor: pointer;
+}
+
+/* Row click hint */
+tr td {
+  cursor: pointer;
 }
 
 .badge {
@@ -1474,8 +1481,8 @@ tr:hover td {
 }
 
 .table-actions button {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2021,6 +2028,15 @@ tr:hover td {
   }
 
   .filters-row select {
+    width: 100%;
+  }
+
+  .date-filters-row {
+    flex-direction: column;
+  }
+
+  .date-filter-group {
+    min-width: 0;
     width: 100%;
   }
 
