@@ -5245,39 +5245,68 @@
           );
 
           // Send email automatically via FormSubmit.co (no backend needed)
-          var techUsers = getUsers().filter(function(u) { return u.role === "tech" || u.role === "owner"; });
-          var techEmails = techUsers.map(function(u) {
-            var ud = getUserData(u.username);
-            return ud.email || u.email || "";
-          }).filter(Boolean);
+          var techUsers = getUsers().filter(function (u) {
+            return u.role === "tech" || u.role === "owner";
+          });
+          var techEmails = techUsers
+            .map(function (u) {
+              var ud = getUserData(u.username);
+              return ud.email || u.email || "";
+            })
+            .filter(Boolean);
           var targetEmail = techEmails[0] || "tomas.b.batalha@gmail.com";
 
-          var emailBody = "Novo pedido de plataforma:\n\n" +
-            "Nome: " + name + "\n" +
-            "Descrição: " + description + "\n" +
-            "Funcionalidades: " + (featureNames || "Nenhuma selecionada") + "\n" +
-            "Complexidade: " + (complexityLabels[complexity.value] || complexity.value) + "\n" +
-            "Orçamento estimado: €" + budgetMin.toLocaleString("pt-PT") + " — €" + budgetMax.toLocaleString("pt-PT") + "\n" +
-            "Prazo estimado: " + timeline + "\n\n" +
-            "Pedido por: " + currentSession.name + " (" + currentSession.username + ")\n" +
-            "Data: " + new Date().toLocaleDateString("pt-PT");
+          var emailBody =
+            "Novo pedido de plataforma:\n\n" +
+            "Nome: " +
+            name +
+            "\n" +
+            "Descrição: " +
+            description +
+            "\n" +
+            "Funcionalidades: " +
+            (featureNames || "Nenhuma selecionada") +
+            "\n" +
+            "Complexidade: " +
+            (complexityLabels[complexity.value] || complexity.value) +
+            "\n" +
+            "Orçamento estimado: €" +
+            budgetMin.toLocaleString("pt-PT") +
+            " — €" +
+            budgetMax.toLocaleString("pt-PT") +
+            "\n" +
+            "Prazo estimado: " +
+            timeline +
+            "\n\n" +
+            "Pedido por: " +
+            currentSession.name +
+            " (" +
+            currentSession.username +
+            ")\n" +
+            "Data: " +
+            new Date().toLocaleDateString("pt-PT");
 
           fetch("https://formsubmit.co/ajax/" + targetEmail, {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
             body: JSON.stringify({
               _subject: "Novo Pedido de Plataforma - " + name,
               message: emailBody,
               name: currentSession.name,
-              _template: "box"
-            })
-          }).then(function(res) {
+              _template: "box",
+            }),
+          }).then(function (res) {
             if (res.ok) {
               showToast("Pedido enviado! Email enviado ao técnico.", "success");
             } else {
-              showToast("Pedido guardado. Email pode precisar de confirmação.", "info");
+              showToast(
+                "Pedido guardado. Email pode precisar de confirmação.",
+                "info",
+              );
             }
-                                                                     o localmente.", "info");
           });
 
           hideRequestModal();
