@@ -355,7 +355,7 @@ const SHORTCUT_OPTIONS = [
   },
   {
     id: "sync-sheets",
-    label: "Sincronizar Google Sheets",
+    label: "Backup Google Sheets",
     action: "openSyncModal()",
     icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>',
   },
@@ -895,7 +895,7 @@ function saveData() {
   }
 }
 
-// Debounced auto-sync: pushes to Google Sheets 10s after last change
+// Auto-sync: pushes to Google Sheets immediately after each change
 function scheduleAutoSyncToSheets() {
   if (_autoSyncTimer) clearTimeout(_autoSyncTimer);
   _autoSyncTimer = setTimeout(async () => {
@@ -916,7 +916,7 @@ function scheduleAutoSyncToSheets() {
         e.message,
       );
     }
-  }, 10000);
+  }, 2000); // 2s debounce for rapid changes, but still quick
 }
 
 // Background sync FROM Google Sheets (runs on page load for multi-device sync)
@@ -4731,17 +4731,17 @@ function showSyncProgressModal() {
             <div class="modal-content sync-progress-content">
                 <div class="sync-progress-header">
                     <div class="sync-spinner"></div>
-                    <h3>A Sincronizar com Google Sheets</h3>
+                    <h3>Backup para Google Sheets</h3>
                 </div>
                 <div class="sync-progress-bar-container">
                     <div class="sync-progress-bar" id="sync-progress-bar"></div>
                 </div>
                 <p class="sync-progress-text" id="sync-progress-text">A iniciar...</p>
                 <div class="sync-progress-steps" id="sync-progress-steps"></div>
-                <p class="sync-progress-note">💡 Podes fechar esta janela - a sincronização continua em segundo plano.</p>
+                <p class="sync-progress-note">💡 Podes fechar esta janela - o backup continua em segundo plano.</p>
                 <div class="sync-progress-actions">
                     <button class="btn btn-secondary" onclick="closeSyncProgressModal()">Fechar</button>
-                    <button class="btn btn-danger" id="cancel-sync-btn" onclick="cancelSync()">Cancelar Sync</button>
+                    <button class="btn btn-danger" id="cancel-sync-btn" onclick="cancelSync()">Cancelar Backup</button>
                 </div>
             </div>
         `;
@@ -4804,7 +4804,7 @@ async function syncToGoogleSheets() {
   }
 
   if (isSyncing) {
-    showToast("Sincronização em progresso...", "error");
+    showToast("Backup em progresso...", "error");
     return;
   }
 
@@ -4813,52 +4813,52 @@ async function syncToGoogleSheets() {
   updateSyncButtonState(true);
   showSyncProgressModal();
 
-  // Simplified steps - no setup tasks (those are in separate script)
+  // Backup-oriented steps
   const steps = [
     { text: "Preparar dados", done: false, active: true },
-    { text: "Enviar para Google Drive", done: false, active: false },
-    { text: "Atualizar folha principal", done: false, active: false },
+    { text: "Criar backup da versão anterior", done: false, active: false },
+    { text: "Guardar versão atual no Drive", done: false, active: false },
     { text: "Atualizar folhas dos artistas", done: false, active: false },
   ];
 
-  console.log("🚀 Starting sync to Google Drive...");
-  console.log("📊 Total expenses to sync:", expenses.length);
+  console.log("🔒 Starting backup to Google Drive...");
+  console.log("📊 Total expenses to backup:", expenses.length);
 
   try {
     // Step 1: Prepare data
     updateSyncProgress(10, `A preparar ${expenses.length} despesas...`, steps);
 
     const payload = {
-      action: "syncFromWebsite",
+      action: "backupAndSync",
       expenses: expenses,
       timestamp: new Date().toISOString(),
     };
 
     if (syncAborted) return;
 
-    // Step 2: Send to Google Drive
+    // Step 2: Create backup + send
     steps[0].done = true;
     steps[0].active = false;
     steps[1].active = true;
-    updateSyncProgress(30, "A enviar dados para Google Drive...", steps);
+    updateSyncProgress(30, "A criar backup da versão anterior...", steps);
 
     // Use iframe form submission to bypass CORS
     await sendToGoogleSheets(payload);
 
-    console.log("✅ Request sent successfully");
+    console.log("✅ Backup request sent successfully");
 
     if (syncAborted) return;
 
-    // Step 3: Main sheet update
+    // Step 3: Saving current version
     steps[1].done = true;
     steps[1].active = false;
     steps[2].active = true;
-    updateSyncProgress(60, "A atualizar folha principal...", steps);
+    updateSyncProgress(60, "A guardar versão atual no Drive...", steps);
 
     await new Promise((r) => setTimeout(r, 1000));
     if (syncAborted) return;
 
-    // Step 4: Artist sheets update
+    // Step 4: Artist sheets
     steps[2].done = true;
     steps[2].active = false;
     steps[3].active = true;
@@ -4870,7 +4870,7 @@ async function syncToGoogleSheets() {
     // Complete
     steps[3].done = true;
     steps[3].active = false;
-    updateSyncProgress(100, "✅ Sincronização completa!", steps);
+    updateSyncProgress(100, "✅ Backup completo!", steps);
 
     // Try to read response
     try {
@@ -4891,7 +4891,7 @@ async function syncToGoogleSheets() {
       console.log("Could not read response (normal with CORS)");
     }
 
-    showToast(`✅ ${expenses.length} despesas sincronizadas!`, "success");
+    showToast(`✅ Backup guardado com ${expenses.length} despesas!`, "success");
     localStorage.setItem("lastSyncToSheets", new Date().toISOString());
 
     // Close modal after 2 seconds
@@ -4899,9 +4899,9 @@ async function syncToGoogleSheets() {
       closeSyncProgressModal();
     }, 2000);
   } catch (error) {
-    console.error("❌ Sync to Google Drive failed:", error);
+    console.error("❌ Backup to Google Drive failed:", error);
     updateSyncProgress(0, "❌ Erro: " + error.message, []);
-    showToast("Erro ao sincronizar: " + error.message, "error");
+    showToast("Erro no backup: " + error.message, "error");
   } finally {
     isSyncing = false;
     updateSyncButtonState(false);
@@ -5239,7 +5239,7 @@ Gerais Maktub</pre>
                             <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
                             <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
                         </svg>
-                        Google Drive Sync
+                        Google Drive Backup
                     </h3>
                 </div>
                 <div class="modal-body">
@@ -5249,10 +5249,10 @@ Gerais Maktub</pre>
                         ? `
                     <div class="sync-actions">
                         <button class="btn btn-primary sync-action-btn" onclick="syncToGoogleSheets()">
-                            <span class="sync-icon">📤</span> Enviar para Drive
+                            <span class="sync-icon">�</span> Backup Seguro
                         </button>
                         <button class="btn btn-secondary sync-action-btn" onclick="syncFromGoogleSheets()">
-                            <span class="sync-icon">📥</span> Obter do Drive
+                            <span class="sync-icon">📥</span> Restaurar do Drive
                         </button>
                     </div>
                     <div class="sync-settings-link">

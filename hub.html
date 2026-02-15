@@ -3758,7 +3758,8 @@
         // ==========================================
         // USER DATA GOOGLE SHEETS SYNC
         // ==========================================
-        const HUB_GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxDZ5FINtZU0s9-T4ULaY9TIgAgXo2wv26Oi2KQKOZR9IFIjPcuyyR9g7azk9fls8HY/exec";
+        const HUB_GOOGLE_SCRIPT_URL =
+          "https://script.google.com/macros/s/AKfycbxDZ5FINtZU0s9-T4ULaY9TIgAgXo2wv26Oi2KQKOZR9IFIjPcuyyR9g7azk9fls8HY/exec";
         let _userDataSyncTimer = null;
 
         function scheduleUserDataSync() {
@@ -3776,10 +3777,16 @@
               const key = localStorage.key(i);
               if (key && key.startsWith("maktub_hub_userdata_")) {
                 const username = key.replace("maktub_hub_userdata_", "");
-                try { userData[username] = JSON.parse(localStorage.getItem(key)); } catch(e) {}
+                try {
+                  userData[username] = JSON.parse(localStorage.getItem(key));
+                } catch (e) {}
               }
             }
-            console.log("Syncing user data to Sheets...", Object.keys(userData).length, "users");
+            console.log(
+              "Syncing user data to Sheets...",
+              Object.keys(userData).length,
+              "users",
+            );
             const resp = await fetch(HUB_GOOGLE_SCRIPT_URL, {
               method: "POST",
               headers: { "Content-Type": "text/plain" },
@@ -3787,8 +3794,8 @@
                 action: "syncUserData",
                 users: users,
                 access: access,
-                userData: userData
-              })
+                userData: userData,
+              }),
             });
             const result = await resp.json();
             if (result.success) {
@@ -3807,11 +3814,14 @@
             const resp = await fetch(HUB_GOOGLE_SCRIPT_URL, {
               method: "POST",
               headers: { "Content-Type": "text/plain" },
-              body: JSON.stringify({ action: "getUserData" })
+              body: JSON.stringify({ action: "getUserData" }),
             });
             const result = await resp.json();
             if (!result.success) {
-              console.warn("Failed to load user data from Sheets:", result.error);
+              console.warn(
+                "Failed to load user data from Sheets:",
+                result.error,
+              );
               return;
             }
 
@@ -3820,8 +3830,8 @@
               const localUsers = getUsers();
               const mergedUsers = [...result.users];
               // Add any local-only users
-              localUsers.forEach(lu => {
-                if (!mergedUsers.find(u => u.username === lu.username)) {
+              localUsers.forEach((lu) => {
+                if (!mergedUsers.find((u) => u.username === lu.username)) {
                   mergedUsers.push(lu);
                 }
               });
@@ -3831,13 +3841,17 @@
             // Merge access map
             if (result.access && Object.keys(result.access).length > 0) {
               const localAccess = getAccessMap();
-              const mergedAccess = Object.assign({}, localAccess, result.access);
+              const mergedAccess = Object.assign(
+                {},
+                localAccess,
+                result.access,
+              );
               saveAccessMap(mergedAccess);
             }
 
             // Merge per-user data (photos, bio, etc.)
             if (result.userData) {
-              Object.keys(result.userData).forEach(username => {
+              Object.keys(result.userData).forEach((username) => {
                 const sheetsData = result.userData[username];
                 const localData = getUserData(username);
                 // Sheets data wins (most recent upload wins)
@@ -3845,7 +3859,11 @@
                 const key = `maktub_hub_userdata_${username}`;
                 localStorage.setItem(key, JSON.stringify(merged));
               });
-              console.log("User data loaded from Sheets:", Object.keys(result.userData).length, "users");
+              console.log(
+                "User data loaded from Sheets:",
+                Object.keys(result.userData).length,
+                "users",
+              );
               // Refresh UI with new photos
               updateProfileUI();
             }
