@@ -1299,6 +1299,7 @@
         -webkit-backdrop-filter: blur(4px) saturate(108%);
         border: 1px solid rgba(255, 255, 255, 0.001);
         border-radius: var(--radius);
+        overflow: hidden;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none;
@@ -1679,10 +1680,8 @@
 
       .access-panel {
         display: none;
-        position: absolute;
-        top: 100%;
-        right: 0;
-        z-index: 300;
+        position: fixed;
+        z-index: 9000;
         min-width: 260px;
         max-width: 320px;
         padding: 14px 16px;
@@ -1692,7 +1691,6 @@
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2);
-        margin-top: 6px;
       }
 
       .access-panel.open {
@@ -4810,7 +4808,14 @@
           });
           const panel = document.getElementById(`access-panel-${platformId}`);
           if (panel) {
-            panel.classList.toggle("open");
+            const isOpen = panel.classList.toggle("open");
+            if (isOpen) {
+              // Position the fixed panel near the toggle button
+              const btn = event.currentTarget;
+              const rect = btn.getBoundingClientRect();
+              panel.style.top = (rect.bottom + 6) + "px";
+              panel.style.right = (window.innerWidth - rect.right) + "px";
+            }
           }
         }
 
