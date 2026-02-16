@@ -9,24 +9,10 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <script>
-      // Redirect to hub if no valid session (skip when in iframe)
+      // Always redirect to hub when opened directly (not in iframe)
       (function () {
-        if (window.self !== window.top) return; // Don't redirect if inside iframe
-        var s = localStorage.getItem("maktub_hub_session");
-        if (!s) {
-          window.location.replace("hub.html");
-          return;
-        }
-        try {
-          var session = JSON.parse(s);
-          var ttl = session.rememberMe ? 2592000000 : 86400000; // 30 days or 24h
-          if (Date.now() - session.loginTime > ttl) {
-            localStorage.removeItem("maktub_hub_session");
-            window.location.replace("hub.html");
-          }
-        } catch (e) {
-          window.location.replace("hub.html");
-        }
+        if (window.self !== window.top) return; // Allow if inside iframe
+        window.location.replace("hub.html");
       })();
     </script>
     <meta
