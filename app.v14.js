@@ -1,6 +1,56 @@
 // Maktub Art Group - Expense Manager App
 // ==========================================
 
+// IMMEDIATE: Purge any "undefined" entries from localStorage on script load
+// (runs before anything else — nuclear fix for stale bad data)
+(function purgeUndefinedFromStorage() {
+  try {
+    const raw = localStorage.getItem("maktub_expenses");
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return;
+    const clean = arr.filter(function (e) {
+      if (!e || typeof e !== "object") return false;
+      if (!e.id) return false;
+      if (
+        !e.artist ||
+        e.artist === "undefined" ||
+        e.artist === "null" ||
+        String(e.artist).trim() === ""
+      )
+        return false;
+      if (
+        !e.project ||
+        e.project === "undefined" ||
+        e.project === "null" ||
+        String(e.project).trim() === ""
+      )
+        return false;
+      if (
+        !e.type ||
+        e.type === "undefined" ||
+        e.type === "null" ||
+        String(e.type).trim() === ""
+      )
+        return false;
+      if (e.date == null || e.date === "undefined" || e.date === "")
+        return false;
+      if (typeof e.amount !== "number" || isNaN(e.amount)) return false;
+      return true;
+    });
+    if (clean.length < arr.length) {
+      localStorage.setItem("maktub_expenses", JSON.stringify(clean));
+      console.warn(
+        "🧹 purgeUndefinedFromStorage: removed " +
+          (arr.length - clean.length) +
+          " bad entries on script load",
+      );
+    }
+  } catch (e) {
+    /* ignore */
+  }
+})();
+
 // Data persistence: localStorage is the primary local store,
 // Google Sheets is the cross-device source of truth.
 
@@ -2465,7 +2515,11 @@ function populateDashboardFilters() {
   const projectSelect = document.getElementById("dashboard-project-filter");
   if (projectSelect) {
     const currentProject = projectSelect.value;
-    const projects = [...new Set(expenses.map((e) => e.project))].sort();
+    const projects = [
+      ...new Set(
+        expenses.map((e) => e.project).filter((p) => p && p !== "undefined"),
+      ),
+    ].sort();
     projectSelect.innerHTML =
       '<option value="all">Todos os Projetos</option>' +
       projects
@@ -2764,8 +2818,8 @@ function updateRecentList(data) {
                 ${getTypeIcon(e.type)}
             </div>
             <div class="activity-info">
-                <div class="activity-title">${e.artist} - ${getTypeName(e.type)}</div>
-                <div class="activity-meta">${e.project} • ${formatDate(e.date)}</div>
+                <div class="activity-title">${e.artist || "Sem artista"} - ${getTypeName(e.type)}</div>
+                <div class="activity-meta">${e.project || "Sem projeto"} • ${formatDate(e.date)}</div>
             </div>
             <div class="activity-amount ${e.investor === "maktub" ? "maktub" : "other"}">
                 ${formatCurrency(e.amount)}
@@ -3314,6 +3368,7 @@ function renderPivotTables() {
     byArtist[artist] = { total: 0, maktub: 0, bandidos_inv: 0 };
   });
   filtered.forEach((e) => {
+    if (!e.artist || e.artist === "undefined") return;
     if (!byArtist[e.artist])
       byArtist[e.artist] = { total: 0, maktub: 0, bandidos_inv: 0 };
     byArtist[e.artist].total += e.amount;
@@ -3348,6 +3403,7 @@ function renderPivotTables() {
   // By Project
   const byProject = {};
   filtered.forEach((e) => {
+    if (!e.project || e.project === "undefined") return;
     byProject[e.project] = (byProject[e.project] || 0) + e.amount;
   });
 
@@ -3376,6 +3432,7 @@ function renderPivotTables() {
   // By Type
   const byType = {};
   filtered.forEach((e) => {
+    if (!e.type || e.type === "undefined") return;
     byType[e.type] = (byType[e.type] || 0) + e.amount;
   });
 
@@ -3416,8 +3473,8 @@ function exportCSV() {
   ];
   const rows = filtered.map((e) => [
     e.date,
-    e.artist,
-    e.project,
+    e.artist || "",
+    e.project || "",
     getTypeName(e.type),
     e.entity || "",
     e.investor === "maktub" ? "Maktub" : "Bandidos",
@@ -3533,6 +3590,7 @@ function exportPDF() {
   // Build chart data for artists
   const byArtist = {};
   filtered.forEach((e) => {
+    if (!e.artist || e.artist === "undefined") return;
     if (!byArtist[e.artist])
       byArtist[e.artist] = { total: 0, maktub: 0, bandidos_inv: 0 };
     byArtist[e.artist].total += e.amount;
@@ -3547,6 +3605,7 @@ function exportPDF() {
   // Build chart data for types
   const byType = {};
   filtered.forEach((e) => {
+    if (!e.type || e.type === "undefined") return;
     byType[e.type] = (byType[e.type] || 0) + e.amount;
   });
   const typeData = Object.entries(byType).sort((a, b) => b[1] - a[1]);
@@ -3703,8 +3762,8 @@ function exportPDF() {
                             (e) => `
                             <tr>
                                 <td>${formatDate(e.date)}</td>
-                                <td>${e.artist}</td>
-                                <td>${e.project}</td>
+                                <td>${e.artist || "-"}</td>
+                                <td>${e.project || "-"}</td>
                                 <td>${getTypeName(e.type)}</td>
                                 <td>${e.entity || "-"}</td>
                                 <td><span class="badge ${e.investor === "maktub" ? "badge-maktub" : "badge-bandidos"}">${e.investor === "maktub" ? "Maktub" : "Bandidos"}</span></td>
@@ -4050,7 +4109,7 @@ function openDeleteModal(id) {
   const exp = expenses.find((e) => e.id === id);
   const contextEl = document.getElementById("delete-context");
   if (contextEl && exp) {
-    contextEl.innerHTML = `<strong>${formatDate(exp.date)}</strong> — ${exp.artist} — ${getTypeName(exp.type)} — <strong>${formatCurrency(exp.amount)}</strong>`;
+    contextEl.innerHTML = `<strong>${formatDate(exp.date)}</strong> — ${exp.artist || "Sem artista"} — ${getTypeName(exp.type)} — <strong>${formatCurrency(exp.amount)}</strong>`;
     contextEl.style.display = "block";
   }
   document.getElementById("delete-modal").classList.remove("hidden");
@@ -4452,9 +4511,9 @@ function renderCSVPreview(parsed, globalErrors) {
       (r) => `
     <tr class="${r.valid ? "" : "csv-row-error"}">
       <td>${r.date}</td>
-      <td>${r.artist}</td>
-      <td>${r.project}</td>
-      <td>${r.valid ? getTypeName(r.type) : r.type}</td>
+      <td>${r.artist || "-"}</td>
+      <td>${r.project || "-"}</td>
+      <td>${r.valid ? getTypeName(r.type) : r.type || "-"}</td>
       <td>${r.entity || "-"}</td>
       <td>${r.investor === "maktub" ? "Maktub" : r.investor === "bandidos" ? "Bandidos" : r.investor}</td>
       <td>${r.amount > 0 ? formatCurrency(r.amount) : "-"}</td>
@@ -5958,8 +6017,8 @@ async function loadExistingProjects() {
                     <div class="project-card-header">
                         <span class="project-card-icon">■</span>
                         <div>
-                            <h4>${proj.project}</h4>
-                            <p class="project-card-artist">${proj.artist}</p>
+                            <h4>${proj.project || "Sem nome"}</h4>
+                            <p class="project-card-artist">${proj.artist || "Sem artista"}</p>
                         </div>
                     </div>
                     <a href="https://docs.google.com/spreadsheets/d/${proj.spreadsheetId}" target="_blank" class="project-card-link">
