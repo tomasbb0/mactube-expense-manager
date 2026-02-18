@@ -68,6 +68,23 @@ let customArtists = [];
 let customProjects = [];
 let isSyncing = false;
 
+// Column filter state (Excel-style per-column filters)
+let columnFilters = {}; // { colKey: Set of selected values }
+let _activeColumnDropdown = null; // currently open dropdown element
+
+// Pagination state
+const PAGE_SIZE = 50;
+let currentTablePage = 1;
+
+// Debounce helper
+function debounce(fn, ms) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+
 // DOM Elements
 const authScreen = document.getElementById("auth-screen");
 const appScreen = document.getElementById("app-screen");
@@ -896,6 +913,72 @@ const DATA_VERSION = 19; // v19: Restore localStorage persistence + background S
 let _autoSyncTimer = null;
 let _syncingFromSheets = false;
 
+// Sanitize expenses: remove entries with missing required fields (fixes "undefined" rows)
+function sanitizeExpenses() {
+  const before = expenses.length;
+  const validTypes = new Set([
+    "combustivel",
+    "alimentacao",
+    "alojamento",
+    "equipamento",
+    "producao",
+    "promocao",
+    "transporte",
+    "outros",
+  ]);
+  expenses = expenses.filter((e) => {
+    if (!e || typeof e !== "object") return false;
+    if (!e.id) return false;
+    if (
+      !e.artist ||
+      e.artist === "undefined" ||
+      e.artist === "null" ||
+      e.artist.trim() === ""
+    )
+      return false;
+    if (
+      !e.project ||
+      e.project === "undefined" ||
+      e.project === "null" ||
+      e.project.trim() === ""
+    )
+      return false;
+    if (
+      !e.type ||
+      e.type === "undefined" ||
+      e.type === "null" ||
+      e.type.trim() === ""
+    )
+      return false;
+    if (e.date == null || e.date === "undefined" || e.date === "") return false;
+    if (typeof e.amount !== "number" || isNaN(e.amount)) return false;
+    // Normalize type to known key if possible
+    if (!validTypes.has(e.type)) {
+      const normalized = e.type
+        .toLowerCase()
+        .replace(/[çã]/g, (c) => ({ ç: "c", ã: "a" })[c] || c);
+      if (validTypes.has(normalized)) {
+        e.type = normalized;
+      }
+    }
+    return true;
+  });
+  // Ensure every expense has a createdAt
+  expenses.forEach((e) => {
+    if (!e.createdAt)
+      e.createdAt = e.date
+        ? new Date(e.date).toISOString()
+        : new Date().toISOString();
+  });
+  const removed = before - expenses.length;
+  if (removed > 0) {
+    console.warn(
+      `🧹 sanitizeExpenses: removed ${removed} invalid/undefined entries`,
+    );
+  }
+  return removed;
+}
+
 function loadData() {
   // 1. Try localStorage first (fast, works offline)
   try {
@@ -907,6 +990,18 @@ function loadData() {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
         expenses = parsed;
+        const removed = sanitizeExpenses();
+        if (removed > 0) {
+          // Persist cleaned data so bad entries don't come back
+          try {
+            localStorage.setItem("maktub_expenses", JSON.stringify(expenses));
+            console.log(
+              `🧹 loadData: persisted cleaned data (removed ${removed})`,
+            );
+          } catch (e) {
+            /* ignore */
+          }
+        }
         console.log(
           `📊 loadData: ${expenses.length} expenses loaded from localStorage`,
         );
@@ -924,6 +1019,7 @@ function loadData() {
   // 2. No saved data — seed with demo data (first-time user)
   console.log("📊 loadData: no saved data found, seeding with demo data");
   expenses = generateDemoData(300);
+  sanitizeExpenses();
   console.log(`📊 loadData: ${expenses.length} demo expenses loaded`);
   saveData(); // Persist the seed so it survives reload
   updateDashboard();
@@ -933,6 +1029,8 @@ function loadData() {
 }
 
 function saveData() {
+  // Always sanitize before persisting
+  sanitizeExpenses();
   try {
     localStorage.setItem("maktub_expenses", JSON.stringify(expenses));
     localStorage.setItem("maktub_data_version", String(DATA_VERSION));
@@ -1016,6 +1114,7 @@ async function backgroundSyncFromSheets() {
       });
 
       if (addedCount > 0 || updatedCount > 0) {
+        sanitizeExpenses();
         _syncingFromSheets = true;
         saveData();
         _syncingFromSheets = false;
@@ -2423,10 +2522,13 @@ function updateArtistChart(data) {
   });
 
   data.forEach((e) => {
+    if (!e.artist || e.artist === "undefined") return;
     byArtist[e.artist] = (byArtist[e.artist] || 0) + e.amount;
   });
 
-  const sorted = Object.entries(byArtist).sort((a, b) => b[1] - a[1]);
+  const sorted = Object.entries(byArtist)
+    .filter(([key]) => key && key !== "undefined" && key !== "null")
+    .sort((a, b) => b[1] - a[1]);
   const max = sorted.length > 0 ? sorted[0][1] : 0;
 
   if (sorted.length === 0) {
@@ -2455,10 +2557,13 @@ function updateTypeChart(data) {
   const byType = {};
 
   data.forEach((e) => {
+    if (!e.type || e.type === "undefined") return;
     byType[e.type] = (byType[e.type] || 0) + e.amount;
   });
 
-  const sorted = Object.entries(byType).sort((a, b) => b[1] - a[1]);
+  const sorted = Object.entries(byType)
+    .filter(([key]) => key && key !== "undefined" && key !== "null")
+    .sort((a, b) => b[1] - a[1]);
   const max = sorted.length > 0 ? sorted[0][1] : 0;
 
   if (sorted.length === 0) {
@@ -2472,7 +2577,7 @@ function updateTypeChart(data) {
         <div class="chart-bar-item">
             <span class="chart-bar-label">${getTypeName(type)}</span>
             <div class="chart-bar-track">
-                <div class="chart-bar-fill" style="width: ${(amount / max) * 100}%"></div>
+                <div class="chart-bar-fill" style="width: ${max > 0 ? (amount / max) * 100 : 0}%"></div>
             </div>
             <span class="chart-bar-value">${formatCurrency(amount)}</span>
         </div>
@@ -2497,6 +2602,7 @@ function updateArtistInvestorChart(data) {
   });
 
   data.forEach((e) => {
+    if (!e.artist || e.artist === "undefined") return;
     if (!byArtist[e.artist]) {
       byArtist[e.artist] = { maktub: 0, bandidos_inv: 0, total: 0 };
     }
@@ -2508,9 +2614,9 @@ function updateArtistInvestorChart(data) {
     byArtist[e.artist].total += e.amount;
   });
 
-  const sorted = Object.entries(byArtist).sort(
-    (a, b) => b[1].total - a[1].total,
-  );
+  const sorted = Object.entries(byArtist)
+    .filter(([key]) => key && key !== "undefined" && key !== "null")
+    .sort((a, b) => b[1].total - a[1].total);
   const maxTotal = sorted.length > 0 ? sorted[0][1].total : 0;
 
   if (sorted.length === 0) {
@@ -2579,6 +2685,7 @@ function updateArtistCategoryChart(data) {
   });
 
   data.forEach((e) => {
+    if (!e.artist || e.artist === "undefined") return;
     if (!byArtist[e.artist]) {
       byArtist[e.artist] = { total: 0 };
       types.forEach((t) => (byArtist[e.artist][t] = 0));
@@ -2587,9 +2694,9 @@ function updateArtistCategoryChart(data) {
     byArtist[e.artist].total += e.amount;
   });
 
-  const sorted = Object.entries(byArtist).sort(
-    (a, b) => b[1].total - a[1].total,
-  );
+  const sorted = Object.entries(byArtist)
+    .filter(([key]) => key && key !== "undefined" && key !== "null")
+    .sort((a, b) => b[1].total - a[1].total);
 
   if (sorted.length === 0) {
     container.innerHTML = '<p class="empty-state">Sem dados</p>';
@@ -2675,10 +2782,16 @@ function updateRecentList(data) {
 
 function updateFilterDropdowns() {
   // Get unique artists (including all defined) and projects
-  const expenseArtists = expenses.map((e) => e.artist);
+  const expenseArtists = expenses
+    .map((e) => e.artist)
+    .filter((a) => a && a !== "undefined");
   const allArtistNames = Object.keys(artistProjects);
   const artists = [...new Set([...allArtistNames, ...expenseArtists])].sort();
-  const projects = [...new Set(expenses.map((e) => e.project))].sort();
+  const projects = [
+    ...new Set(
+      expenses.map((e) => e.project).filter((p) => p && p !== "undefined"),
+    ),
+  ].sort();
 
   // Update artist filter
   const artistFilter = document.getElementById("filter-artist");
@@ -2698,31 +2811,42 @@ function updateFilterDropdowns() {
 // ==========================================
 
 function initFilters() {
-  document.getElementById("search-input").addEventListener("input", () => {
+  const debouncedRender = debounce(() => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
-  });
+  }, 200);
+
+  document
+    .getElementById("search-input")
+    .addEventListener("input", debouncedRender);
   document.getElementById("filter-artist").addEventListener("change", () => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
   });
   document.getElementById("filter-project").addEventListener("change", () => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
   });
   document.getElementById("filter-type").addEventListener("change", () => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
   });
   document.getElementById("filter-investor").addEventListener("change", () => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
   });
   document.getElementById("filter-date-from").addEventListener("change", () => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
   });
   document.getElementById("filter-date-to").addEventListener("change", () => {
+    currentTablePage = 1;
     renderTable();
     renderPivotTables();
   });
@@ -2734,6 +2858,266 @@ function initFilters() {
   document.getElementById("export-pdf").addEventListener("click", exportPDF);
   document.getElementById("view-all-btn").addEventListener("click", () => {
     document.querySelector('[data-tab="reports"]').click();
+  });
+
+  // Initialize column header filters
+  initColumnFilters();
+
+  // Close column dropdown on outside click
+  document.addEventListener("click", (e) => {
+    if (
+      _activeColumnDropdown &&
+      !e.target.closest(".col-filter-dropdown") &&
+      !e.target.closest(".col-filter-btn")
+    ) {
+      closeColumnDropdown();
+    }
+  });
+}
+
+// ==========================================
+// COLUMN FILTERS (Excel-style)
+// ==========================================
+
+function initColumnFilters() {
+  const ths = document.querySelectorAll("#expenses-table thead th[data-col]");
+  ths.forEach((th) => {
+    const col = th.getAttribute("data-col");
+    const btn = document.createElement("button");
+    btn.className = "col-filter-btn";
+    btn.type = "button";
+    btn.title = "Filtrar coluna";
+    btn.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="6 9 12 15 18 9"/></svg>';
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleColumnFilter(e, col, th);
+    });
+    th.style.cursor = "pointer";
+    th.appendChild(btn);
+    th.addEventListener("click", (e) => {
+      if (!e.target.closest(".col-filter-btn")) {
+        toggleColumnFilter(e, col, th);
+      }
+    });
+  });
+}
+
+function getColumnValues(col) {
+  // Get unique values for a column from ALL expenses (not filtered)
+  const valSet = new Set();
+  expenses.forEach((e) => {
+    let val;
+    switch (col) {
+      case "date":
+        val = formatDate(e.date);
+        break;
+      case "artist":
+        val = e.artist;
+        break;
+      case "project":
+        val = e.project;
+        break;
+      case "type":
+        val = getTypeName(e.type);
+        break;
+      case "entity":
+        val = e.entity || "-";
+        break;
+      case "investor":
+        val = e.investor === "maktub" ? "Maktub" : "Bandidos";
+        break;
+      default:
+        val = "";
+    }
+    if (val) valSet.add(val);
+  });
+  return [...valSet].sort();
+}
+
+function toggleColumnFilter(event, col, thEl) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  // If this dropdown is already open, close it
+  if (_activeColumnDropdown && _activeColumnDropdown.dataset.col === col) {
+    closeColumnDropdown();
+    return;
+  }
+
+  closeColumnDropdown();
+
+  const allValues = getColumnValues(col);
+  const selected = columnFilters[col] || new Set(allValues);
+
+  const dropdown = document.createElement("div");
+  dropdown.className = "col-filter-dropdown";
+  dropdown.dataset.col = col;
+
+  // Search box
+  const searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.className = "col-filter-search";
+  searchInput.placeholder = "Pesquisar...";
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.toLowerCase();
+    dropdown.querySelectorAll(".col-filter-item").forEach((item) => {
+      const label = item.querySelector("label").textContent.toLowerCase();
+      item.style.display = label.includes(q) ? "" : "none";
+    });
+  });
+  dropdown.appendChild(searchInput);
+
+  // Select All / Deselect All
+  const actionsRow = document.createElement("div");
+  actionsRow.className = "col-filter-actions";
+  const selectAllBtn = document.createElement("button");
+  selectAllBtn.type = "button";
+  selectAllBtn.textContent = "Todos";
+  selectAllBtn.addEventListener("click", () => {
+    dropdown
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((cb) => (cb.checked = true));
+  });
+  const deselectAllBtn = document.createElement("button");
+  deselectAllBtn.type = "button";
+  deselectAllBtn.textContent = "Nenhum";
+  deselectAllBtn.addEventListener("click", () => {
+    dropdown
+      .querySelectorAll('input[type="checkbox"]')
+      .forEach((cb) => (cb.checked = false));
+  });
+  actionsRow.appendChild(selectAllBtn);
+  actionsRow.appendChild(deselectAllBtn);
+  dropdown.appendChild(actionsRow);
+
+  // Value checkboxes
+  const listContainer = document.createElement("div");
+  listContainer.className = "col-filter-list";
+  allValues.forEach((val) => {
+    const item = document.createElement("div");
+    item.className = "col-filter-item";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = selected.has(val);
+    cb.value = val;
+    const label = document.createElement("label");
+    label.textContent = val;
+    label.addEventListener("click", () => {
+      cb.checked = !cb.checked;
+    });
+    item.appendChild(cb);
+    item.appendChild(label);
+    listContainer.appendChild(item);
+  });
+  dropdown.appendChild(listContainer);
+
+  // Apply / Clear buttons
+  const footerRow = document.createElement("div");
+  footerRow.className = "col-filter-footer";
+  const applyBtn = document.createElement("button");
+  applyBtn.type = "button";
+  applyBtn.className = "col-filter-apply";
+  applyBtn.textContent = "Aplicar";
+  applyBtn.addEventListener("click", () => {
+    const checkedVals = new Set();
+    dropdown
+      .querySelectorAll('input[type="checkbox"]:checked')
+      .forEach((cb) => checkedVals.add(cb.value));
+    if (checkedVals.size === allValues.length) {
+      delete columnFilters[col]; // all selected = no filter
+    } else {
+      columnFilters[col] = checkedVals;
+    }
+    // Update th visual indicator
+    updateColumnFilterIndicators();
+    closeColumnDropdown();
+    currentTablePage = 1;
+    renderTable();
+    renderPivotTables();
+  });
+  const clearBtn = document.createElement("button");
+  clearBtn.type = "button";
+  clearBtn.className = "col-filter-clear";
+  clearBtn.textContent = "Limpar";
+  clearBtn.addEventListener("click", () => {
+    delete columnFilters[col];
+    updateColumnFilterIndicators();
+    closeColumnDropdown();
+    currentTablePage = 1;
+    renderTable();
+    renderPivotTables();
+  });
+  footerRow.appendChild(applyBtn);
+  footerRow.appendChild(clearBtn);
+  dropdown.appendChild(footerRow);
+
+  // Position dropdown below the th using fixed positioning (avoids overflow clipping)
+  const rect = thEl.getBoundingClientRect();
+  dropdown.style.position = "fixed";
+  dropdown.style.left = rect.left + "px";
+  // If dropdown would go off screen bottom, show above the th
+  const spaceBelow = window.innerHeight - rect.bottom;
+  if (spaceBelow < 340) {
+    dropdown.style.bottom = window.innerHeight - rect.top + "px";
+    dropdown.style.top = "auto";
+  } else {
+    dropdown.style.top = rect.bottom + "px";
+  }
+  document.body.appendChild(dropdown);
+  _activeColumnDropdown = dropdown;
+
+  // Focus the search
+  setTimeout(() => searchInput.focus(), 50);
+}
+
+function closeColumnDropdown() {
+  if (_activeColumnDropdown) {
+    _activeColumnDropdown.remove();
+    _activeColumnDropdown = null;
+  }
+}
+
+function updateColumnFilterIndicators() {
+  document
+    .querySelectorAll("#expenses-table thead th[data-col]")
+    .forEach((th) => {
+      const col = th.getAttribute("data-col");
+      if (columnFilters[col]) {
+        th.classList.add("col-filtered");
+      } else {
+        th.classList.remove("col-filtered");
+      }
+    });
+}
+
+function getColumnValue(e, col) {
+  switch (col) {
+    case "date":
+      return formatDate(e.date);
+    case "artist":
+      return e.artist;
+    case "project":
+      return e.project;
+    case "type":
+      return getTypeName(e.type);
+    case "entity":
+      return e.entity || "-";
+    case "investor":
+      return e.investor === "maktub" ? "Maktub" : "Bandidos";
+    default:
+      return "";
+  }
+}
+
+function applyColumnFilters(data) {
+  const activeCols = Object.keys(columnFilters);
+  if (activeCols.length === 0) return data;
+  return data.filter((e) => {
+    return activeCols.every((col) => {
+      const val = getColumnValue(e, col);
+      return columnFilters[col].has(val);
+    });
   });
 }
 
@@ -2775,7 +3159,8 @@ function getFilteredExpenses() {
 }
 
 function renderTable() {
-  const filtered = getFilteredExpenses();
+  const baseFiltered = getFilteredExpenses();
+  const filtered = applyColumnFilters(baseFiltered);
 
   // Update summary
   const total = filtered.reduce((sum, e) => sum + e.amount, 0);
@@ -2810,18 +3195,31 @@ function renderTable() {
             </tr>
         `;
     tfoot.innerHTML = "";
+    renderPagination(0);
     return;
   }
 
-  tbody.innerHTML = sorted
-    .map(
-      (e) => `
-        <tr data-expense-id="${e.id}" onclick="handleRowClick(event, '${e.id}')">
+  // Pagination
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  if (currentTablePage > totalPages) currentTablePage = totalPages;
+  if (currentTablePage < 1) currentTablePage = 1;
+  const startIdx = (currentTablePage - 1) * PAGE_SIZE;
+  const pageItems = sorted.slice(startIdx, startIdx + PAGE_SIZE);
+
+  // Use DocumentFragment for performance
+  const fragment = document.createDocumentFragment();
+  pageItems.forEach((e) => {
+    const tr = document.createElement("tr");
+    tr.setAttribute("data-expense-id", e.id);
+    tr.onclick = function (event) {
+      handleRowClick(event, e.id);
+    };
+    tr.innerHTML = `
             <td>${formatDate(e.date)}</td>
-            <td>${e.artist}</td>
-            <td>${e.project}</td>
+            <td>${e.artist || ""}</td>
+            <td title="${(e.project || "").replace(/"/g, "&quot;")}">${e.project || ""}</td>
             <td>${getTypeName(e.type)}</td>
-            <td>${e.entity || "-"}</td>
+            <td title="${(e.entity || "").replace(/"/g, "&quot;")}">${e.entity || "-"}</td>
             <td><span class="badge ${e.investor === "maktub" ? "badge-maktub" : "badge-bandidos"}">${e.investor === "maktub" ? "Maktub" : "Bandidos"}</span></td>
             <td>${formatCurrency(e.amount)}</td>
             <td>
@@ -2834,10 +3232,11 @@ function renderTable() {
                     </button>
                 </div>
             </td>
-        </tr>
-    `,
-    )
-    .join("");
+    `;
+    fragment.appendChild(tr);
+  });
+  tbody.innerHTML = "";
+  tbody.appendChild(fragment);
 
   // Add total row in footer
   tfoot.innerHTML = `
@@ -2848,10 +3247,66 @@ function renderTable() {
             <td></td>
         </tr>
     `;
+
+  renderPagination(sorted.length);
 }
 
+function renderPagination(totalItems) {
+  let paginationEl = document.getElementById("table-pagination");
+  if (!paginationEl) {
+    // Create pagination container after table-wrapper
+    const wrapper = document.querySelector("#reports .table-wrapper");
+    if (!wrapper) return;
+    paginationEl = document.createElement("div");
+    paginationEl.id = "table-pagination";
+    paginationEl.className = "table-pagination";
+    wrapper.after(paginationEl);
+  }
+
+  if (totalItems <= PAGE_SIZE) {
+    paginationEl.innerHTML = "";
+    return;
+  }
+
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  const startItem = (currentTablePage - 1) * PAGE_SIZE + 1;
+  const endItem = Math.min(currentTablePage * PAGE_SIZE, totalItems);
+
+  let pageButtons = "";
+  // Show max 7 page buttons
+  let startPage = Math.max(1, currentTablePage - 3);
+  let endPage = Math.min(totalPages, startPage + 6);
+  if (endPage - startPage < 6) startPage = Math.max(1, endPage - 6);
+
+  for (let p = startPage; p <= endPage; p++) {
+    pageButtons += `<button class="page-btn ${p === currentTablePage ? "active" : ""}" onclick="goToPage(${p})">${p}</button>`;
+  }
+
+  paginationEl.innerHTML = `
+    <span class="pagination-info">A mostrar ${startItem}–${endItem} de ${totalItems}</span>
+    <div class="pagination-buttons">
+      <button class="page-btn" onclick="goToPage(1)" ${currentTablePage === 1 ? "disabled" : ""}>&laquo;</button>
+      <button class="page-btn" onclick="goToPage(${currentTablePage - 1})" ${currentTablePage === 1 ? "disabled" : ""}>&lsaquo;</button>
+      ${pageButtons}
+      <button class="page-btn" onclick="goToPage(${currentTablePage + 1})" ${currentTablePage === totalPages ? "disabled" : ""}>&rsaquo;</button>
+      <button class="page-btn" onclick="goToPage(${totalPages})" ${currentTablePage === totalPages ? "disabled" : ""}>&raquo;</button>
+    </div>
+  `;
+}
+
+function goToPage(page) {
+  currentTablePage = page;
+  renderTable();
+  // Scroll table into view
+  document
+    .querySelector("#reports .table-wrapper")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+window.goToPage = goToPage;
+
 function renderPivotTables() {
-  const filtered = getFilteredExpenses();
+  const baseFiltered = getFilteredExpenses();
+  const filtered = applyColumnFilters(baseFiltered);
 
   // By Artist - include all defined artists
   const byArtist = {};
@@ -5012,6 +5467,7 @@ async function syncFromGoogleSheets() {
         }
       });
 
+      sanitizeExpenses();
       saveData();
       updateDashboard();
       renderTable();
@@ -5114,6 +5570,7 @@ async function fullSync() {
     console.log("✅ Merged count:", mergedExpenses.length);
 
     expenses = mergedExpenses;
+    sanitizeExpenses();
 
     // Now push merged data back to sheets
     console.log("📤 Pushing to Google Sheets...");
@@ -5838,6 +6295,18 @@ window.endTutorial = endTutorial;
 // ==========================================
 // BOOTSTRAP — must be after all const/let declarations
 // ==========================================
+
+// Safety net: persist on page unload
+window.addEventListener("beforeunload", () => {
+  try {
+    sanitizeExpenses();
+    localStorage.setItem("maktub_expenses", JSON.stringify(expenses));
+    localStorage.setItem("maktub_data_version", String(DATA_VERSION));
+  } catch (e) {
+    /* best-effort */
+  }
+});
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initApp);
 } else {
