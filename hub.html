@@ -1256,6 +1256,10 @@
       body.iframe-active .cursor-trail {
       }
 
+      body.iframe-active #hub-screen {
+        z-index: auto; /* Remove stacking context so topbar (z:200) beats iframe-container (z:50) */
+      }
+
       body.iframe-active .hub-content {
         display: none;
       }
