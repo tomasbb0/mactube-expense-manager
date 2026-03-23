@@ -846,7 +846,7 @@
           <select id="dashboard-investor-filter" onchange="filterDashboard()">
             <option value="all">Todos os Investidores</option>
             <option value="maktub">Maktub</option>
-            <option value="bandidos">Bandidos</option>
+            <option value="bandidos">Artista</option>
           </select>
           <div class="dashboard-date-range">
             <input
@@ -917,7 +917,7 @@
             </div>
             <div class="stat-info">
               <span class="stat-value" id="stat-bandidos">0.00 EUR</span>
-              <span class="stat-label">Bandidos</span>
+              <span class="stat-label">Artista</span>
             </div>
           </div>
           <div class="stat-card">
@@ -955,7 +955,7 @@
         <div class="charts-row">
           <div class="chart-card">
             <div class="chart-header">
-              <h3>Por Artista: Maktub vs Bandidos</h3>
+              <h3>Por Artista: Maktub vs Artista</h3>
               <div class="chart-actions">
                 <button
                   class="chart-export-btn"
@@ -1249,7 +1249,10 @@
                 </option>
                 <option value="BRUCE">BRUCE</option>
                 <option value="Buba Espinho">Buba Espinho</option>
+                <option value="CRISTO">CRISTO</option>
                 <option value="D.A.M.A">D.A.M.A</option>
+                <option value="GERAL MAKTUB">GERAL MAKTUB</option>
+                <option value="GRUPO CORAL OURIQUE">GRUPO CORAL OURIQUE</option>
                 <option value="INÊS">INÊS</option>
                 <option value="LUTZ">LUTZ</option>
                 <option value="MAR">MAR</option>
@@ -1485,8 +1488,8 @@
                   <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
                   <path d="M12 18V6" />
                 </svg>
-                <span class="investor-name">Bandidos</span>
-                <span class="investor-desc">Bandidos pagaram</span>
+                <span class="investor-name">Artista</span>
+                <span class="investor-desc">Artista pagou</span>
               </button>
             </div>
             <input type="hidden" id="investor" value="maktub" />
@@ -1773,7 +1776,7 @@
             <select id="filter-investor">
               <option value="all">Todos os Investidores</option>
               <option value="maktub">Maktub</option>
-              <option value="bandidos">Bandidos</option>
+              <option value="bandidos">Artista</option>
             </select>
           </div>
 
@@ -1800,7 +1803,7 @@
               >
             </div>
             <div class="summary-item">
-              <span class="summary-label">Bandidos</span>
+              <span class="summary-label">Artista</span>
               <span class="summary-value yellow" id="summary-bandidos"
                 >0.00 EUR</span
               >
@@ -2158,12 +2161,15 @@
                 <option value="Bandidos do Cante" selected>
                   Bandidos do Cante
                 </option>
-                <option value="Buba Espinho">Buba Espinho</option>
-                <option value="MAR">MAR</option>
-                <option value="D.A.M.A">D.A.M.A</option>
                 <option value="BRUCE">BRUCE</option>
-                <option value="LUTZ">LUTZ</option>
+                <option value="Buba Espinho">Buba Espinho</option>
+                <option value="CRISTO">CRISTO</option>
+                <option value="D.A.M.A">D.A.M.A</option>
+                <option value="GERAL MAKTUB">GERAL MAKTUB</option>
+                <option value="GRUPO CORAL OURIQUE">GRUPO CORAL OURIQUE</option>
                 <option value="INÊS">INÊS</option>
+                <option value="LUTZ">LUTZ</option>
+                <option value="MAR">MAR</option>
                 <option value="REAL GUNS">REAL GUNS</option>
                 <option value="SUAVE">SUAVE</option>
                 <option value="__new__">+ Novo Artista...</option>
@@ -2474,7 +2480,7 @@
             <span class="settlement-label">Total Investido</span>
           </div>
           <div class="settlement-card card-bandidos">
-            <h3>Bandidos</h3>
+            <h3>Artista</h3>
             <span class="settlement-value" id="settle-bandidos">0.00 EUR</span>
             <span class="settlement-label">Total Investido</span>
           </div>
@@ -2488,7 +2494,7 @@
           </div>
           <div class="balance-labels">
             <span>Maktub: <strong id="pct-maktub">0%</strong></span>
-            <span>Bandidos: <strong id="pct-bandidos">0%</strong></span>
+            <span>Artista: <strong id="pct-bandidos">0%</strong></span>
           </div>
         </div>
 
@@ -2520,13 +2526,15 @@
               </option>
               <option value="BRUCE">BRUCE</option>
               <option value="Buba Espinho">Buba Espinho</option>
+              <option value="CRISTO">CRISTO</option>
               <option value="D.A.M.A">D.A.M.A</option>
+              <option value="GERAL MAKTUB">GERAL MAKTUB</option>
+              <option value="GRUPO CORAL OURIQUE">GRUPO CORAL OURIQUE</option>
               <option value="INÊS">INÊS</option>
               <option value="LUTZ">LUTZ</option>
               <option value="MAR">MAR</option>
               <option value="REAL GUNS">REAL GUNS</option>
               <option value="SUAVE">SUAVE</option>
-              <option value="Outro">Bandidos</option>
             </select>
           </div>
           <div class="form-group">
@@ -2590,7 +2598,7 @@
             <label>Investidor</label>
             <select id="edit-investor" required>
               <option value="maktub">Maktub</option>
-              <option value="bandidos">Bandidos</option>
+              <option value="bandidos">Artista</option>
             </select>
           </div>
           <div class="form-group">
@@ -2669,7 +2677,7 @@
             <select id="bulk-delete-investor">
               <option value="all">Todos</option>
               <option value="maktub">Maktub</option>
-              <option value="bandidos">Bandidos</option>
+              <option value="bandidos">Artista</option>
             </select>
           </div>
           <div class="form-row">

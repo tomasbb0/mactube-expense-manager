@@ -1,0 +1,12 @@
+{
+  "folders": [
+	{
+		"name": "MadalenaCruzProject",
+		"path": "."
+	}
+],
+  "settings": {
+    "liveServer.settings.port": 5503,
+    "gitflow.disableOnRepo": true
+  }
+}
