@@ -29,15 +29,20 @@
 
     <style>
       /* ============================================
-       CUSTOM CURSOR
+       CUSTOM CURSOR (disabled — normal mouse restored)
        ============================================ */
       *,
       *::before,
       *::after {
-        cursor: none !important;
+        cursor: auto;
       }
 
-      .cursor-ball {
+      .cursor-ball,
+      .cursor-trail {
+        display: none !important;
+      }
+
+      .cursor-ball-OFF {
         position: fixed;
         width: 13px;
         height: 13px;
