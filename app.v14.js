@@ -364,13 +364,16 @@ function initTabs() {
 
       highlightQuickActions(targetId);
 
-      if (targetId === "reports") {
+      if (targetId === "analytics") {
+        updateDashboard();
         renderTable();
         renderPivotTables();
-      } else if (targetId === "settlement") {
         updateSettlement();
-      } else if (targetId === "dashboard") {
-        updateDashboard();
+        // Sync URL for bookmarking
+        window.history.pushState({view: "analytics"}, "", "/gestures/analytics/");
+      } else if (targetId === "adicionar") {
+        // Sync URL for bookmarking
+        window.history.pushState({view: "adicionar"}, "", "/gestures/adicionar/");
       }
     });
   });
@@ -949,7 +952,7 @@ function handleFormSubmit(e) {
   updateFilterDropdowns();
   showToast("Despesa registada com sucesso!", "success");
 
-  document.querySelector('[data-tab="dashboard"]').click();
+  document.querySelector('[data-tab="analytics"]').click();
 }
 
 function resetForm() {
@@ -2980,7 +2983,7 @@ function initFilters() {
     .addEventListener("click", exportGoogleSheets);
   document.getElementById("export-pdf").addEventListener("click", exportPDF);
   document.getElementById("view-all-btn").addEventListener("click", () => {
-    document.querySelector('[data-tab="reports"]').click();
+    document.querySelector('[data-tab="analytics"]').click();
   });
 
   // Initialize column header filters
@@ -6118,7 +6121,7 @@ async function loadExistingProjects() {
 // Load projects when switching to the tab
 function initProjectTab() {
   // Listen for tab changes
-  document.querySelectorAll('.tab[data-tab="new-project"]').forEach((tab) => {
+  document.querySelectorAll('.tab[data-tab="adicionar"]').forEach((tab) => {
     tab.addEventListener("click", () => {
       loadExistingProjects();
     });
@@ -6274,7 +6277,7 @@ function startTutorial() {
   }
 
   // Switch to Dashboard tab so tutorial targets are visible
-  const dashTab = document.querySelector('.tab[data-tab="dashboard"]');
+  const dashTab = document.querySelector('.tab[data-tab="analytics"]');
   if (dashTab) dashTab.click();
 
   // Show the tutorial overlay
