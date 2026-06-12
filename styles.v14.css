@@ -4231,3 +4231,8 @@ tr td {
     min-width: 180px;
   }
 }
+
+/* ── Minimalist editor: hide the busy quick-action shortcut rows (overstimulating) ── */
+.dashboard-quick-actions {
+  display: none !important;
+}

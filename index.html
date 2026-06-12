@@ -38,7 +38,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.v14.css?v=54" />
+    <link rel="stylesheet" href="styles.v14.css?v=55" />
 
     <link rel="icon" type="image/png" href="maktub-logo.png" />
   </head>
@@ -555,28 +555,22 @@
       </header>
 
       <nav class="tabs">
-        <button class="tab active" data-tab="adicionar">
-          <svg
-            class="tab-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
+        <button class="tab active" data-tab="despesa">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
             <path d="M12 8v8" />
             <path d="M8 12h8" />
           </svg>
-          <span>Adicionar</span>
+          <span>Nova Despesa</span>
+        </button>
+        <button class="tab" data-tab="projeto">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          <span>Novo Projeto</span>
         </button>
         <button class="tab" data-tab="analytics">
-          <svg
-            class="tab-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="9" />
             <rect x="14" y="3" width="7" height="5" />
             <rect x="14" y="12" width="7" height="9" />
@@ -586,8 +580,8 @@
         </button>
       </nav>
 
-      <!-- Dashboard Tab -->
-      <div id="analytics" class="tab-content hidden">
+      <!-- Dashboard (grouped under Analytics) -->
+      <div id="dashboard" class="tab-content hidden" data-group="analytics">
         <div class="content-header">
           <h2>Dashboard</h2>
           <p>Visão geral das despesas</p>
@@ -1001,7 +995,7 @@
       </div>
 
       <!-- New Expense Tab -->
-      <div id="adicionar" class="tab-content active">
+      <div id="despesa" class="tab-content active">
         <div class="content-header">
           <h2>Nova Despesa</h2>
           <p>Registe uma nova despesa</p>
@@ -1497,8 +1491,8 @@
         </div>
       </div>
 
-      <!-- Reports Tab -->
-      <div >
+      <!-- Reports (grouped under Analytics) -->
+      <div id="relatorios" class="tab-content hidden" data-group="analytics">
         <div class="reports-sticky-header">
           <div class="content-header">
             <h2>Relatórios</h2>
@@ -1915,7 +1909,7 @@
       </div>
 
       <!-- New Project Tab -->
-      <div >
+      <div id="projeto" class="tab-content hidden">
         <div class="content-header">
           <h2>Novo Projeto</h2>
           <p>Criar nova spreadsheet para um projeto</p>
@@ -2235,8 +2229,8 @@
         </div>
       </div>
 
-      <!-- Settlement Tab -->
-      <div >
+      <!-- Settlement (grouped under Analytics) -->
+      <div id="acerto" class="tab-content hidden" data-group="analytics">
         <div class="content-header">
           <h2>Acerto de Contas</h2>
           <p>Balanço entre Maktub e terceiros</p>

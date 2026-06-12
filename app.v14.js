@@ -356,11 +356,13 @@ function initTabs() {
       });
 
       tab.classList.add("active");
-      const targetContent = document.getElementById(targetId);
-      if (targetContent) {
-        targetContent.classList.add("active");
-        targetContent.classList.remove("hidden");
-      }
+      // Show the target view plus any views grouped under it (data-group)
+      contents.forEach((c) => {
+        if (c.id === targetId || c.dataset.group === targetId) {
+          c.classList.add("active");
+          c.classList.remove("hidden");
+        }
+      });
 
       highlightQuickActions(targetId);
 
@@ -369,12 +371,9 @@ function initTabs() {
         renderTable();
         renderPivotTables();
         updateSettlement();
-        // Sync URL for bookmarking
-        window.history.pushState({view: "analytics"}, "", "/gestures/analytics/");
-      } else if (targetId === "adicionar") {
-        // Sync URL for bookmarking
-        window.history.pushState({view: "adicionar"}, "", "/gestures/adicionar/");
       }
+      // Sync URL for bookmarking
+      window.history.pushState({ view: targetId }, "", "/gestures/" + targetId + "/");
     });
   });
 
@@ -6121,7 +6120,7 @@ async function loadExistingProjects() {
 // Load projects when switching to the tab
 function initProjectTab() {
   // Listen for tab changes
-  document.querySelectorAll('.tab[data-tab="adicionar"]').forEach((tab) => {
+  document.querySelectorAll('.tab[data-tab="projeto"]').forEach((tab) => {
     tab.addEventListener("click", () => {
       loadExistingProjects();
     });
