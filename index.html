@@ -440,6 +440,18 @@
         border: 1px solid rgba(0, 0, 0, 0.15) !important;
         color: #1a1a1a !important;
       }
+      /* selected state must beat the white override so taps give feedback */
+      .in-iframe .type-btn.selected,
+      .in-iframe .investor-btn.selected {
+        background: rgba(34, 201, 34, 0.12) !important;
+        border-color: #22c922 !important;
+        color: #16a516 !important;
+        box-shadow: 0 0 0 2px #22c922 !important;
+      }
+      .in-iframe .type-btn.selected svg,
+      .in-iframe .investor-btn.selected svg {
+        color: #16a516 !important;
+      }
 
       /* Always-visible 3-option menu + Back (sticky white bar) */
       .tab-back {
