@@ -440,6 +440,55 @@
         border: 1px solid rgba(0, 0, 0, 0.15) !important;
         color: #1a1a1a !important;
       }
+
+      /* Always-visible 3-option menu + Back (sticky white bar) */
+      .tab-back {
+        display: none;
+      }
+      .in-iframe .tabs {
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border-radius: 14px !important;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        position: sticky !important;
+        top: 8px !important;
+        z-index: 30 !important;
+        margin: 4px 0 18px !important;
+        overflow: hidden !important;
+      }
+      .in-iframe .tab {
+        color: #5a5a5a !important;
+        border-bottom: none !important;
+      }
+      .in-iframe .tab:hover {
+        color: #1a1a1a !important;
+        background: rgba(0, 0, 0, 0.04) !important;
+      }
+      .in-iframe .tab.active {
+        color: #1ca31c !important;
+        background: rgba(34, 201, 34, 0.1) !important;
+        border-bottom: none !important;
+      }
+      .in-iframe .tab-back {
+        display: flex !important;
+        flex: 0 0 auto !important;
+        align-items: center;
+        gap: 6px;
+        padding: 16px 18px;
+        background: transparent !important;
+        border: none !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.08) !important;
+        color: #8a8a8a !important;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .in-iframe .tab-back:hover {
+        color: #1a1a1a !important;
+        background: rgba(0, 0, 0, 0.04) !important;
+      }
     </style>
     <!-- Auth Screen -->
     <div id="auth-screen" class="screen active">
@@ -593,6 +642,13 @@
       </header>
 
       <nav class="tabs">
+        <button class="tab-back" type="button" onclick="window.parent.postMessage({ type: 'closePlatform' }, '*')" title="Voltar às plataformas">
+          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+          </svg>
+          <span>Voltar</span>
+        </button>
         <button class="tab active" data-tab="despesa">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
