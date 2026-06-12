@@ -446,8 +446,7 @@
         display: none;
       }
       .in-iframe .tabs {
-        display: flex !important;
-        align-items: stretch !important;
+        display: none !important;
         background: #ffffff !important;
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
         border-radius: 14px !important;
@@ -490,6 +489,88 @@
       .in-iframe .tab-back:hover {
         color: #1a1a1a !important;
         background: rgba(0, 0, 0, 0.04) !important;
+      }
+
+      /* ════════ Minimal landing (3 giant options) + back arrow ════════ */
+      .editor-home,
+      .editor-back {
+        display: none;
+      }
+      .in-iframe .editor-home {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        max-width: 520px;
+        margin: 32px auto;
+        padding: 8px;
+      }
+      .in-iframe .home-tile {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        text-align: left;
+        padding: 30px 30px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.07);
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease,
+          border-color 0.18s ease;
+      }
+      .in-iframe .home-tile:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+        border-color: rgba(34, 201, 34, 0.45);
+      }
+      .in-iframe .home-tile:active {
+        transform: translateY(0);
+      }
+      .in-iframe .home-tile svg {
+        width: 32px;
+        height: 32px;
+        color: #22c922;
+        margin-bottom: 10px;
+      }
+      .in-iframe .home-tile-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        letter-spacing: -0.015em;
+      }
+      .in-iframe .home-tile-sub {
+        font-size: 0.9rem;
+        color: #9a9a9a;
+        font-weight: 400;
+      }
+      .in-iframe .editor-back {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        margin: 4px 0 14px;
+        background: #ffffff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 13px;
+        color: #5a5a5a;
+        cursor: pointer;
+        position: sticky;
+        top: 8px;
+        z-index: 30;
+        transition: background 0.15s ease, color 0.15s ease;
+      }
+      .in-iframe .editor-back[hidden] {
+        display: none !important;
+      }
+      .in-iframe .editor-back:hover {
+        background: rgba(0, 0, 0, 0.04);
+        color: #1a1a1a;
+      }
+      .in-iframe .editor-back svg {
+        width: 20px;
+        height: 20px;
       }
     </style>
     <!-- Auth Screen -->
@@ -643,14 +724,31 @@
         </div>
       </header>
 
-      <nav class="tabs">
-        <button class="tab-back" type="button" onclick="window.parent.postMessage({ type: 'closePlatform' }, '*')" title="Voltar às plataformas">
-          <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M19 12H5" />
-            <path d="M12 19l-7-7 7-7" />
-          </svg>
-          <span>Voltar</span>
+      <!-- Minimal landing: 3 giant options -->
+      <div id="editor-home" class="editor-home">
+        <button class="home-tile" type="button" onclick="openEditorView('despesa')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" /></svg>
+          <span class="home-tile-title">Nova Despesa</span>
+          <span class="home-tile-sub">Registar uma despesa</span>
         </button>
+        <button class="home-tile" type="button" onclick="openEditorView('projeto')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
+          <span class="home-tile-title">Novo Projeto</span>
+          <span class="home-tile-sub">Criar um projeto</span>
+        </button>
+        <button class="home-tile" type="button" onclick="openEditorView('analytics')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="home-tile-title">Analytics</span>
+          <span class="home-tile-sub">Dashboard, relatórios e acertos</span>
+        </button>
+      </div>
+
+      <!-- Back-to-menu arrow (only inside a section) -->
+      <button id="editor-back" class="editor-back" type="button" onclick="showEditorHome()" title="Voltar ao menu" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
+      </button>
+
+      <nav class="tabs">
         <button class="tab active" data-tab="despesa">
           <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
@@ -1091,7 +1189,7 @@
       </div>
 
       <!-- New Expense Tab -->
-      <div id="despesa" class="tab-content active">
+      <div id="despesa" class="tab-content hidden">
         <div class="content-header">
           <h2>Nova Despesa</h2>
           <p>Registe uma nova despesa</p>
@@ -3257,6 +3355,41 @@ Uma despesa por linha."
           requestAnimationFrame(animate);
         }
         animate();
+      })();
+    </script>
+
+    <script>
+      // ── Minimal editor nav: landing (3 tiles) <-> section + back arrow ──
+      function openEditorView(id) {
+        var home = document.getElementById("editor-home");
+        var back = document.getElementById("editor-back");
+        if (home) home.style.display = "none";
+        if (back) back.hidden = false;
+        var btn = document.querySelector('.tab[data-tab="' + id + '"]');
+        if (btn) btn.click(); // reuse initTabs: shows section + runs analytics init
+        try { window.scrollTo(0, 0); } catch (e) {}
+      }
+      function showEditorHome() {
+        document.querySelectorAll(".tab-content").forEach(function (c) {
+          c.classList.add("hidden");
+          c.classList.remove("active");
+        });
+        var back = document.getElementById("editor-back");
+        if (back) back.hidden = true;
+        var home = document.getElementById("editor-home");
+        if (home) home.style.display = "";
+        try { window.scrollTo(0, 0); } catch (e) {}
+      }
+      // Start on the landing when embedded in the hub
+      (function () {
+        function start() {
+          if (window.self !== window.top) showEditorHome();
+        }
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", start);
+        } else {
+          start();
+        }
       })();
     </script>
 
