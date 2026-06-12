@@ -514,8 +514,8 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        gap: 24px;
-        max-width: 660px;
+        gap: 20px;
+        max-width: 360px;
         margin: 0 auto;
         padding: 16px;
         min-height: calc(100vh - 70px);
@@ -564,16 +564,27 @@
       .in-iframe .tile-projeto {
         order: 1;
       }
-      .in-iframe .tile-despesa {
+      .in-iframe .tile-analytics {
         order: 2;
-        width: 212px;
-        height: 212px;
+      }
+      .in-iframe .tile-despesa {
+        order: 3;
+        width: 200px;
+        height: 200px;
         background: linear-gradient(135deg, #2bd62b, #16a516);
         border: none;
         box-shadow: 0 16px 38px rgba(34, 201, 34, 0.4);
       }
-      .in-iframe .tile-analytics {
-        order: 3;
+      .in-iframe .tile-gerir {
+        order: 4;
+      }
+      .in-iframe .tile-drive {
+        order: 5;
+      }
+      /* Analytics sub-menu reuses the ball layout */
+      .in-iframe .analytics-menu .home-tile {
+        width: 138px;
+        height: 138px;
       }
       .in-iframe .tile-despesa svg {
         width: 42px;
@@ -776,15 +787,41 @@
           <span class="home-tile-title">Novo Projeto</span>
           <span class="home-tile-sub">Criar um projeto</span>
         </button>
-        <button class="home-tile tile-analytics" type="button" onclick="openEditorView('analytics')">
+        <button class="home-tile tile-analytics" type="button" onclick="openAnalyticsMenu()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
           <span class="home-tile-title">Analytics</span>
           <span class="home-tile-sub">Dashboard, relatórios e acertos</span>
         </button>
+        <button class="home-tile tile-gerir" type="button" onclick="openEditorView('relatorios')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+          <span class="home-tile-title">Gerir Despesas</span>
+          <span class="home-tile-sub">Lista, editar, eliminar</span>
+        </button>
+        <button class="home-tile tile-drive" type="button" onclick="openDrive()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.71 3.5 1.15 15l3.43 6 6.56-11.5z" /><path d="M22.85 15 16.29 3.5H9.43L16 15z" /><path d="M4.58 21h13.13l3.14-6H7.71z" /></svg>
+          <span class="home-tile-title">Abrir Drive</span>
+          <span class="home-tile-sub">Pasta Google Drive</span>
+        </button>
       </div>
 
-      <!-- Back-to-menu arrow (only inside a section) -->
-      <button id="editor-back" class="editor-back" type="button" onclick="showEditorHome()" title="Voltar ao menu" hidden>
+      <!-- Analytics sub-menu -->
+      <div id="analytics-menu" class="editor-home analytics-menu" style="display: none">
+        <button class="home-tile" type="button" onclick="openEditorView('dashboard', openAnalyticsMenu)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
+          <span class="home-tile-title">Dashboard</span>
+        </button>
+        <button class="home-tile" type="button" onclick="openEditorView('relatorios', openAnalyticsMenu)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-6" /></svg>
+          <span class="home-tile-title">Relatórios</span>
+        </button>
+        <button class="home-tile" type="button" onclick="openEditorView('acerto', openAnalyticsMenu)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3v18" /><path d="M5 7 2 13h6z" /><path d="M19 7l-3 6h6z" /><path d="M5 7h14" /></svg>
+          <span class="home-tile-title">Acertos</span>
+        </button>
+      </div>
+
+      <!-- Back arrow (inside a section / sub-menu) -->
+      <button id="editor-back" class="editor-back" type="button" onclick="editorBack()" title="Voltar" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
       </button>
 
@@ -3399,21 +3436,58 @@ Uma despesa por linha."
     </script>
 
     <script>
-      // ── Minimal editor nav: landing (3 tiles) <-> section + back arrow ──
-      function openEditorView(id) {
-        var home = document.getElementById("editor-home");
-        var back = document.getElementById("editor-back");
-        if (home) home.style.display = "none";
-        if (back) back.hidden = false;
-        var btn = document.querySelector('.tab[data-tab="' + id + '"]');
-        if (btn) btn.click(); // reuse initTabs: shows section + runs analytics init
-        try { window.scrollTo(0, 0); } catch (e) {}
-      }
-      function showEditorHome() {
+      // ── Editor navigation: home (5 balls) → section / analytics sub-menu ──
+      var DRIVE_URL =
+        "https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing";
+      var editorBackTo = showEditorHome;
+
+      function _hideEditorScreens() {
         document.querySelectorAll(".tab-content").forEach(function (c) {
           c.classList.add("hidden");
           c.classList.remove("active");
         });
+        var h = document.getElementById("editor-home");
+        if (h) h.style.display = "none";
+        var m = document.getElementById("analytics-menu");
+        if (m) m.style.display = "none";
+      }
+      function _initSection(id) {
+        try { if (typeof updateDashboard === "function") updateDashboard(); } catch (e) {}
+        try { if (id === "relatorios" && typeof renderTable === "function") renderTable(); } catch (e) {}
+        try { if (id === "relatorios" && typeof renderPivotTables === "function") renderPivotTables(); } catch (e) {}
+        try { if (id === "acerto" && typeof updateSettlement === "function") updateSettlement(); } catch (e) {}
+        try { if (id === "projeto" && typeof loadExistingProjects === "function") loadExistingProjects(); } catch (e) {}
+      }
+      function openEditorView(id, backFn) {
+        _hideEditorScreens();
+        var el = document.getElementById(id);
+        if (el) {
+          el.classList.remove("hidden");
+          el.classList.add("active");
+        }
+        var back = document.getElementById("editor-back");
+        if (back) back.hidden = false;
+        editorBackTo = backFn || showEditorHome;
+        _initSection(id);
+        try { window.scrollTo(0, 0); } catch (e) {}
+      }
+      function openAnalyticsMenu() {
+        _hideEditorScreens();
+        var m = document.getElementById("analytics-menu");
+        if (m) m.style.display = "";
+        var back = document.getElementById("editor-back");
+        if (back) back.hidden = false;
+        editorBackTo = showEditorHome;
+        try { window.scrollTo(0, 0); } catch (e) {}
+      }
+      function openDrive() {
+        try { window.open(DRIVE_URL, "_blank"); } catch (e) { location.href = DRIVE_URL; }
+      }
+      function editorBack() {
+        (editorBackTo || showEditorHome)();
+      }
+      function showEditorHome() {
+        _hideEditorScreens();
         var back = document.getElementById("editor-back");
         if (back) back.hidden = true;
         var home = document.getElementById("editor-home");
