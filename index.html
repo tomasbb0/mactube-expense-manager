@@ -402,6 +402,44 @@
       .in-iframe * {
         scrollbar-width: none;
       }
+
+      /* ════════════════════════════════════════════════════════════
+         LIGHT EXPENSE APP INSIDE THE DARK HUB
+         The app was built to blend into the dark hub (transparent
+         surfaces). These overrides make it a solid, minimal LIGHT
+         surface instead. Last in the cascade -> wins.
+         ════════════════════════════════════════════════════════════ */
+      .in-iframe,
+      .in-iframe body,
+      .in-iframe #app-screen {
+        background: #f4f5f7 !important;
+        color: #1a1a1a !important;
+      }
+      .in-iframe .form-box,
+      .in-iframe .stat-card,
+      .in-iframe .chart-card,
+      .in-iframe .activity-item,
+      .in-iframe .summary-card,
+      .in-iframe .reports-sticky-header,
+      .in-iframe .pivot-section {
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+      }
+      .in-iframe .content-header,
+      .in-iframe .tabs,
+      .in-iframe .dashboard-filter-bar {
+        background: transparent !important;
+      }
+      .in-iframe .form-group input,
+      .in-iframe .form-group select,
+      .in-iframe .form-group textarea,
+      .in-iframe .type-btn,
+      .in-iframe .investor-btn {
+        background: #ffffff !important;
+        border: 1px solid rgba(0, 0, 0, 0.15) !important;
+        color: #1a1a1a !important;
+      }
     </style>
     <!-- Auth Screen -->
     <div id="auth-screen" class="screen active">
