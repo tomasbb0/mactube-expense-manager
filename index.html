@@ -498,51 +498,79 @@
       }
       .in-iframe .editor-home {
         display: flex;
-        flex-direction: column;
-        gap: 14px;
-        max-width: 520px;
-        margin: 32px auto;
-        padding: 8px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        max-width: 660px;
+        margin: 0 auto;
+        padding: 16px;
+        min-height: calc(100vh - 70px);
       }
       .in-iframe .home-tile {
+        width: 152px;
+        height: 152px;
+        border-radius: 50%;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        text-align: left;
-        padding: 30px 30px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 6px;
+        padding: 14px;
         background: #ffffff;
-        border: 1px solid rgba(0, 0, 0, 0.07);
-        border-radius: 20px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
         cursor: pointer;
-        transition: transform 0.18s ease, box-shadow 0.18s ease,
-          border-color 0.18s ease;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
       }
       .in-iframe .home-tile:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-        border-color: rgba(34, 201, 34, 0.45);
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
       }
       .in-iframe .home-tile:active {
-        transform: translateY(0);
+        transform: scale(0.99);
       }
       .in-iframe .home-tile svg {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         color: #22c922;
-        margin-bottom: 10px;
+        margin-bottom: 2px;
       }
       .in-iframe .home-tile-title {
-        font-size: 1.4rem;
+        font-size: 1rem;
         font-weight: 700;
         color: #1a1a1a;
-        letter-spacing: -0.015em;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
       }
       .in-iframe .home-tile-sub {
-        font-size: 0.9rem;
-        color: #9a9a9a;
-        font-weight: 400;
+        display: none;
+      }
+      /* Nova Despesa = big highlighted center ball; others flank it */
+      .in-iframe .tile-projeto {
+        order: 1;
+      }
+      .in-iframe .tile-despesa {
+        order: 2;
+        width: 212px;
+        height: 212px;
+        background: linear-gradient(135deg, #2bd62b, #16a516);
+        border: none;
+        box-shadow: 0 16px 38px rgba(34, 201, 34, 0.4);
+      }
+      .in-iframe .tile-analytics {
+        order: 3;
+      }
+      .in-iframe .tile-despesa svg {
+        width: 42px;
+        height: 42px;
+        color: #ffffff;
+      }
+      .in-iframe .tile-despesa .home-tile-title {
+        color: #ffffff;
+        font-size: 1.25rem;
       }
       .in-iframe .editor-back {
         display: inline-flex;
@@ -726,17 +754,17 @@
 
       <!-- Minimal landing: 3 giant options -->
       <div id="editor-home" class="editor-home">
-        <button class="home-tile" type="button" onclick="openEditorView('despesa')">
+        <button class="home-tile tile-despesa" type="button" onclick="openEditorView('despesa')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" /></svg>
           <span class="home-tile-title">Nova Despesa</span>
           <span class="home-tile-sub">Registar uma despesa</span>
         </button>
-        <button class="home-tile" type="button" onclick="openEditorView('projeto')">
+        <button class="home-tile tile-projeto" type="button" onclick="openEditorView('projeto')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" /></svg>
           <span class="home-tile-title">Novo Projeto</span>
           <span class="home-tile-sub">Criar um projeto</span>
         </button>
-        <button class="home-tile" type="button" onclick="openEditorView('analytics')">
+        <button class="home-tile tile-analytics" type="button" onclick="openEditorView('analytics')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
           <span class="home-tile-title">Analytics</span>
           <span class="home-tile-sub">Dashboard, relatórios e acertos</span>
