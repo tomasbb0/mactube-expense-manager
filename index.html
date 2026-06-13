@@ -513,9 +513,10 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
+        align-content: center;
         justify-content: center;
-        gap: 10px;
-        max-width: 360px;
+        gap: 6px;
+        max-width: 340px;
         margin: 0 auto;
         padding: 16px;
         min-height: calc(100vh - 70px);
@@ -672,6 +673,15 @@
       .in-iframe .editor-back:hover {
         background: rgba(0, 0, 0, 0.04);
         color: #1a1a1a;
+      }
+      /* keyboard focus visibility (a11y) */
+      .in-iframe .home-tile:focus-visible,
+      .in-iframe .editor-back:focus-visible {
+        outline: 2px solid #16a516;
+        outline-offset: 3px;
+      }
+      .in-iframe .tile-despesa:focus-visible {
+        outline-color: #0a7a0a;
       }
       .in-iframe .editor-back svg {
         width: 20px;
@@ -875,7 +885,7 @@
       </div>
 
       <!-- Back arrow (inside a section / sub-menu) -->
-      <button id="editor-back" class="editor-back" type="button" onclick="editorBack()" title="Voltar" hidden>
+      <button id="editor-back" class="editor-back" type="button" onclick="editorBack()" title="Voltar" aria-label="Voltar" hidden>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5" /><path d="M12 19l-7-7 7-7" /></svg>
       </button>
 
