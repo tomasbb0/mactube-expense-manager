@@ -774,6 +774,27 @@
           0 0 30px rgba(43, 214, 43, 0.92),
           0 0 64px rgba(43, 214, 43, 0.5);
       }
+      /* proportional zoom from each ball's own centre (no left/right drift) */
+      .in-iframe #editor-home .home-tile:hover {
+        translate: 0;
+        scale: 1;
+        animation: none;
+      }
+      .in-iframe #editor-home .tile-despesa:hover {
+        transform: translate(-50%, -50%) scale(1.06);
+      }
+      .in-iframe #editor-home .tile-projeto:hover {
+        transform: translate(-50%, calc(-50% - 26vmin)) scale(1.08);
+      }
+      .in-iframe #editor-home .tile-gerir:hover {
+        transform: translate(-50%, calc(-50% + 26vmin)) scale(1.08);
+      }
+      .in-iframe #editor-home .tile-analytics:hover {
+        transform: translate(calc(-50% + 26vmin), -50%) scale(1.08);
+      }
+      .in-iframe #editor-home .tile-drive:hover {
+        transform: translate(calc(-50% - 26vmin), -50%) scale(1.08);
+      }
       .in-iframe .editor-back svg {
         width: 20px;
         height: 20px;
