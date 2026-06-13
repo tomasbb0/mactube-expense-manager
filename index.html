@@ -3524,6 +3524,7 @@ Uma despesa por linha."
         if (back) back.hidden = false;
         editorBackTo = backFn || showEditorHome;
         _initSection(id);
+        _setView(id === "relatorios" && listOnly ? "gerir" : id);
         try { window.scrollTo(0, 0); } catch (e) {}
       }
       function openAnalyticsMenu() {
@@ -3533,6 +3534,7 @@ Uma despesa por linha."
         var back = document.getElementById("editor-back");
         if (back) back.hidden = false;
         editorBackTo = showEditorHome;
+        _setView("analytics");
         try { window.scrollTo(0, 0); } catch (e) {}
       }
       function openDrive() {
@@ -3547,12 +3549,37 @@ Uma despesa por linha."
         if (back) back.hidden = true;
         var home = document.getElementById("editor-home");
         if (home) home.style.display = "";
+        _setView("home");
         try { window.scrollTo(0, 0); } catch (e) {}
       }
-      // Start on the landing when embedded in the hub
+      function _setView(v) {
+        try {
+          if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
+        } catch (e) {}
+        try {
+          window.parent.postMessage({ type: "maktub-view", view: v }, "*");
+        } catch (e) {}
+      }
+      function _openByView(v) {
+        switch (v) {
+          case "despesa": openEditorView("despesa"); break;
+          case "projeto": openEditorView("projeto"); break;
+          case "analytics": openAnalyticsMenu(); break;
+          case "dashboard": openEditorView("dashboard", openAnalyticsMenu); break;
+          case "relatorios": openEditorView("relatorios", openAnalyticsMenu, false); break;
+          case "gerir": openEditorView("relatorios", null, true); break;
+          case "acerto": openEditorView("acerto", openAnalyticsMenu); break;
+          default: showEditorHome();
+        }
+      }
+      // Start on the landing — or a bookmarked view — when embedded in the hub
       (function () {
         function start() {
-          if (window.self !== window.top) showEditorHome();
+          if (window.self !== window.top) {
+            var v = (location.hash || "").replace(/^#/, "");
+            if (v) _openByView(v);
+            else showEditorHome();
+          }
         }
         if (document.readyState === "loading") {
           document.addEventListener("DOMContentLoaded", start);

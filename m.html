@@ -4156,6 +4156,22 @@
           renderHub();
           // Load latest user data (photos, etc.) from Google Sheets in background
           loadUserDataFromSheets();
+          restoreViewFromHash();
+        }
+
+        // Re-open a bookmarked platform/view from the URL hash
+        function restoreViewFromHash() {
+          try {
+            const h = (location.hash || "").replace(/^#/, "");
+            if (!h) return;
+            const parts = h.split("/");
+            if (parts[0] === "expense-manager") {
+              const platform = PLATFORMS.find(function (p) {
+                return p.id === "expense-manager";
+              });
+              if (platform) navigateToPlatform(platform, parts[1] || "");
+            }
+          } catch (e) {}
         }
 
         function showManagement() {
@@ -4635,7 +4651,7 @@
           }
         }
 
-        function navigateToPlatform(platform) {
+        function navigateToPlatform(platform, view) {
           if (platform.id === "expense-manager") {
             const userData = getUserData(currentSession.username);
             const maktubUser = {
@@ -4653,11 +4669,20 @@
           if (container && iframe) {
             // Force full reload: clear iframe first, then set new src with cache-bust
             iframe.src = "about:blank";
+            const _viewHash = view ? "#" + view : "";
             setTimeout(() => {
-              iframe.src = platform.url + "?nocache=" + Date.now() + "&v=61";
+              iframe.src =
+                platform.url + "?nocache=" + Date.now() + "&v=61" + _viewHash;
             }, 50);
             container.classList.add("active");
             document.body.classList.add("iframe-active");
+            try {
+              history.replaceState(
+                null,
+                "",
+                "#" + platform.id + (view ? "/" + view : ""),
+              );
+            } catch (e) {}
           } else {
             // Fallback: direct navigation
             sessionStorage.setItem("maktub_internal_nav", "true");
@@ -4675,12 +4700,23 @@
           }
           if (iframe) iframe.src = "";
           document.body.classList.remove("iframe-active");
+          try {
+            history.replaceState(null, "", location.pathname + location.search);
+          } catch (e) {}
         }
 
-        // Listen for postMessage from iframe (e.g. logout)
+        // Listen for postMessage from iframe (e.g. logout, view changes)
         window.addEventListener("message", function (e) {
           if (e.data && e.data.type === "closePlatform") {
             closePlatformIframe();
+          } else if (e.data && e.data.type === "maktub-view" && e.data.view) {
+            try {
+              history.replaceState(
+                null,
+                "",
+                "#expense-manager/" + e.data.view,
+              );
+            } catch (err) {}
           }
         });
 
