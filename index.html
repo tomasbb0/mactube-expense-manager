@@ -539,11 +539,12 @@
         transition: transform 0.18s ease, box-shadow 0.18s ease;
       }
       .in-iframe .home-tile:hover {
-        transform: translateY(-3px) scale(1.03);
+        translate: 0 -3px;
+        scale: 1.04;
         box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
       }
       .in-iframe .home-tile:active {
-        transform: scale(0.99);
+        scale: 0.99;
       }
       .in-iframe .home-tile svg {
         width: 30px;
@@ -640,10 +641,10 @@
       @keyframes ball-float {
         0%,
         100% {
-          transform: translateY(0);
+          translate: 0 0;
         }
         50% {
-          transform: translateY(-7px);
+          translate: 0 -7px;
         }
       }
       .in-iframe .home-tile {
@@ -686,14 +687,13 @@
         outline-color: #0a7a0a;
       }
 
-      /* ════════ Radial menu: satellites around the big center ball ════════ */
+      /* ════════ Radial menu: scales to fill the iframe, small gaps ════════ */
       .in-iframe #editor-home {
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 320px;
-        height: 340px;
+        inset: 0;
+        transform: none;
+        width: auto;
+        height: auto;
         max-width: none;
         min-height: 0;
         padding: 0;
@@ -701,51 +701,48 @@
       }
       .in-iframe #editor-home .home-tile {
         position: absolute;
-        width: 96px;
-        height: 96px;
+        top: 50%;
+        left: 50%;
+        width: 22vmin;
+        height: 22vmin;
+        min-width: 76px;
+        min-height: 76px;
+        margin: 0;
       }
       .in-iframe #editor-home .home-tile .home-tile-title {
-        font-size: 0.74rem;
+        font-size: clamp(0.6rem, 2.5vmin, 0.92rem);
         line-height: 1.1;
       }
       .in-iframe #editor-home .home-tile svg {
-        width: 22px;
-        height: 22px;
+        width: clamp(16px, 5vmin, 28px);
+        height: clamp(16px, 5vmin, 28px);
         margin-bottom: 1px;
       }
       .in-iframe #editor-home .tile-despesa {
-        top: 50%;
-        left: 50%;
-        margin: -84px 0 0 -84px;
-        width: 168px;
-        height: 168px;
+        width: 36vmin;
+        height: 36vmin;
+        min-width: 132px;
+        min-height: 132px;
+        transform: translate(-50%, -50%);
       }
       .in-iframe #editor-home .tile-despesa .home-tile-title {
-        font-size: 1.18rem;
+        font-size: clamp(1rem, 3.8vmin, 1.45rem);
       }
       .in-iframe #editor-home .tile-despesa svg {
-        width: 40px;
-        height: 40px;
+        width: clamp(30px, 8vmin, 46px);
+        height: clamp(30px, 8vmin, 46px);
       }
       .in-iframe #editor-home .tile-projeto {
-        top: 0;
-        left: 50%;
-        margin-left: -48px;
-      }
-      .in-iframe #editor-home .tile-analytics {
-        top: 50%;
-        right: 0;
-        margin-top: -48px;
+        transform: translate(-50%, calc(-50% - 30vmin));
       }
       .in-iframe #editor-home .tile-gerir {
-        bottom: 0;
-        left: 50%;
-        margin-left: -48px;
+        transform: translate(-50%, calc(-50% + 30vmin));
+      }
+      .in-iframe #editor-home .tile-analytics {
+        transform: translate(calc(-50% + 30vmin), -50%);
       }
       .in-iframe #editor-home .tile-drive {
-        top: 50%;
-        left: 0;
-        margin-top: -48px;
+        transform: translate(calc(-50% - 30vmin), -50%);
       }
       .in-iframe .editor-back svg {
         width: 20px;
