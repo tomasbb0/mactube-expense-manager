@@ -593,6 +593,13 @@
         width: 138px;
         height: 138px;
       }
+      .in-iframe .home-tile {
+        text-decoration: none;
+      }
+      /* Gerir Despesas: show only the list, hide the pivot/report part */
+      .in-iframe #relatorios.list-only .pivot-section {
+        display: none !important;
+      }
       .in-iframe .tile-despesa svg {
         width: 42px;
         height: 42px;
@@ -839,16 +846,16 @@
           <span class="home-tile-title">Analytics</span>
           <span class="home-tile-sub">Dashboard, relatórios e acertos</span>
         </button>
-        <button class="home-tile tile-gerir" type="button" onclick="openEditorView('relatorios')">
+        <button class="home-tile tile-gerir" type="button" onclick="openEditorView('relatorios', null, true)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
           <span class="home-tile-title">Gerir Despesas</span>
           <span class="home-tile-sub">Lista, editar, eliminar</span>
         </button>
-        <button class="home-tile tile-drive" type="button" onclick="openDrive()">
+        <a class="home-tile tile-drive" href="https://drive.google.com/drive/folders/1MIwgtsBXH4BW_zXb0rb09DtergXq9uLp?usp=sharing" target="_blank" rel="noopener noreferrer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7.71 3.5 1.15 15l3.43 6 6.56-11.5z" /><path d="M22.85 15 16.29 3.5H9.43L16 15z" /><path d="M4.58 21h13.13l3.14-6H7.71z" /></svg>
           <span class="home-tile-title">Abrir Drive</span>
           <span class="home-tile-sub">Pasta Google Drive</span>
-        </button>
+        </a>
       </div>
 
       <!-- Analytics sub-menu -->
@@ -857,7 +864,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" /><rect x="14" y="3" width="7" height="5" /><rect x="14" y="12" width="7" height="9" /><rect x="3" y="16" width="7" height="5" /></svg>
           <span class="home-tile-title">Dashboard</span>
         </button>
-        <button class="home-tile" type="button" onclick="openEditorView('relatorios', openAnalyticsMenu)">
+        <button class="home-tile" type="button" onclick="openEditorView('relatorios', openAnalyticsMenu, false)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18" /><path d="m7 14 4-4 4 4 5-6" /></svg>
           <span class="home-tile-title">Relatórios</span>
         </button>
@@ -3505,12 +3512,13 @@ Uma despesa por linha."
         try { if (id === "acerto" && typeof updateSettlement === "function") updateSettlement(); } catch (e) {}
         try { if (id === "projeto" && typeof loadExistingProjects === "function") loadExistingProjects(); } catch (e) {}
       }
-      function openEditorView(id, backFn) {
+      function openEditorView(id, backFn, listOnly) {
         _hideEditorScreens();
         var el = document.getElementById(id);
         if (el) {
           el.classList.remove("hidden");
           el.classList.add("active");
+          if (id === "relatorios") el.classList.toggle("list-only", !!listOnly);
         }
         var back = document.getElementById("editor-back");
         if (back) back.hidden = false;
