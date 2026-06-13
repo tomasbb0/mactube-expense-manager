@@ -597,7 +597,9 @@
       .in-iframe .home-tile {
         text-decoration: none;
       }
-      /* Gerir Despesas: show only the list, hide the pivot/report part */
+      /* Gerir Despesas: show only the list (hide title, filters, totals, pivot) */
+      .in-iframe #relatorios.list-only .reports-sticky-header,
+      .in-iframe #relatorios.list-only .summary-row,
       .in-iframe #relatorios.list-only .pivot-section {
         display: none !important;
       }
