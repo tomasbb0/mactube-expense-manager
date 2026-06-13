@@ -683,6 +683,68 @@
       .in-iframe .tile-despesa:focus-visible {
         outline-color: #0a7a0a;
       }
+
+      /* ════════ Radial menu: satellites around the big center ball ════════ */
+      .in-iframe #editor-home {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        height: 340px;
+        max-width: none;
+        min-height: 0;
+        padding: 0;
+        gap: 0;
+      }
+      .in-iframe #editor-home .home-tile {
+        position: absolute;
+        width: 96px;
+        height: 96px;
+      }
+      .in-iframe #editor-home .home-tile .home-tile-title {
+        font-size: 0.74rem;
+        line-height: 1.1;
+      }
+      .in-iframe #editor-home .home-tile svg {
+        width: 22px;
+        height: 22px;
+        margin-bottom: 1px;
+      }
+      .in-iframe #editor-home .tile-despesa {
+        top: 50%;
+        left: 50%;
+        margin: -84px 0 0 -84px;
+        width: 168px;
+        height: 168px;
+      }
+      .in-iframe #editor-home .tile-despesa .home-tile-title {
+        font-size: 1.18rem;
+      }
+      .in-iframe #editor-home .tile-despesa svg {
+        width: 40px;
+        height: 40px;
+      }
+      .in-iframe #editor-home .tile-projeto {
+        top: 0;
+        left: 50%;
+        margin-left: -48px;
+      }
+      .in-iframe #editor-home .tile-analytics {
+        top: 50%;
+        right: 0;
+        margin-top: -48px;
+      }
+      .in-iframe #editor-home .tile-gerir {
+        bottom: 0;
+        left: 50%;
+        margin-left: -48px;
+      }
+      .in-iframe #editor-home .tile-drive {
+        top: 50%;
+        left: 0;
+        margin-top: -48px;
+      }
       .in-iframe .editor-back svg {
         width: 20px;
         height: 20px;
