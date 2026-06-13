@@ -514,7 +514,7 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
-        gap: 20px;
+        gap: 10px;
         max-width: 360px;
         margin: 0 auto;
         padding: 16px;
@@ -569,11 +569,18 @@
       }
       .in-iframe .tile-despesa {
         order: 3;
-        width: 200px;
-        height: 200px;
+        width: 248px;
+        height: 248px;
         background: linear-gradient(135deg, #2bd62b, #16a516);
         border: none;
-        box-shadow: 0 16px 38px rgba(34, 201, 34, 0.4);
+        box-shadow: 0 18px 44px rgba(34, 201, 34, 0.42);
+      }
+      .in-iframe .tile-despesa .home-tile-title {
+        font-size: 1.45rem;
+      }
+      .in-iframe .tile-despesa svg {
+        width: 48px;
+        height: 48px;
       }
       .in-iframe .tile-gerir {
         order: 4;
@@ -599,18 +606,58 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 42px;
-        height: 42px;
-        margin: 4px 0 14px;
-        background: #ffffff;
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         border: 1px solid rgba(0, 0, 0, 0.08);
-        border-radius: 13px;
+        border-radius: 14px;
         color: #5a5a5a;
         cursor: pointer;
-        position: sticky;
-        top: 8px;
-        z-index: 30;
+        position: fixed;
+        top: 14px;
+        left: 14px;
+        z-index: 100;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
         transition: background 0.15s ease, color 0.15s ease;
+      }
+      /* content clears the fixed back arrow */
+      .in-iframe .tab-content.active {
+        padding-top: 60px !important;
+      }
+      /* gentle, slow floating motion (staggered per ball) */
+      @keyframes ball-float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-7px);
+        }
+      }
+      .in-iframe .home-tile {
+        animation: ball-float 5.5s ease-in-out infinite;
+      }
+      .in-iframe .tile-despesa {
+        animation-delay: 0.35s;
+      }
+      .in-iframe .tile-analytics {
+        animation-delay: 0.7s;
+      }
+      .in-iframe .tile-gerir {
+        animation-delay: 1.05s;
+      }
+      .in-iframe .tile-drive {
+        animation-delay: 1.4s;
+      }
+      .in-iframe .home-tile:hover {
+        animation: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .in-iframe .home-tile {
+          animation: none;
+        }
       }
       .in-iframe .editor-back[hidden] {
         display: none !important;
