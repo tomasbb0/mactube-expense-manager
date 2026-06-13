@@ -412,8 +412,14 @@
       .in-iframe,
       .in-iframe body,
       .in-iframe #app-screen {
-        background: rgba(244, 245, 247, 0.5) !important;
+        background: #ffffff !important;
         color: #1a1a1a !important;
+      }
+      /* only the main ball menu is 50% transparent; all other views stay white */
+      .in-iframe.home-bg,
+      .in-iframe.home-bg body,
+      .in-iframe.home-bg #app-screen {
+        background: rgba(244, 245, 247, 0.5) !important;
       }
       .in-iframe .form-box,
       .in-iframe .stat-card,
@@ -3626,6 +3632,7 @@ Uma despesa por linha."
         if (h) h.style.display = "none";
         var m = document.getElementById("analytics-menu");
         if (m) m.style.display = "none";
+        document.documentElement.classList.remove("home-bg");
       }
       function _initSection(id) {
         try { if (typeof updateDashboard === "function") updateDashboard(); } catch (e) {}
@@ -3671,6 +3678,7 @@ Uma despesa por linha."
         if (back) back.hidden = true;
         var home = document.getElementById("editor-home");
         if (home) home.style.display = "";
+        document.documentElement.classList.add("home-bg");
         _setView("home");
         try { window.scrollTo(0, 0); } catch (e) {}
       }
